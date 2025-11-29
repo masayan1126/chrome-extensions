@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <rect width="16" height="16" rx="3" fill="#1a1a1a"/>
+  <g fill="white">
+    <!-- Simplified highlighter marker -->
+    <path d="M3.5 10.5 L6 8 L10 12 L7.5 14.5 Z" opacity="0.9"/>
+    <path d="M6 8 L12 2 L14 4 L8 10 Z" opacity="0.9"/>
+    <!-- Simplified sticky note -->
+    <rect x="8" y="6" width="6" height="6" rx="1" fill="#fef08a" opacity="0.95"/>
+    <rect x="8" y="6" width="6" height="2" rx="0.5" fill="#f9a825" opacity="0.95"/>
+  </g>
+</svg>

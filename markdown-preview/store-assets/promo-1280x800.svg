@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
+  <!-- Background -->
+  <rect width="1280" height="800" fill="#171717"/>
+
+  <!-- Left side - Icon and text -->
+  <g transform="translate(80, 200)">
+    <!-- App Icon -->
+    <rect width="240" height="240" rx="40" fill="#262626"/>
+    <path d="M37.5 176V64h33.9l26.2 52.5 26.2-52.5h33.9v112h-33.9V108.7l-26.2 52.5-26.2-52.5V176H37.5z" fill="#fafafa"/>
+    <path d="M202.5 176V131.3l-22.5 26.2-22.5-26.2V176H135V64h22.5l30 37.5 30-37.5H240v112h-37.5z" fill="#a3a3a3"/>
+  </g>
+
+  <!-- Title and description -->
+  <text x="400" y="300" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#fafafa">Markdown Preview</text>
+  <text x="400" y="370" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#a3a3a3">Beautiful. Customizable. Fast.</text>
+
+  <!-- Feature highlights -->
+  <g transform="translate(400, 430)">
+    <rect x="0" y="0" width="200" height="48" rx="8" fill="#262626"/>
+    <text x="100" y="31" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#fafafa" text-anchor="middle">Multiple Themes</text>
+
+    <rect x="220" y="0" width="200" height="48" rx="8" fill="#262626"/>
+    <text x="320" y="31" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#fafafa" text-anchor="middle">Custom Fonts</text>
+
+    <rect x="440" y="0" width="200" height="48" rx="8" fill="#262626"/>
+    <text x="540" y="31" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#fafafa" text-anchor="middle">Table of Contents</text>
+  </g>
+
+  <!-- Japanese tagline -->
+  <text x="400" y="550" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#737373">ローカルのMarkdownファイルを美しくプレビュー</text>
+
+  <!-- Right side - Preview mockup -->
+  <g transform="translate(820, 100)">
+    <rect width="380" height="600" rx="12" fill="#262626" stroke="#404040" stroke-width="1"/>
+    <!-- Toolbar -->
+    <rect y="0" width="380" height="48" rx="12" fill="#1a1a1a"/>
+    <circle cx="24" cy="24" r="6" fill="#525252"/>
+    <circle cx="48" cy="24" r="6" fill="#525252"/>
+    <circle cx="72" cy="24" r="6" fill="#525252"/>
+
+    <!-- Content lines -->
+    <rect x="24" y="72" width="220" height="20" rx="4" fill="#fafafa"/>
+    <rect x="24" y="108" width="332" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="130" width="300" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="152" width="320" height="10" rx="2" fill="#525252"/>
+
+    <rect x="24" y="190" width="180" height="16" rx="4" fill="#a3a3a3"/>
+    <rect x="24" y="222" width="332" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="244" width="310" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="266" width="290" height="10" rx="2" fill="#525252"/>
+
+    <rect x="24" y="304" width="160" height="16" rx="4" fill="#a3a3a3"/>
+    <rect x="24" y="336" width="332" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="358" width="280" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="380" width="320" height="10" rx="2" fill="#525252"/>
+
+    <!-- Code block -->
+    <rect x="24" y="418" width="332" height="80" rx="6" fill="#1a1a1a"/>
+    <rect x="40" y="438" width="200" height="8" rx="2" fill="#737373"/>
+    <rect x="40" y="458" width="160" height="8" rx="2" fill="#737373"/>
+    <rect x="40" y="478" width="180" height="8" rx="2" fill="#737373"/>
+
+    <rect x="24" y="520" width="150" height="16" rx="4" fill="#a3a3a3"/>
+    <rect x="24" y="552" width="332" height="10" rx="2" fill="#525252"/>
+    <rect x="24" y="574" width="300" height="10" rx="2" fill="#525252"/>
+  </g>
+</svg>

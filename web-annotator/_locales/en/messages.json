@@ -1,0 +1,132 @@
+{
+  "extName": {
+    "message": "Web Annotator",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Add highlights and sticky notes to web pages, export as Markdown",
+    "description": "Extension description"
+  },
+  "tabHighlights": {
+    "message": "Highlights",
+    "description": "Highlights tab label"
+  },
+  "tabNotes": {
+    "message": "Notes",
+    "description": "Notes tab label"
+  },
+  "noHighlights": {
+    "message": "No highlights yet",
+    "description": "Empty highlights message"
+  },
+  "noNotes": {
+    "message": "No notes yet",
+    "description": "Empty notes message"
+  },
+  "emptyNote": {
+    "message": "(Empty note)",
+    "description": "Empty note placeholder"
+  },
+  "goTo": {
+    "message": "Go to",
+    "description": "Go to highlight button"
+  },
+  "delete": {
+    "message": "Delete",
+    "description": "Delete button"
+  },
+  "exportMarkdown": {
+    "message": "Export as Markdown",
+    "description": "Export button"
+  },
+  "clearAll": {
+    "message": "Clear All",
+    "description": "Clear all button"
+  },
+  "howToUse": {
+    "message": "How to use",
+    "description": "Help section title"
+  },
+  "helpHighlight": {
+    "message": "Highlight: Select text, use toolbar",
+    "description": "Help text for highlight"
+  },
+  "helpRemove": {
+    "message": "Remove: Ctrl/Cmd + Click on highlight",
+    "description": "Help text for remove"
+  },
+  "helpAddNote": {
+    "message": "Add note: Alt + Double click",
+    "description": "Help text for adding note"
+  },
+  "helpShortcut": {
+    "message": "Shortcut: Ctrl/Cmd + Shift + H",
+    "description": "Help text for shortcut"
+  },
+  "notAvailable": {
+    "message": "Not available on this page",
+    "description": "Message for special pages"
+  },
+  "pleaseReload": {
+    "message": "Please reload the page",
+    "description": "Reload request message"
+  },
+  "reloadNote": {
+    "message": "(Required after extension update)",
+    "description": "Reload note"
+  },
+  "confirmDeleteHighlight": {
+    "message": "Delete this highlight?",
+    "description": "Confirm delete highlight"
+  },
+  "confirmDeleteNote": {
+    "message": "Delete this note?",
+    "description": "Confirm delete note"
+  },
+  "confirmClearAll": {
+    "message": "Delete all annotations? ($COUNT$ highlights, $NOTES$ notes)",
+    "description": "Confirm clear all",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "5"
+      },
+      "notes": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "highlightDeleted": {
+    "message": "Highlight deleted",
+    "description": "Toast message"
+  },
+  "noteDeleted": {
+    "message": "Note deleted",
+    "description": "Toast message"
+  },
+  "noHighlightsToExport": {
+    "message": "No highlights to export",
+    "description": "Toast message"
+  },
+  "markdownDownloaded": {
+    "message": "Markdown file downloaded",
+    "description": "Toast message"
+  },
+  "noAnnotationsToDelete": {
+    "message": "No annotations to delete",
+    "description": "Toast message"
+  },
+  "allAnnotationsDeleted": {
+    "message": "All annotations deleted",
+    "description": "Toast message"
+  },
+  "stickyNoteTitle": {
+    "message": "Note",
+    "description": "Sticky note header title"
+  },
+  "stickyNotePlaceholder": {
+    "message": "Write a note...",
+    "description": "Sticky note placeholder"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Markdown Preview",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Preview local Markdown files beautifully. Customizable themes, font selection, and auto-generated table of contents.",
+    "description": "Description of the extension"
+  }
+}

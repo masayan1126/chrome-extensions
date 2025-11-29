@@ -1,0 +1,120 @@
+{
+  "extensionName": {
+    "message": "Copy Tab Anything",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Export tab titles & URLs in any format - Markdown, HTML, Plain, or custom templates. Supports tab groups!",
+    "description": "Description of the extension"
+  },
+  "popupTitle": {
+    "message": "Copy Tab Anything",
+    "description": "Title shown in popup"
+  },
+  "popupSubtitle": {
+    "message": "Export links & titles instantly",
+    "description": "Subtitle shown in popup"
+  },
+  "labelScope": {
+    "message": "Scope",
+    "description": "Label for scope selector"
+  },
+  "scopeCurrentWindow": {
+    "message": "Current Window",
+    "description": "Current window option"
+  },
+  "scopeAllWindows": {
+    "message": "All Windows",
+    "description": "All windows option"
+  },
+  "scopeCurrentGroup": {
+    "message": "Current Tab Group",
+    "description": "Current tab group option"
+  },
+  "scopePickGroup": {
+    "message": "Select Group",
+    "description": "Pick group option"
+  },
+  "labelTabGroup": {
+    "message": "Tab Group",
+    "description": "Label for tab group selector"
+  },
+  "labelFormat": {
+    "message": "Format",
+    "description": "Label for format selector"
+  },
+  "formatMarkdown": {
+    "message": "Markdown",
+    "description": "Markdown format"
+  },
+  "formatPlain": {
+    "message": "Plain Text",
+    "description": "Plain text format"
+  },
+  "formatHtml": {
+    "message": "HTML",
+    "description": "HTML format"
+  },
+  "formatTitleUrl": {
+    "message": "Title + URL",
+    "description": "Title and URL format"
+  },
+  "formatCustomPresets": {
+    "message": "Custom Presets",
+    "description": "Custom presets optgroup label"
+  },
+  "formatCustom": {
+    "message": "Custom...",
+    "description": "Custom format option"
+  },
+  "labelCustomTemplate": {
+    "message": "Custom Template ({title}, {url})",
+    "description": "Label for custom template input"
+  },
+  "placeholderCustomTemplate": {
+    "message": "e.g., [{title}]({url})",
+    "description": "Placeholder for custom template input"
+  },
+  "buttonCopy": {
+    "message": "Copy",
+    "description": "Copy button text"
+  },
+  "successMessage": {
+    "message": "$COUNT$ items copied",
+    "description": "Success message after copying",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "errorCopyFailed": {
+    "message": "Failed to copy",
+    "description": "Error message when copy fails"
+  },
+  "errorNoTemplate": {
+    "message": "Please enter a custom template",
+    "description": "Error message when custom template is empty"
+  },
+  "commandCopyCurrentWindow": {
+    "message": "Copy current window tabs",
+    "description": "Description for keyboard shortcut"
+  },
+  "contextMenuCopyCurrentWindow": {
+    "message": "Copy current window tabs",
+    "description": "Context menu: Copy current window tabs"
+  },
+  "contextMenuCopyAllWindows": {
+    "message": "Copy all windows tabs",
+    "description": "Context menu: Copy all windows tabs"
+  },
+  "contextMenuCopyCurrentGroup": {
+    "message": "Copy current tab group",
+    "description": "Context menu: Copy current tab group"
+  },
+  "optionsPageDescription": {
+    "message": "Minimal options page (preset saving may be added in the future).",
+    "description": "Description text on options page"
+  }
+}

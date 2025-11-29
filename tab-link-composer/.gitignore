@@ -1,0 +1,15 @@
+node_modules
+dist
+dist.crx
+*.zip
+.DS_Store
+*.log
+*.pem
+
+# Embedded repos (should be removed or converted to submodules)
+ai-prompt-generator/
+ai-timeline-3d/
+claude-code-forest/
+color-theme-preview/
+color/
+

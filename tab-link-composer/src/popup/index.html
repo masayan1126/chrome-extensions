@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TabLink Composer</title>
+    <style>
+      :root {
+        --theme: #5CD6A8;
+        --bg-start: #0E0E0E;
+        --bg-end: #0E0E0E;
+        --card-bg: rgba(255, 255, 255, 0.08);
+        --card-border: rgba(255, 255, 255, 0.25);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: var(--theme);
+      }
+      html, body { margin: 0; padding: 0; }
+      body {
+        min-width: 320px;
+        max-width: 380px;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans JP, sans-serif;
+        background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+        color: var(--text);
+      }
+      .card {
+        width: 100%;
+        background: var(--card-bg);
+        backdrop-filter: blur(8px);
+        
+        /* box-shadow: 0 6px 30px rgba(0,0,0,0.15); */
+        overflow: hidden;
+      }
+      .header { display: flex; align-items: center; gap: 8px; padding: 12px 16px 8px 16px; }
+      .logo { width: 18px; height: 18px; border-radius: 4px; background: conic-gradient(from 180deg at 50% 50%, var(--bg-start), var(--bg-end)); }
+      .title { font-size: 16px; color: #eef2ff; font-weight: 800; letter-spacing: .2px; }
+      .subtitle { font-size: 10px; color: #eef2ff; opacity: .9; margin-top: 1px; }
+
+      .body { padding: 8px 16px 16px 16px; }
+      .field { margin: 8px 0; }
+      .label { font-size: 11px; color: #e2e8f0; margin-bottom: 4px; display: block; }
+
+      select, button, input[type="text"] {
+        width: 100%;
+        font-size: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.9);
+        padding: 8px 10px;
+        outline: none;
+      }
+      select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px); background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
+      select:focus, input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(92,214,168,0.2); }
+      input[type="text"]::placeholder { color: var(--muted); opacity: 0.6; }
+
+      .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0 4px; }
+      .check { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.3); padding: 6px 8px; border-radius: 8px; font-size: 11px; }
+
+      #customTemplateRow { margin-bottom: 0; }
+      .actions { margin-top: 10px; }
+      #copy {
+        background: var(--accent);
+        color: white;
+        border: none;
+        font-weight: 700;
+        letter-spacing: .2px;
+        transition: transform .06s ease, box-shadow .2s ease;
+        box-shadow: 0 8px 18px rgba(92,214,168,0.35);
+      }
+      #copy:hover { filter: brightness(1.03); }
+      #copy:active { transform: translateY(1px); }
+
+      #result { font-size: 11px; margin-top: 6px; display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="header">
+        <div class="logo"></div>
+        <div>
+          <div class="title" data-i18n="popupTitle">Copy Tab Anything</div>
+          <div class="subtitle" data-i18n="popupSubtitle">Export links & titles instantly</div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="field">
+          <span class="label" data-i18n="labelScope">Scope</span>
+          <select id="scope">
+            <option value="currentWindow" data-i18n="scopeCurrentWindow">Current Window</option>
+            <option value="all" data-i18n="scopeAllWindows">All Windows</option>
+            <option value="currentGroup" data-i18n="scopeCurrentGroup">Current Tab Group</option>
+            <option value="pickGroup" selected data-i18n="scopePickGroup">Select Group</option>
+          </select>
+        </div>
+        <div class="field" id="groupRow">
+          <span class="label" data-i18n="labelTabGroup">Tab Group</span>
+          <select id="groupSelect"></select>
+        </div>
+        <div class="field">
+          <span class="label" data-i18n="labelFormat">Format</span>
+          <select id="format">
+            <option value="markdown" data-i18n="formatMarkdown">Markdown</option>
+            <option value="plain" data-i18n="formatPlain">Plain Text</option>
+            <option value="html" data-i18n="formatHtml">HTML</option>
+            <option value="title_newline_url" data-i18n="formatTitleUrl">Title + URL</option>
+            <optgroup label="Custom Presets" data-i18n-label="formatCustomPresets">
+              <option value="notion">Notion</option>
+              <option value="obsidian">Obsidian</option>
+              <option value="slack">Slack</option>
+              <option value="discord">Discord</option>
+              <option value="csv">CSV</option>
+              <option value="org">Org-mode</option>
+              <option value="confluence">Confluence</option>
+            </optgroup>
+            <option value="custom" data-i18n="formatCustom">Custom...</option>
+          </select>
+        </div>
+        <div class="field" id="customTemplateRow" style="display: none;">
+          <span class="label" data-i18n="labelCustomTemplate">Custom Template ({title}, {url})</span>
+          <input type="text" id="customTemplate" data-i18n-placeholder="placeholderCustomTemplate" placeholder="e.g., [{title}]({url})" />
+        </div>
+
+        <div class="actions">
+          <button id="copy" data-i18n="buttonCopy">Copy</button>
+          <div id="result"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./index.ts"></script>
+  </body>
+</html>
+
+

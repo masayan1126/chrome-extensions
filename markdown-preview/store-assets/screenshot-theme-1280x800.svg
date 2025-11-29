@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
+  <!-- Background (dimmed) -->
+  <rect width="1280" height="800" fill="#171717"/>
+
+  <!-- Toolbar (dimmed) -->
+  <rect y="0" width="1280" height="48" fill="#171717" opacity="0.5"/>
+
+  <!-- Sidebar (dimmed) -->
+  <rect x="0" y="49" width="256" height="751" fill="#262626" opacity="0.5"/>
+
+  <!-- Main content (dimmed) -->
+  <rect x="257" y="49" width="767" height="751" fill="#1e293b" opacity="0.3"/>
+
+  <!-- TOC (dimmed) -->
+  <rect x="1024" y="49" width="256" height="751" fill="rgba(38,38,38,0.3)"/>
+
+  <!-- Modal overlay -->
+  <rect width="1280" height="800" fill="rgba(0,0,0,0.5)"/>
+
+  <!-- Theme Panel Modal -->
+  <rect x="320" y="80" width="640" height="640" rx="8" fill="#262626"/>
+
+  <!-- Modal header -->
+  <rect x="320" y="80" width="640" height="56" rx="8" fill="#262626"/>
+  <text x="340" y="116" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#fafafa">テーマ設定</text>
+
+  <!-- Close button -->
+  <g transform="translate(928, 96)">
+    <line x1="0" y1="0" x2="16" y2="16" stroke="#737373" stroke-width="2"/>
+    <line x1="16" y1="0" x2="0" y2="16" stroke="#737373" stroke-width="2"/>
+  </g>
+
+  <rect x="320" y="136" width="640" height="1" fill="#404040"/>
+
+  <!-- Content area -->
+  <g transform="translate(340, 156)">
+    <!-- Section title -->
+    <text x="0" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#737373">プリセットテーマ</text>
+
+    <!-- Theme grid -->
+    <g transform="translate(0, 40)">
+      <!-- Dark Default (selected) -->
+      <rect x="0" y="0" width="290" height="72" rx="6" fill="transparent" stroke="#a3a3a3" stroke-width="2"/>
+      <rect x="0" y="0" width="290" height="72" rx="6" fill="rgba(82,82,82,0.3)"/>
+      <rect x="16" y="16" width="40" height="40" rx="4" fill="#1a1a1a" stroke="#525252"/>
+      <text x="36" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#fafafa" text-anchor="middle">A</text>
+      <text x="72" y="34" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">ダークデフォルト</text>
+      <text x="72" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">ダーク</text>
+
+      <!-- Dark Blue -->
+      <rect x="310" y="0" width="290" height="72" rx="6" fill="transparent" stroke="#525252"/>
+      <rect x="326" y="16" width="40" height="40" rx="4" fill="#1e293b" stroke="#525252"/>
+      <text x="346" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#60a5fa" text-anchor="middle">A</text>
+      <text x="382" y="34" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">ダークブルー</text>
+      <text x="382" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">ダーク</text>
+
+      <!-- Dark Green -->
+      <rect x="0" y="88" width="290" height="72" rx="6" fill="transparent" stroke="#525252"/>
+      <rect x="16" y="104" width="40" height="40" rx="4" fill="#14231a" stroke="#525252"/>
+      <text x="36" y="130" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#4ade80" text-anchor="middle">A</text>
+      <text x="72" y="122" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">ダークグリーン</text>
+      <text x="72" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">ダーク</text>
+
+      <!-- Light Default -->
+      <rect x="310" y="88" width="290" height="72" rx="6" fill="transparent" stroke="#525252"/>
+      <rect x="326" y="104" width="40" height="40" rx="4" fill="#ffffff" stroke="#525252"/>
+      <text x="346" y="130" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">A</text>
+      <text x="382" y="122" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">ライトデフォルト</text>
+      <text x="382" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">ライト</text>
+
+      <!-- Sepia -->
+      <rect x="0" y="176" width="290" height="72" rx="6" fill="transparent" stroke="#525252"/>
+      <rect x="16" y="192" width="40" height="40" rx="4" fill="#f5f0e6" stroke="#525252"/>
+      <text x="36" y="218" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#5c4b37" text-anchor="middle">A</text>
+      <text x="72" y="210" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">セピア</text>
+      <text x="72" y="228" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">ライト</text>
+
+      <!-- High Contrast -->
+      <rect x="310" y="176" width="290" height="72" rx="6" fill="transparent" stroke="#525252"/>
+      <rect x="326" y="192" width="40" height="40" rx="4" fill="#000000" stroke="#525252"/>
+      <text x="346" y="218" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">A</text>
+      <text x="382" y="210" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">ハイコントラスト</text>
+      <text x="382" y="228" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">ダーク</text>
+    </g>
+
+    <!-- Custom theme section -->
+    <text x="0" y="320" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#737373">カスタムテーマ</text>
+
+    <!-- Custom theme item -->
+    <g transform="translate(0, 340)">
+      <rect x="0" y="0" width="290" height="72" rx="6" fill="transparent" stroke="#525252"/>
+      <rect x="16" y="16" width="40" height="40" rx="4" fill="#2d1b4e" stroke="#525252"/>
+      <text x="36" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#c084fc" text-anchor="middle">A</text>
+      <text x="72" y="34" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa">マイテーマ</text>
+      <text x="72" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#737373">カスタム</text>
+      <!-- Edit button -->
+      <g transform="translate(230, 28)">
+        <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke="#737373" stroke-width="1.5" fill="none" transform="scale(0.7)"/>
+      </g>
+      <!-- Delete button -->
+      <g transform="translate(258, 28)">
+        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="#737373" stroke-width="1.5" fill="none" transform="scale(0.7)"/>
+      </g>
+    </g>
+
+    <!-- Create new theme button -->
+    <rect x="0" y="428" width="600" height="56" rx="6" fill="transparent" stroke="#525252" stroke-dasharray="8 4"/>
+    <text x="300" y="462" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#737373" text-anchor="middle">+ 新しいカスタムテーマを作成</text>
+  </g>
+
+  <!-- Modal footer -->
+  <rect x="320" y="664" width="640" height="56" rx="8" fill="#262626"/>
+  <rect x="320" y="664" width="640" height="1" fill="#404040"/>
+  <rect x="840" y="680" width="100" height="36" rx="4" fill="#404040"/>
+  <text x="890" y="704" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#fafafa" text-anchor="middle">閉じる</text>
+</svg>

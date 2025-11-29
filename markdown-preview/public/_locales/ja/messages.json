@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Markdown Preview",
+    "description": "拡張機能の名前"
+  },
+  "extensionDescription": {
+    "message": "ローカルのMarkdownファイルを美しくプレビュー。カスタマイズ可能なテーマ、フォント選択、目次の自動生成に対応。",
+    "description": "拡張機能の説明"
+  }
+}

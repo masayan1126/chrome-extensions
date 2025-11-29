@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>SVG to PNG Converter</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    h1, h2 { margin-bottom: 20px; }
+    h2 { margin-top: 40px; border-top: 1px solid #404040; padding-top: 20px; }
+    .icon-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 20px 0;
+      padding: 20px;
+      background: #262626;
+      border-radius: 8px;
+    }
+    .preview {
+      background: #404040;
+      padding: 10px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .preview img {
+      display: block;
+    }
+    button {
+      padding: 10px 20px;
+      background: #525252;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    button:hover {
+      background: #737373;
+    }
+    canvas { display: none; }
+    .info { color: #a3a3a3; font-size: 14px; margin-bottom: 20px; }
+    .screenshot-preview {
+      max-width: 400px;
+      border: 1px solid #404040;
+      border-radius: 4px;
+    }
+    .flex-1 { flex: 1; }
+  </style>
+</head>
+<body>
+  <h1>PNG 変換ツール</h1>
+  <p class="info">各項目の「ダウンロード」ボタンをクリックしてPNGファイルを保存してください。</p>
+
+  <h2>アイコン画像</h2>
+  <p class="info">保存したファイルを <code>public/icons/</code> フォルダに配置してください。</p>
+
+  <div class="icon-row">
+    <div class="preview">
+      <img id="preview-16" width="16" height="16">
+    </div>
+    <span class="flex-1">icon-16.png (16x16)</span>
+    <button onclick="downloadIcon(16)">ダウンロード</button>
+  </div>
+
+  <div class="icon-row">
+    <div class="preview">
+      <img id="preview-48" width="48" height="48">
+    </div>
+    <span class="flex-1">icon-48.png (48x48)</span>
+    <button onclick="downloadIcon(48)">ダウンロード</button>
+  </div>
+
+  <div class="icon-row">
+    <div class="preview">
+      <img id="preview-128" width="128" height="128">
+    </div>
+    <span class="flex-1">icon-128.png (128x128)</span>
+    <button onclick="downloadIcon(128)">ダウンロード</button>
+  </div>
+
+  <h2>プロモーション画像 (1280x800)</h2>
+  <p class="info">Chrome Web Storeのプロモーション用画像です。</p>
+
+  <div class="icon-row">
+    <div class="preview">
+      <img id="preview-promo" class="screenshot-preview">
+    </div>
+    <span class="flex-1">promo-1280x800.png (プロモーション)</span>
+    <button onclick="downloadPromo()">ダウンロード</button>
+  </div>
+
+  <h2>スクリーンショット (1280x800)</h2>
+  <p class="info">Chrome Web Storeにアップロードするスクリーンショット画像です。</p>
+
+  <div class="icon-row">
+    <div class="preview">
+      <img id="preview-screenshot1" class="screenshot-preview">
+    </div>
+    <span class="flex-1">screenshot-1.png (メイン画面)</span>
+    <button onclick="downloadScreenshot('screenshot1')">ダウンロード</button>
+  </div>
+
+  <div class="icon-row">
+    <div class="preview">
+      <img id="preview-screenshot2" class="screenshot-preview">
+    </div>
+    <span class="flex-1">screenshot-2.png (テーマ設定)</span>
+    <button onclick="downloadScreenshot('screenshot2')">ダウンロード</button>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="16" fill="#171717"/>
+  <path d="M20 94V34h18l14 28 14-28h18v60h-18V58l-14 28-14-28v36H20z" fill="#fafafa"/>
+  <path d="M108 94V70l-12 14-12-14v24H72V34h12l16 20 16-20h12v60h-20z" fill="#a3a3a3"/>
+</svg>`;
+
+    const sizes = [16, 48, 128];
+
+    // アイコンプレビュー
+    sizes.forEach(size => {
+      const blob = new Blob([iconSvg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById(`preview-${size}`).src = url;
+    });
+
+    function downloadIcon(size) {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = size;
+      canvas.height = size;
+
+      const img = new Image();
+      const blob = new Blob([iconSvg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+
+      img.onload = function() {
+        ctx.clearRect(0, 0, size, size);
+        ctx.drawImage(img, 0, 0, size, size);
+
+        canvas.toBlob(function(blob) {
+          const link = document.createElement('a');
+          link.download = `icon-${size}.png`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/png');
+
+        URL.revokeObjectURL(url);
+      };
+
+      img.src = url;
+    }
+
+    // プロモーション画像
+    fetch('promo-1280x800.svg')
+      .then(r => r.text())
+      .then(svg => {
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        document.getElementById('preview-promo').src = url;
+      })
+      .catch(e => console.log('Could not load promo:', e));
+
+    function downloadPromo() {
+      fetch('promo-1280x800.svg')
+        .then(r => r.text())
+        .then(svg => {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 1280;
+          canvas.height = 800;
+
+          const img = new Image();
+          const blob = new Blob([svg], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(blob);
+
+          img.onload = function() {
+            ctx.clearRect(0, 0, 1280, 800);
+            ctx.drawImage(img, 0, 0, 1280, 800);
+
+            canvas.toBlob(function(blob) {
+              const link = document.createElement('a');
+              link.download = 'promo-1280x800.png';
+              link.href = URL.createObjectURL(blob);
+              link.click();
+              URL.revokeObjectURL(link.href);
+            }, 'image/png');
+
+            URL.revokeObjectURL(url);
+          };
+
+          img.src = url;
+        });
+    }
+
+    // スクリーンショット
+    const screenshots = {
+      screenshot1: 'screenshot-1280x800.svg',
+      screenshot2: 'screenshot-theme-1280x800.svg'
+    };
+
+    // スクリーンショットプレビュー読み込み
+    Object.entries(screenshots).forEach(([id, file]) => {
+      fetch(file)
+        .then(r => r.text())
+        .then(svg => {
+          const blob = new Blob([svg], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(blob);
+          document.getElementById(`preview-${id}`).src = url;
+        })
+        .catch(e => console.log(`Could not load ${file}:`, e));
+    });
+
+    function downloadScreenshot(id) {
+      const file = screenshots[id];
+      fetch(file)
+        .then(r => r.text())
+        .then(svg => {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 1280;
+          canvas.height = 800;
+
+          const img = new Image();
+          const blob = new Blob([svg], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(blob);
+
+          img.onload = function() {
+            ctx.clearRect(0, 0, 1280, 800);
+            ctx.drawImage(img, 0, 0, 1280, 800);
+
+            canvas.toBlob(function(blob) {
+              const link = document.createElement('a');
+              const num = id === 'screenshot1' ? '1' : '2';
+              link.download = `screenshot-${num}.png`;
+              link.href = URL.createObjectURL(blob);
+              link.click();
+              URL.revokeObjectURL(link.href);
+            }, 'image/png');
+
+            URL.revokeObjectURL(url);
+          };
+
+          img.src = url;
+        });
+    }
+  </script>
+</body>
+</html>

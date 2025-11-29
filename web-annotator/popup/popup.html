@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Annotator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Web Annotator</h1>
+      <p class="subtitle" id="pageTitle">-</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="highlights">
+        <span data-i18n="tabHighlights">Highlights</span> <span class="badge" id="highlightCount">0</span>
+      </button>
+      <button class="tab-btn" data-tab="stickynotes">
+        <span data-i18n="tabNotes">Notes</span> <span class="badge" id="stickyCount">0</span>
+      </button>
+    </nav>
+
+    <main class="content">
+      <!-- ハイライト一覧 -->
+      <section id="highlights-tab" class="tab-content active">
+        <div id="highlightList" class="list">
+          <p class="empty-message" data-i18n="noHighlights">No highlights yet</p>
+        </div>
+      </section>
+
+      <!-- 付箋一覧 -->
+      <section id="stickynotes-tab" class="tab-content">
+        <div id="stickyList" class="list">
+          <p class="empty-message" data-i18n="noNotes">No notes yet</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <button id="exportBtn" class="btn btn-primary" data-i18n="exportMarkdown">
+        Export as Markdown
+      </button>
+      <button id="clearBtn" class="btn btn-danger" data-i18n="clearAll">
+        Clear All
+      </button>
+    </footer>
+
+    <div class="help-section">
+      <details>
+        <summary data-i18n="howToUse">How to use</summary>
+        <ul>
+          <li data-i18n="helpHighlight">Highlight: Select text, use toolbar</li>
+          <li data-i18n="helpRemove">Remove: Ctrl/Cmd + Click on highlight</li>
+          <li data-i18n="helpAddNote">Add note: Alt + Double click</li>
+          <li data-i18n="helpShortcut">Shortcut: Ctrl/Cmd + Shift + H</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

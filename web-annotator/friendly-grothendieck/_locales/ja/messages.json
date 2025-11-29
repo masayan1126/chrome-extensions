@@ -1,0 +1,132 @@
+{
+  "extName": {
+    "message": "Web Annotator",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Webページにマーカーと付箋を追加し、Markdownで出力できる注釈ツール",
+    "description": "Extension description"
+  },
+  "tabHighlights": {
+    "message": "ハイライト",
+    "description": "Highlights tab label"
+  },
+  "tabNotes": {
+    "message": "付箋",
+    "description": "Notes tab label"
+  },
+  "noHighlights": {
+    "message": "ハイライトがありません",
+    "description": "Empty highlights message"
+  },
+  "noNotes": {
+    "message": "付箋がありません",
+    "description": "Empty notes message"
+  },
+  "emptyNote": {
+    "message": "(空の付箋)",
+    "description": "Empty note placeholder"
+  },
+  "goTo": {
+    "message": "移動",
+    "description": "Go to highlight button"
+  },
+  "delete": {
+    "message": "削除",
+    "description": "Delete button"
+  },
+  "exportMarkdown": {
+    "message": "Markdownで出力",
+    "description": "Export button"
+  },
+  "clearAll": {
+    "message": "全削除",
+    "description": "Clear all button"
+  },
+  "howToUse": {
+    "message": "使い方",
+    "description": "Help section title"
+  },
+  "helpHighlight": {
+    "message": "ハイライト: テキストを選択してツールバーを使用",
+    "description": "Help text for highlight"
+  },
+  "helpRemove": {
+    "message": "削除: Ctrl/Cmd + クリック",
+    "description": "Help text for remove"
+  },
+  "helpAddNote": {
+    "message": "付箋追加: Alt + ダブルクリック",
+    "description": "Help text for adding note"
+  },
+  "helpShortcut": {
+    "message": "ショートカット: Ctrl/Cmd + Shift + H",
+    "description": "Help text for shortcut"
+  },
+  "notAvailable": {
+    "message": "このページでは使用できません",
+    "description": "Message for special pages"
+  },
+  "pleaseReload": {
+    "message": "ページをリロードしてください",
+    "description": "Reload request message"
+  },
+  "reloadNote": {
+    "message": "（拡張機能の更新後は再読み込みが必要です）",
+    "description": "Reload note"
+  },
+  "confirmDeleteHighlight": {
+    "message": "このハイライトを削除しますか？",
+    "description": "Confirm delete highlight"
+  },
+  "confirmDeleteNote": {
+    "message": "この付箋を削除しますか？",
+    "description": "Confirm delete note"
+  },
+  "confirmClearAll": {
+    "message": "全てのアノテーションを削除しますか？（ハイライト$COUNT$件、付箋$NOTES$件）",
+    "description": "Confirm clear all",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "5"
+      },
+      "notes": {
+        "content": "$2",
+        "example": "3"
+      }
+    }
+  },
+  "highlightDeleted": {
+    "message": "ハイライトを削除しました",
+    "description": "Toast message"
+  },
+  "noteDeleted": {
+    "message": "付箋を削除しました",
+    "description": "Toast message"
+  },
+  "noHighlightsToExport": {
+    "message": "エクスポートするハイライトがありません",
+    "description": "Toast message"
+  },
+  "markdownDownloaded": {
+    "message": "Markdownファイルをダウンロードしました",
+    "description": "Toast message"
+  },
+  "noAnnotationsToDelete": {
+    "message": "削除するアノテーションがありません",
+    "description": "Toast message"
+  },
+  "allAnnotationsDeleted": {
+    "message": "全てのアノテーションを削除しました",
+    "description": "Toast message"
+  },
+  "stickyNoteTitle": {
+    "message": "付箋",
+    "description": "Sticky note header title"
+  },
+  "stickyNotePlaceholder": {
+    "message": "メモを入力...",
+    "description": "Sticky note placeholder"
+  }
+}

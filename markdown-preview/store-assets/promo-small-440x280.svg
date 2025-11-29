@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280">
+  <!-- Background -->
+  <rect width="440" height="280" fill="#171717"/>
+
+  <!-- App Icon -->
+  <g transform="translate(170, 50)">
+    <rect width="100" height="100" rx="16" fill="#262626"/>
+    <path d="M15.6 73.4V26.6h14.1l10.9 21.9 10.9-21.9h14.1v46.8h-14.1V45.3l-10.9 21.9-10.9-21.9v27.8H15.6z" fill="#fafafa"/>
+    <path d="M84.4 73.4V54.7l-9.4 10.9-9.4-10.9v18.7H56.2V26.6h9.4l12.5 15.6 12.5-15.6h9.4v46.8h-15.6z" fill="#a3a3a3"/>
+  </g>
+
+  <!-- Text -->
+  <text x="220" y="185" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#fafafa" text-anchor="middle">Markdown Preview</text>
+  <text x="220" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#a3a3a3" text-anchor="middle">Beautiful. Customizable. Fast.</text>
+</svg>

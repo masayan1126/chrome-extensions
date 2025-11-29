@@ -1,0 +1,120 @@
+{
+  "extensionName": {
+    "message": "Copy Tab Anything",
+    "description": "拡張機能の名前"
+  },
+  "extensionDescription": {
+    "message": "タブのタイトルとURLを好きなフォーマットでエクスポート - Markdown、HTML、プレーン、カスタムテンプレート対応。タブグループにも対応！",
+    "description": "拡張機能の説明"
+  },
+  "popupTitle": {
+    "message": "Copy Tab Anything",
+    "description": "ポップアップに表示されるタイトル"
+  },
+  "popupSubtitle": {
+    "message": "タブのタイトル+URLをスタイル良く一括コピー",
+    "description": "ポップアップに表示されるサブタイトル"
+  },
+  "labelScope": {
+    "message": "スコープ",
+    "description": "スコープセレクターのラベル"
+  },
+  "scopeCurrentWindow": {
+    "message": "現在のウィンドウ",
+    "description": "現在のウィンドウオプション"
+  },
+  "scopeAllWindows": {
+    "message": "すべてのウィンドウ",
+    "description": "すべてのウィンドウオプション"
+  },
+  "scopeCurrentGroup": {
+    "message": "現在のタブグループ",
+    "description": "現在のタブグループオプション"
+  },
+  "scopePickGroup": {
+    "message": "グループを選択",
+    "description": "グループを選択オプション"
+  },
+  "labelTabGroup": {
+    "message": "タブグループ",
+    "description": "タブグループセレクターのラベル"
+  },
+  "labelFormat": {
+    "message": "フォーマット",
+    "description": "フォーマットセレクターのラベル"
+  },
+  "formatMarkdown": {
+    "message": "Markdown",
+    "description": "Markdownフォーマット"
+  },
+  "formatPlain": {
+    "message": "プレーン",
+    "description": "プレーンテキストフォーマット"
+  },
+  "formatHtml": {
+    "message": "HTML",
+    "description": "HTMLフォーマット"
+  },
+  "formatTitleUrl": {
+    "message": "タイトル+改行+URL",
+    "description": "タイトルとURLフォーマット"
+  },
+  "formatCustomPresets": {
+    "message": "カスタムプリセット",
+    "description": "カスタムプリセットのオプショングループラベル"
+  },
+  "formatCustom": {
+    "message": "カスタム...",
+    "description": "カスタムフォーマットオプション"
+  },
+  "labelCustomTemplate": {
+    "message": "カスタムテンプレート ({title}, {url})",
+    "description": "カスタムテンプレート入力のラベル"
+  },
+  "placeholderCustomTemplate": {
+    "message": "例: [{title}]({url})",
+    "description": "カスタムテンプレート入力のプレースホルダー"
+  },
+  "buttonCopy": {
+    "message": "コピー",
+    "description": "コピーボタンのテキスト"
+  },
+  "successMessage": {
+    "message": "$COUNT$件コピーしました",
+    "description": "コピー成功時のメッセージ",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "errorCopyFailed": {
+    "message": "コピーに失敗しました",
+    "description": "コピー失敗時のエラーメッセージ"
+  },
+  "errorNoTemplate": {
+    "message": "カスタムテンプレートを入力してください",
+    "description": "カスタムテンプレートが空の場合のエラーメッセージ"
+  },
+  "commandCopyCurrentWindow": {
+    "message": "現在のウィンドウのタブをコピー",
+    "description": "キーボードショートカットの説明"
+  },
+  "contextMenuCopyCurrentWindow": {
+    "message": "現在のウィンドウのタブをコピー",
+    "description": "コンテキストメニュー: 現在のウィンドウのタブをコピー"
+  },
+  "contextMenuCopyAllWindows": {
+    "message": "すべてのウィンドウのタブをコピー",
+    "description": "コンテキストメニュー: すべてのウィンドウのタブをコピー"
+  },
+  "contextMenuCopyCurrentGroup": {
+    "message": "現在のタブグループをコピー",
+    "description": "コンテキストメニュー: 現在のタブグループをコピー"
+  },
+  "optionsPageDescription": {
+    "message": "最小構成のオプションページです（将来、プリセット保存などを追加可能）。",
+    "description": "オプションページの説明テキスト"
+  }
+}

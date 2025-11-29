@@ -1,0 +1,31 @@
+{
+  "name": "tablink-composer",
+  "version": "1.0.0",
+  "description": "Copy tab titles and URLs in customizable formats (Markdown/HTML/Plain).",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest",
+    "zip": "rm -f ./tablink-composer.zip; cd dist && zip -r ../tablink-composer.zip .",
+    "build:zip": "npm run build && npm run zip",
+    "icons": "node scripts/gen-icons.mjs",
+    "store:images": "node scripts/gen-store-images.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.2.0",
+    "@types/chrome": "^0.1.6",
+    "@types/node": "^24.3.1",
+    "sharp": "^0.34.3",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "punycode": "^2.3.1"
+  }
+}
