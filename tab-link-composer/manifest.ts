@@ -24,9 +24,9 @@ const manifest: ManifestV3 = {
     default_popup: 'src/popup/index.html',
     default_icon: {
       16: 'public/icon-16.png',
-      32: 'public/icon-16.png',
-      48: 'public/icon-16.png',
-      128: 'public/icon-16.png'
+      32: 'public/icon-48.png',
+      48: 'public/icon-48.png',
+      128: 'public/icon-128.png'
     }
   },
   options_page: 'src/options/index.html',
@@ -40,9 +40,9 @@ const manifest: ManifestV3 = {
   },
   icons: {
     16: 'public/icon-16.png',
-    32: 'public/icon-16.png',
-    48: 'public/icon-16.png',
-    128: 'public/icon-16.png'
+    32: 'public/icon-48.png',
+    48: 'public/icon-48.png',
+    128: 'public/icon-128.png'
   },
   web_accessible_resources: [
     {
