@@ -79,7 +79,7 @@ const DirectoryTree: React.FC<{
         <button
           onClick={() => onToggleDirectory(dir)}
           onContextMenu={(e) => onContextMenu(e, 'directory', undefined, dir)}
-          className="flex items-center gap-1 px-2 py-1 w-full text-left hover:bg-neutral-700/50 rounded text-sm"
+          className="flex items-center gap-1 px-2 py-1 w-full text-left hover:bg-neutral-700/50 rounded text-sm text-neutral-300"
           style={{ paddingLeft: `${depth * 12 + 8}px` }}
         >
           <ChevronIcon isOpen={dir.isExpanded} />
