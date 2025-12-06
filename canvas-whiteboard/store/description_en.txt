@@ -1,0 +1,35 @@
+Canvas Whiteboard - Draw and Connect Shapes on Any Webpage
+
+Transform any webpage into your personal whiteboard! Canvas Whiteboard lets you draw shapes and connect them with arrows directly on top of any website, perfect for brainstorming, planning, and organizing your thoughts.
+
+KEY FEATURES:
+
+- Multiple Shape Tools: Rectangle, Circle, Ellipse, Triangle, and Diamond
+- Smart Connections: Connect shapes with straight or curved arrows
+- Full Customization: Change fill and stroke colors for each shape
+- Alignment Tools: Align multiple shapes (left, center, right, top, middle, bottom) and distribute them evenly
+- Undo/Redo: Full history support for all your actions
+- Export Options: Save your work as PNG, SVG, or JSON files
+- Import/Export: Save and reload your whiteboard data with JSON
+- Keyboard Shortcut: Toggle whiteboard instantly with Alt+W
+- Works Everywhere: Use on any webpage without leaving your browser
+
+PERFECT FOR:
+
+- Visual note-taking during research
+- Creating quick diagrams and flowcharts
+- Planning and brainstorming sessions
+- Annotating web content for presentations
+- Organizing complex information visually
+
+HOW TO USE:
+
+1. Click the extension icon or press Alt+W to open the whiteboard
+2. Select a shape tool from the toolbar
+3. Click and drag on the page to draw shapes
+4. Use the arrow tool to connect shapes
+5. Export your work when finished
+
+The whiteboard overlay appears on top of the webpage, allowing you to reference the content while creating your diagrams. All your work is saved automatically per page.
+
+Lightweight, fast, and completely free. No account required.

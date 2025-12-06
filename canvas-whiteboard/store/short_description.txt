@@ -1,0 +1,5 @@
+Short Description (max 132 characters):
+
+[EN] Draw shapes and connect them with arrows on any webpage. Perfect for brainstorming, diagrams, and visual note-taking.
+
+[JA] Webページ上で図形を描き矢印で接続。ブレインストーミング、図解、ビジュアルノートに最適。

@@ -1,0 +1,121 @@
+Privacy Policy for Canvas Whiteboard Chrome Extension
+
+Last Updated: December 2024
+
+1. OVERVIEW
+
+Canvas Whiteboard is a browser extension that allows users to draw shapes and diagrams on any webpage. We are committed to protecting your privacy and being transparent about our data practices.
+
+2. DATA COLLECTION
+
+Canvas Whiteboard does NOT collect, store, or transmit any personal information to external servers.
+
+What we store locally:
+- Whiteboard drawings and shapes (stored in your browser's local storage)
+- User preferences such as colors and settings
+
+All data is stored locally on your device using Chrome's storage API and is never transmitted to any external server.
+
+3. PERMISSIONS EXPLAINED
+
+The extension requests the following permissions:
+
+- storage: To save your whiteboard data and preferences locally in your browser
+- activeTab: To display the whiteboard overlay on the current webpage when activated
+- tabs: To manage whiteboard state across different tabs
+- scripting: To inject the whiteboard canvas onto webpages
+- host_permissions (<all_urls>): To allow the whiteboard to work on any website you visit
+
+4. DATA SHARING
+
+We do not share, sell, or transfer any user data to third parties. Since all data remains on your device, there is nothing to share.
+
+5. DATA SECURITY
+
+Your data is stored locally in your browser and is protected by Chrome's built-in security measures. We do not have access to your data.
+
+6. USER RIGHTS
+
+You have full control over your data:
+- Export: You can export your whiteboard data as PNG, SVG, or JSON files
+- Delete: Clearing your browser data or uninstalling the extension will remove all stored data
+- Access: All your data is accessible through the extension interface
+
+7. THIRD-PARTY SERVICES
+
+Canvas Whiteboard does not use any third-party analytics, tracking, or advertising services.
+
+8. CHILDREN'S PRIVACY
+
+Canvas Whiteboard does not knowingly collect any information from children under 13. The extension is designed for general audiences.
+
+9. CHANGES TO THIS POLICY
+
+We may update this privacy policy from time to time. Any changes will be reflected in the "Last Updated" date above.
+
+10. CONTACT
+
+If you have any questions about this privacy policy, please contact us through the Chrome Web Store developer contact information.
+
+---
+
+JAPANESE VERSION (日本語版)
+
+Canvas Whiteboard Chrome拡張機能 プライバシーポリシー
+
+最終更新日: 2024年12月
+
+1. 概要
+
+Canvas Whiteboardは、Webページ上に図形や図を描くことができるブラウザ拡張機能です。私たちはあなたのプライバシーを保護し、データの取り扱いについて透明性を保つことをお約束します。
+
+2. データ収集について
+
+Canvas Whiteboardは個人情報を収集、保存、または外部サーバーに送信することはありません。
+
+ローカルに保存されるデータ:
+- ホワイトボードの描画データと図形（ブラウザのローカルストレージに保存）
+- 色や設定などのユーザー設定
+
+すべてのデータはChromeのストレージAPIを使用してデバイス上にローカルに保存され、外部サーバーに送信されることはありません。
+
+3. 権限について
+
+本拡張機能は以下の権限を要求します：
+
+- storage: ホワイトボードのデータと設定をブラウザにローカル保存するため
+- activeTab: 有効化時に現在のWebページにホワイトボードを表示するため
+- tabs: 異なるタブ間でホワイトボードの状態を管理するため
+- scripting: Webページにホワイトボードキャンバスを挿入するため
+- host_permissions (<all_urls>): 訪問するすべてのWebサイトでホワイトボードを使用可能にするため
+
+4. データ共有
+
+ユーザーデータを第三者と共有、販売、または転送することはありません。すべてのデータはデバイス上に保存されるため、共有するデータは存在しません。
+
+5. データセキュリティ
+
+データはブラウザ内にローカル保存され、Chromeの組み込みセキュリティ対策によって保護されています。私たちはあなたのデータにアクセスできません。
+
+6. ユーザーの権利
+
+データに対する完全な制御権があります：
+- エクスポート: ホワイトボードデータをPNG、SVG、またはJSONファイルとしてエクスポート可能
+- 削除: ブラウザデータのクリアまたは拡張機能のアンインストールで保存データを削除
+- アクセス: すべてのデータは拡張機能のインターフェースからアクセス可能
+
+7. サードパーティサービス
+
+Canvas Whiteboardはサードパーティの分析、トラッキング、または広告サービスを使用していません。
+
+8. お子様のプライバシー
+
+Canvas Whiteboardは13歳未満のお子様から意図的に情報を収集することはありません。本拡張機能は一般ユーザー向けに設計されています。
+
+9. ポリシーの変更
+
+このプライバシーポリシーは随時更新される場合があります。変更は上記の「最終更新日」に反映されます。
+
+10. お問い合わせ
+
+このプライバシーポリシーに関するご質問は、Chrome Web Storeの開発者連絡先からお問い合わせください。
