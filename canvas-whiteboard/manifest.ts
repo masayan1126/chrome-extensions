@@ -4,11 +4,10 @@ const manifest: ManifestV3 = {
   manifest_version: 3,
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
-  version: '1.0.0',
+  version: '1.0.1',
   minimum_chrome_version: '114',
   default_locale: 'en',
-  permissions: ['storage', 'activeTab', 'tabs', 'scripting'],
-  host_permissions: ['<all_urls>'],
+  permissions: ['storage', 'activeTab', 'scripting'],
   background: {
     service_worker: 'src/background/index.ts',
     type: 'module',

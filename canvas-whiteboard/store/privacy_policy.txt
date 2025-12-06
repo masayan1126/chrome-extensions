@@ -21,10 +21,8 @@ All data is stored locally on your device using Chrome's storage API and is neve
 The extension requests the following permissions:
 
 - storage: To save your whiteboard data and preferences locally in your browser
-- activeTab: To display the whiteboard overlay on the current webpage when activated
-- tabs: To manage whiteboard state across different tabs
-- scripting: To inject the whiteboard canvas onto webpages
-- host_permissions (<all_urls>): To allow the whiteboard to work on any website you visit
+- activeTab: To display the whiteboard overlay on the current webpage when you activate the extension
+- scripting: To inject the whiteboard canvas onto the current webpage
 
 4. DATA SHARING
 
@@ -84,10 +82,8 @@ Canvas Whiteboardは個人情報を収集、保存、または外部サーバー
 本拡張機能は以下の権限を要求します：
 
 - storage: ホワイトボードのデータと設定をブラウザにローカル保存するため
-- activeTab: 有効化時に現在のWebページにホワイトボードを表示するため
-- tabs: 異なるタブ間でホワイトボードの状態を管理するため
-- scripting: Webページにホワイトボードキャンバスを挿入するため
-- host_permissions (<all_urls>): 訪問するすべてのWebサイトでホワイトボードを使用可能にするため
+- activeTab: 拡張機能を有効化した時に現在のWebページにホワイトボードを表示するため
+- scripting: 現在のWebページにホワイトボードキャンバスを挿入するため
 
 4. データ共有
 
