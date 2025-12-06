@@ -1,0 +1,166 @@
+{
+  "extensionName": {
+    "message": "Canvas Whiteboard",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Draw shapes and connect them with arrows on any webpage to organize your thoughts",
+    "description": "Description of the extension"
+  },
+  "commandToggle": {
+    "message": "Toggle whiteboard",
+    "description": "Keyboard shortcut description for toggling whiteboard"
+  },
+  "toolSelect": {
+    "message": "Select",
+    "description": "Select tool"
+  },
+  "toolRectangle": {
+    "message": "Rectangle",
+    "description": "Rectangle shape tool"
+  },
+  "toolCircle": {
+    "message": "Circle",
+    "description": "Circle shape tool"
+  },
+  "toolEllipse": {
+    "message": "Ellipse",
+    "description": "Ellipse shape tool"
+  },
+  "toolTriangle": {
+    "message": "Triangle",
+    "description": "Triangle shape tool"
+  },
+  "toolDiamond": {
+    "message": "Diamond",
+    "description": "Diamond shape tool"
+  },
+  "toolArrow": {
+    "message": "Arrow",
+    "description": "Arrow connection tool"
+  },
+  "actionUndo": {
+    "message": "Undo",
+    "description": "Undo action"
+  },
+  "actionRedo": {
+    "message": "Redo",
+    "description": "Redo action"
+  },
+  "actionDelete": {
+    "message": "Delete",
+    "description": "Delete selected"
+  },
+  "actionExport": {
+    "message": "Export",
+    "description": "Export whiteboard"
+  },
+  "actionImport": {
+    "message": "Import JSON",
+    "description": "Import whiteboard from JSON"
+  },
+  "actionClose": {
+    "message": "Close",
+    "description": "Close whiteboard"
+  },
+  "actionAlign": {
+    "message": "Align (select 2+ shapes)",
+    "description": "Alignment tool tooltip"
+  },
+  "alignLeft": {
+    "message": "Align Left",
+    "description": "Align shapes to the left"
+  },
+  "alignCenter": {
+    "message": "Align Center",
+    "description": "Align shapes to the center"
+  },
+  "alignRight": {
+    "message": "Align Right",
+    "description": "Align shapes to the right"
+  },
+  "alignTop": {
+    "message": "Align Top",
+    "description": "Align shapes to the top"
+  },
+  "alignMiddle": {
+    "message": "Align Middle",
+    "description": "Align shapes to the middle"
+  },
+  "alignBottom": {
+    "message": "Align Bottom",
+    "description": "Align shapes to the bottom"
+  },
+  "distributeHorizontal": {
+    "message": "Distribute Horizontal",
+    "description": "Distribute shapes horizontally"
+  },
+  "distributeVertical": {
+    "message": "Distribute Vertical",
+    "description": "Distribute shapes vertically"
+  },
+  "lineStraight": {
+    "message": "Line: Straight (click to toggle)",
+    "description": "Straight line connection mode"
+  },
+  "lineCurved": {
+    "message": "Line: Curved (click to toggle)",
+    "description": "Curved line connection mode"
+  },
+  "fillColor": {
+    "message": "Fill Color",
+    "description": "Fill color button tooltip"
+  },
+  "strokeColor": {
+    "message": "Stroke Color",
+    "description": "Stroke color button tooltip"
+  },
+  "exportTitle": {
+    "message": "Export Whiteboard",
+    "description": "Export dialog title"
+  },
+  "exportPNG": {
+    "message": "PNG - Image file",
+    "description": "PNG export option"
+  },
+  "exportSVG": {
+    "message": "SVG - Vector file",
+    "description": "SVG export option"
+  },
+  "exportJSON": {
+    "message": "JSON - Data file (re-import)",
+    "description": "JSON export option"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Cancel button"
+  },
+  "importOptionsTitle": {
+    "message": "Import Options:",
+    "description": "Import options dialog title"
+  },
+  "importReplace": {
+    "message": "OK = Replace all (clear current and load file)",
+    "description": "Import replace option"
+  },
+  "importMerge": {
+    "message": "Cancel = Merge (add to current canvas)",
+    "description": "Import merge option"
+  },
+  "importError": {
+    "message": "Failed to import file. Please make sure it is a valid whiteboard JSON file.",
+    "description": "Import error message"
+  },
+  "popupTitle": {
+    "message": "Canvas Whiteboard",
+    "description": "Popup title"
+  },
+  "popupToggle": {
+    "message": "Toggle Whiteboard",
+    "description": "Toggle whiteboard button text"
+  },
+  "popupShortcut": {
+    "message": "Shortcut: Alt+W",
+    "description": "Keyboard shortcut hint"
+  }
+}

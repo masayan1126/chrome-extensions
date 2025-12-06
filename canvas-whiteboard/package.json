@@ -1,0 +1,21 @@
+{
+  "name": "canvas-whiteboard",
+  "version": "1.0.0",
+  "description": "A whiteboard extension to draw shapes and connect them with arrows on any webpage",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && mkdir -p dist/src/content && cp src/content/styles.css dist/src/content/",
+    "zip": "rm -f ./canvas-whiteboard.zip; cd dist && zip -r ../canvas-whiteboard.zip .",
+    "build:zip": "npm run build && npm run zip",
+    "icons": "node scripts/gen-icons.mjs"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.2.0",
+    "@types/chrome": "^0.1.6",
+    "@types/node": "^24.3.1",
+    "sharp": "^0.34.3",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4"
+  }
+}

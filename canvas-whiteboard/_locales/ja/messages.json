@@ -1,0 +1,166 @@
+{
+  "extensionName": {
+    "message": "Canvas Whiteboard",
+    "description": "拡張機能の名前"
+  },
+  "extensionDescription": {
+    "message": "Webページ上で図形を描き、矢印で接続して思考を整理できます",
+    "description": "拡張機能の説明"
+  },
+  "commandToggle": {
+    "message": "ホワイトボードの切り替え",
+    "description": "ホワイトボード切り替えのキーボードショートカットの説明"
+  },
+  "toolSelect": {
+    "message": "選択",
+    "description": "選択ツール"
+  },
+  "toolRectangle": {
+    "message": "四角形",
+    "description": "四角形ツール"
+  },
+  "toolCircle": {
+    "message": "円",
+    "description": "円ツール"
+  },
+  "toolEllipse": {
+    "message": "楕円",
+    "description": "楕円ツール"
+  },
+  "toolTriangle": {
+    "message": "三角形",
+    "description": "三角形ツール"
+  },
+  "toolDiamond": {
+    "message": "ひし形",
+    "description": "ひし形ツール"
+  },
+  "toolArrow": {
+    "message": "矢印",
+    "description": "矢印接続ツール"
+  },
+  "actionUndo": {
+    "message": "元に戻す",
+    "description": "元に戻す"
+  },
+  "actionRedo": {
+    "message": "やり直し",
+    "description": "やり直し"
+  },
+  "actionDelete": {
+    "message": "削除",
+    "description": "選択を削除"
+  },
+  "actionExport": {
+    "message": "エクスポート",
+    "description": "ホワイトボードをエクスポート"
+  },
+  "actionImport": {
+    "message": "JSONを読み込む",
+    "description": "JSONファイルからホワイトボードを読み込む"
+  },
+  "actionClose": {
+    "message": "閉じる",
+    "description": "ホワイトボードを閉じる"
+  },
+  "actionAlign": {
+    "message": "整列 (2つ以上の図形を選択)",
+    "description": "整列ツールのツールチップ"
+  },
+  "alignLeft": {
+    "message": "左揃え",
+    "description": "図形を左に揃える"
+  },
+  "alignCenter": {
+    "message": "中央揃え",
+    "description": "図形を中央に揃える"
+  },
+  "alignRight": {
+    "message": "右揃え",
+    "description": "図形を右に揃える"
+  },
+  "alignTop": {
+    "message": "上揃え",
+    "description": "図形を上に揃える"
+  },
+  "alignMiddle": {
+    "message": "上下中央揃え",
+    "description": "図形を上下中央に揃える"
+  },
+  "alignBottom": {
+    "message": "下揃え",
+    "description": "図形を下に揃える"
+  },
+  "distributeHorizontal": {
+    "message": "横方向に均等配置",
+    "description": "図形を横方向に均等に配置"
+  },
+  "distributeVertical": {
+    "message": "縦方向に均等配置",
+    "description": "図形を縦方向に均等に配置"
+  },
+  "lineStraight": {
+    "message": "線: 直線 (クリックで切り替え)",
+    "description": "直線接続モード"
+  },
+  "lineCurved": {
+    "message": "線: 曲線 (クリックで切り替え)",
+    "description": "曲線接続モード"
+  },
+  "fillColor": {
+    "message": "塗りつぶし色",
+    "description": "塗りつぶし色ボタンのツールチップ"
+  },
+  "strokeColor": {
+    "message": "線の色",
+    "description": "線の色ボタンのツールチップ"
+  },
+  "exportTitle": {
+    "message": "エクスポート",
+    "description": "エクスポートダイアログのタイトル"
+  },
+  "exportPNG": {
+    "message": "PNG - 画像ファイル",
+    "description": "PNGエクスポートオプション"
+  },
+  "exportSVG": {
+    "message": "SVG - ベクターファイル",
+    "description": "SVGエクスポートオプション"
+  },
+  "exportJSON": {
+    "message": "JSON - データファイル (再読み込み可能)",
+    "description": "JSONエクスポートオプション"
+  },
+  "cancel": {
+    "message": "キャンセル",
+    "description": "キャンセルボタン"
+  },
+  "importOptionsTitle": {
+    "message": "読み込みオプション:",
+    "description": "読み込みオプションダイアログのタイトル"
+  },
+  "importReplace": {
+    "message": "OK = 置き換え (現在の内容をクリアしてファイルを読み込む)",
+    "description": "読み込み置き換えオプション"
+  },
+  "importMerge": {
+    "message": "キャンセル = 追加 (現在のキャンバスに追加)",
+    "description": "読み込みマージオプション"
+  },
+  "importError": {
+    "message": "ファイルの読み込みに失敗しました。有効なホワイトボードのJSONファイルか確認してください。",
+    "description": "読み込みエラーメッセージ"
+  },
+  "popupTitle": {
+    "message": "Canvas Whiteboard",
+    "description": "ポップアップのタイトル"
+  },
+  "popupToggle": {
+    "message": "ホワイトボードを開く",
+    "description": "ホワイトボード切り替えボタンのテキスト"
+  },
+  "popupShortcut": {
+    "message": "ショートカット: Alt+W",
+    "description": "キーボードショートカットのヒント"
+  }
+}
