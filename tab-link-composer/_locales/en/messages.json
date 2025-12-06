@@ -59,6 +59,10 @@
     "message": "Title + URL",
     "description": "Title and URL format"
   },
+  "formatUrlOnly": {
+    "message": "URL Only",
+    "description": "URL only format"
+  },
   "formatCustomPresets": {
     "message": "Custom Presets",
     "description": "Custom presets optgroup label"

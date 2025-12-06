@@ -59,6 +59,10 @@
     "message": "タイトル+改行+URL",
     "description": "タイトルとURLフォーマット"
   },
+  "formatUrlOnly": {
+    "message": "URLのみ",
+    "description": "URLのみフォーマット"
+  },
   "formatCustomPresets": {
     "message": "カスタムプリセット",
     "description": "カスタムプリセットのオプショングループラベル"

@@ -13,6 +13,9 @@ export function buildLine(tab: TabInfo, format: OutputFormat): string {
   if (format.kind === 'title_newline_url') {
     return `${title}\n${url}`;
   }
+  if (format.kind === 'url_only') {
+    return url;
+  }
   if (format.kind === 'custom') {
     return applyCustomTemplate(title, url, format.template);
   }

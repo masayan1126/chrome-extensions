@@ -110,6 +110,8 @@ copyBtn.addEventListener('click', async () => {
     format = { kind: 'title_newline_url' as const };
   } else if (formatValue === 'plain') {
     format = { kind: 'plain' as const };
+  } else if (formatValue === 'url_only') {
+    format = { kind: 'url_only' as const };
   } else if (formatValue === 'custom') {
     const template = customTemplateInput.value.trim();
     if (!template) {

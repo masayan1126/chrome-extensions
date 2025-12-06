@@ -9,6 +9,7 @@ export type OutputFormat =
   | { kind: 'markdown' }
   | { kind: 'html' }
   | { kind: 'title_newline_url' }
+  | { kind: 'url_only' }
   | { kind: 'custom'; template: string };
 
 export interface CopyRequest {
