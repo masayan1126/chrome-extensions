@@ -1,0 +1,81 @@
+/* Chat Area */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--app-chat-bg);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-area__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Message Row */
+.message {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: messageIn 0.2s ease;
+}
+
+.message--me {
+  flex-direction: row-reverse;
+}
+
+.message--other {
+  flex-direction: row;
+}
+
+/* Avatar */
+.message__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #CCCCCC;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.message__avatar svg {
+  width: 20px;
+  height: 20px;
+  color: #999999;
+}
+
+/* Stamp Image */
+.message__stamp {
+  max-width: 180px;
+  max-height: 180px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.message__stamp:hover {
+  transform: scale(1.05);
+}
+
+/* Message animation */
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

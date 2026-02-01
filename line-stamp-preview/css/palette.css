@@ -1,0 +1,143 @@
+/* Stamp Palette */
+.palette {
+  flex-shrink: 0;
+  background: var(--palette-bg);
+  max-height: 240px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Drop Zone */
+.palette__drop-zone {
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.palette__drop-zone:hover {
+  background: #F0F0F0;
+}
+
+.palette__drop-zone--active {
+  background: #E8F5E9 !important;
+  outline: 2px dashed var(--app-green);
+  outline-offset: -4px;
+}
+
+.palette__drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.palette__drop-zone-content svg {
+  color: #BBBBBB;
+}
+
+.palette__drop-zone-content p {
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.palette__drop-zone-hint {
+  font-size: 11px;
+  color: #AAAAAA;
+}
+
+/* Drop Zone collapsed when stamps exist */
+.palette__drop-zone--collapsed {
+  padding: 8px 16px;
+}
+
+.palette__drop-zone--collapsed .palette__drop-zone-content {
+  flex-direction: row;
+  gap: 8px;
+}
+
+.palette__drop-zone--collapsed .palette__drop-zone-content svg {
+  width: 18px;
+  height: 18px;
+}
+
+.palette__drop-zone--collapsed .palette__drop-zone-content p {
+  font-size: 12px;
+}
+
+.palette__drop-zone--collapsed .palette__drop-zone-content p br {
+  display: none;
+}
+
+.palette__drop-zone--collapsed .palette__drop-zone-hint {
+  display: none;
+}
+
+/* Stamp Grid */
+.palette__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 4px;
+  padding: 8px 12px 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.palette__grid:empty {
+  display: none;
+}
+
+/* Stamp Item */
+.stamp-item {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.1s;
+  overflow: hidden;
+}
+
+.stamp-item:hover {
+  border-color: var(--app-green);
+  transform: scale(1.05);
+}
+
+.stamp-item__img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.stamp-item__delete {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.stamp-item:hover .stamp-item__delete {
+  display: flex;
+}
+
+.stamp-item__delete:hover {
+  background: var(--danger);
+}
