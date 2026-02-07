@@ -45,20 +45,21 @@
   }
 
   function scheduleHighlightRender() {
-    // 初回: 100ms後
+    // Reactなどのフレームワークのhydration完了を待ってからDOMを変更する
+    // 初回: 1000ms後（hydration完了を待つ）
     setTimeout(() => {
       renderHighlights();
-      // 2回目: 500ms後（SPAの遅延レンダリング対応）
+      // 2回目: 2500ms後（SPAの遅延レンダリング対応）
       setTimeout(() => {
         renderHighlights();
-        // 3回目: 1500ms後（非常に遅いSPA対応）
+        // 3回目: 4500ms後（非常に遅いSPA対応）
         setTimeout(() => {
           renderHighlights();
           // 監視を開始
           startHighlightObserver();
-        }, 1000);
-      }, 400);
-    }, 100);
+        }, 2000);
+      }, 1500);
+    }, 1000);
   }
 
   // ============================================
@@ -187,47 +188,44 @@
       return;
     }
 
-    textNodes.forEach((textNode, index) => {
+    // rangeの参照がsplitTextで変わるため、先にオフセット情報を取得
+    const nodeInfos = textNodes.map(textNode => ({
+      textNode,
+      startOffset: textNode === range.startContainer ? range.startOffset : 0,
+      endOffset: textNode === range.endContainer ? range.endOffset : textNode.textContent.length
+    }));
+
+    nodeInfos.forEach(({ textNode, startOffset, endOffset }, index) => {
       const span = document.createElement('span');
       span.className = 'web-annotator-highlight';
       span.dataset.highlightId = highlightId;
       // 複数ノードの場合、パーツインデックスを付加
-      if (textNodes.length > 1) {
+      if (nodeInfos.length > 1) {
         span.dataset.highlightPart = index;
       }
-      span.style.backgroundColor = color;
+      span.style.setProperty('background-color', color, 'important');
       span.style.cursor = 'pointer';
 
-      // テキストノードの範囲を決定
-      let startOffset = 0;
-      let endOffset = textNode.textContent.length;
+      try {
+        // splitTextベースの安全なラップ処理
+        let targetNode = textNode;
 
-      if (textNode === range.startContainer) {
-        startOffset = range.startOffset;
-      }
-      if (textNode === range.endContainer) {
-        endOffset = range.endOffset;
-      }
-
-      // 部分的にハイライトする必要がある場合
-      if (startOffset > 0 || endOffset < textNode.textContent.length) {
-        const nodeRange = document.createRange();
-        nodeRange.setStart(textNode, startOffset);
-        nodeRange.setEnd(textNode, endOffset);
-        try {
-          nodeRange.surroundContents(span);
-        } catch (e) {
-          // フォールバック
-          const text = textNode.textContent.substring(startOffset, endOffset);
-          span.textContent = text;
-          nodeRange.deleteContents();
-          nodeRange.insertNode(span);
+        // 末尾を先に分割（先に分割するとオフセットがずれないため）
+        if (endOffset < textNode.textContent.length) {
+          textNode.splitText(endOffset);
         }
-      } else {
-        // テキストノード全体をラップ
-        const parent = textNode.parentNode;
-        parent.insertBefore(span, textNode);
-        span.appendChild(textNode);
+
+        // 先頭を分割
+        if (startOffset > 0) {
+          targetNode = textNode.splitText(startOffset);
+        }
+
+        // テキストノードをspanでラップ
+        targetNode.parentNode.insertBefore(span, targetNode);
+        span.appendChild(targetNode);
+      } catch (e) {
+        console.warn('[Web Annotator] Highlight wrap failed:', e.message);
+        return;
       }
 
       // クリックイベントを追加
@@ -762,7 +760,12 @@
   }
 
   function showFloatingToolbar(x, y) {
-    const toolbar = document.getElementById('web-annotator-toolbar');
+    let toolbar = document.getElementById('web-annotator-toolbar');
+    // Reactの再レンダリング等でツールバーが消えた場合に再作成
+    if (!toolbar) {
+      createFloatingToolbar();
+      toolbar = document.getElementById('web-annotator-toolbar');
+    }
     if (toolbar) {
       // 画面外に出ないように調整
       const toolbarWidth = 260;
@@ -804,6 +807,41 @@
   // ============================================
 
   function setupEventListeners() {
+    // リンク上でのテキスト選択を可能にする
+    let selectionStartedOnLink = false;
+    let isDraggingText = false;
+
+    document.addEventListener('dragstart', (e) => {
+      if (e.target.closest('a')) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('mousedown', (e) => {
+      if (e.target.closest('a') && e.button === 0) {
+        selectionStartedOnLink = true;
+        isDraggingText = false;
+      } else {
+        selectionStartedOnLink = false;
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (selectionStartedOnLink && e.buttons === 1) {
+        isDraggingText = true;
+      }
+    });
+
+    // テキスト選択中のリンククリック（ページ遷移）を抑制
+    document.addEventListener('click', (e) => {
+      if (selectionStartedOnLink && isDraggingText) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      selectionStartedOnLink = false;
+      isDraggingText = false;
+    }, true);
+
     // テキスト選択時にツールバーを表示
     document.addEventListener('mouseup', (e) => {
       // ツールバー内のクリックは無視

@@ -2,12 +2,18 @@
 
 /* ハイライトのスタイル */
 .web-annotator-highlight {
-  padding: 2px 0;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #1a1a1a !important;
+  padding: 2px 0 !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
   text-shadow: none !important;
+  display: inline !important;
+}
+
+/* リンク内のハイライトはリンク色を維持しつつ背景を確実に表示 */
+a .web-annotator-highlight,
+a.web-annotator-highlight {
+  color: inherit !important;
 }
 
 .web-annotator-highlight:hover {
