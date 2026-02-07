@@ -49,14 +49,17 @@
     // 初回: 1000ms後（hydration完了を待つ）
     setTimeout(() => {
       renderHighlights();
+      renderStickyNotes();
       // 2回目: 2500ms後（SPAの遅延レンダリング対応）
       setTimeout(() => {
         renderHighlights();
+        renderStickyNotes();
         // 3回目: 4500ms後（非常に遅いSPA対応）
         setTimeout(() => {
           renderHighlights();
+          renderStickyNotes();
           // 監視を開始
-          startHighlightObserver();
+          startAnnotationObserver();
         }, 2000);
       }, 1500);
     }, 1000);
@@ -66,7 +69,7 @@
   // ハイライト監視（MutationObserver）
   // ============================================
 
-  function startHighlightObserver() {
+  function startAnnotationObserver() {
     if (highlightObserver) {
       highlightObserver.disconnect();
     }
@@ -75,21 +78,33 @@
       // レンダリング中は無視
       if (isRenderingHighlights) return;
 
+      let needsHighlightRerender = false;
+      let needsStickyRerender = false;
+
       // ハイライトが消えていないかチェック
-      let needsRerender = false;
       for (const hl of highlights) {
         const existing = document.querySelector(`[data-highlight-id="${hl.id}"]`);
         if (!existing) {
-          needsRerender = true;
+          needsHighlightRerender = true;
           break;
         }
       }
 
-      if (needsRerender) {
-        console.log('[Web Annotator] Highlights removed, re-rendering...');
+      // 付箋が消えていないかチェック
+      for (const note of stickyNotes) {
+        const existing = document.querySelector(`[data-note-id="${note.id}"]`);
+        if (!existing) {
+          needsStickyRerender = true;
+          break;
+        }
+      }
+
+      if (needsHighlightRerender || needsStickyRerender) {
+        console.log('[Web Annotator] Annotations removed, re-rendering...');
         // 少し遅延させて、ページの再レンダリングが完了してから復元
         setTimeout(() => {
-          renderHighlights();
+          if (needsHighlightRerender) renderHighlights();
+          if (needsStickyRerender) renderStickyNotes();
         }, 50);
       }
     });
