@@ -1,5 +1,14 @@
 # Chrome Web Store Listing Information
 
+## Single Purpose Description
+**English:**
+This extension detects and displays the publication and update dates of web articles to help users identify outdated content.
+
+**Japanese:**
+この拡張機能は、Web記事の公開日・更新日を検出して表示し、古い記事の判別を支援します。
+
+---
+
 ## Short Description (132 characters max)
 **English:**
 Instantly detect and display article publish/update dates with freshness color coding. Never read outdated articles by mistake again.
@@ -97,6 +106,16 @@ Required for featuring in the Chrome Web Store
 
 ### Marquee Promo Tile (1400x560)
 Optional, but recommended for better visibility
+
+---
+
+## Host Permission Justification
+
+### English
+This extension requires access to all URLs (`<all_urls>`) because it needs to read the HTML content of any article page the user visits in order to detect publication and update dates. The date detection engine analyzes structured data (JSON-LD, Open Graph, meta tags, HTML5 time elements, Microdata, and CSS class patterns) embedded in the page's HTML. Without broad host access, the extension cannot function on arbitrary news sites, blogs, and documentation pages. No page content is collected, stored, or transmitted externally — all processing occurs locally within the browser.
+
+### Japanese
+この拡張機能は、ユーザーが訪問するあらゆる記事ページのHTMLコンテンツを読み取り、公開日・更新日を検出するために、すべてのURL（`<all_urls>`）へのアクセス権限が必要です。日付検出エンジンは、ページのHTMLに埋め込まれた構造化データ（JSON-LD、Open Graph、メタタグ、HTML5 time要素、Microdata、CSSクラスパターン）を解析します。広範なホストアクセスがなければ、任意のニュースサイト、ブログ、ドキュメントページで機能できません。ページコンテンツの収集・保存・外部送信は一切行わず、すべての処理はブラウザ内でローカルに完結します。
 
 ---
 
