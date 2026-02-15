@@ -1,0 +1,92 @@
+{
+  "extensionName": {
+    "message": "Article Date Detector"
+  },
+  "extensionDescription": {
+    "message": "Instantly see when an article was published or updated. Detects dates from structured data, meta tags, and page content."
+  },
+  "publishedDate": {
+    "message": "Published"
+  },
+  "modifiedDate": {
+    "message": "Updated"
+  },
+  "noDateFound": {
+    "message": "No date detected"
+  },
+  "source": {
+    "message": "Source"
+  },
+  "scrollToDate": {
+    "message": "Scroll to date element"
+  },
+  "closeBadge": {
+    "message": "Close"
+  },
+  "detectedDates": {
+    "message": "Detected Dates"
+  },
+  "detectionSource": {
+    "message": "Detection Source"
+  },
+  "siteSettings": {
+    "message": "Site Settings"
+  },
+  "enableOnThisSite": {
+    "message": "Enable on this site"
+  },
+  "freshnessNew": {
+    "message": "Fresh"
+  },
+  "freshnessMedium": {
+    "message": "A few months old"
+  },
+  "freshnessOld": {
+    "message": "Old"
+  },
+  "freshnessVeryOld": {
+    "message": "Very old"
+  },
+  "ago": {
+    "message": "ago"
+  },
+  "justNow": {
+    "message": "just now"
+  },
+  "minutesAgo": {
+    "message": "$COUNT$ min ago",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "hoursAgo": {
+    "message": "$COUNT$h ago",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "daysAgo": {
+    "message": "$COUNT$d ago",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "monthsAgo": {
+    "message": "$COUNT$mo ago",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "yearsAgo": {
+    "message": "$COUNT$y ago",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "notAnArticle": {
+    "message": "This page does not appear to be an article."
+  },
+  "disabledOnSite": {
+    "message": "Disabled on this site"
+  }
+}

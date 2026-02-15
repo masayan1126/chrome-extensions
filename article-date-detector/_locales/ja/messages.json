@@ -1,0 +1,92 @@
+{
+  "extensionName": {
+    "message": "Article Date Detector"
+  },
+  "extensionDescription": {
+    "message": "記事の公開日・更新日を即座に表示。構造化データ、メタタグ、ページコンテンツから日付を自動検出します。"
+  },
+  "publishedDate": {
+    "message": "公開日"
+  },
+  "modifiedDate": {
+    "message": "更新日"
+  },
+  "noDateFound": {
+    "message": "日付を検出できませんでした"
+  },
+  "source": {
+    "message": "ソース"
+  },
+  "scrollToDate": {
+    "message": "日付要素へスクロール"
+  },
+  "closeBadge": {
+    "message": "閉じる"
+  },
+  "detectedDates": {
+    "message": "検出された日付"
+  },
+  "detectionSource": {
+    "message": "検出ソース"
+  },
+  "siteSettings": {
+    "message": "サイト設定"
+  },
+  "enableOnThisSite": {
+    "message": "このサイトで有効にする"
+  },
+  "freshnessNew": {
+    "message": "新しい"
+  },
+  "freshnessMedium": {
+    "message": "数か月前"
+  },
+  "freshnessOld": {
+    "message": "古い"
+  },
+  "freshnessVeryOld": {
+    "message": "非常に古い"
+  },
+  "ago": {
+    "message": "前"
+  },
+  "justNow": {
+    "message": "たった今"
+  },
+  "minutesAgo": {
+    "message": "$COUNT$分前",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "hoursAgo": {
+    "message": "$COUNT$時間前",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "daysAgo": {
+    "message": "$COUNT$日前",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "monthsAgo": {
+    "message": "$COUNT$か月前",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "yearsAgo": {
+    "message": "$COUNT$年前",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "notAnArticle": {
+    "message": "このページは記事ではないようです。"
+  },
+  "disabledOnSite": {
+    "message": "このサイトでは無効です"
+  }
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1 class="popup-title" data-i18n="extensionName">Article Date Detector</h1>
+    </header>
+
+    <main class="popup-main" id="main-content">
+      <!-- Loading state -->
+      <div class="popup-loading" id="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- No date state -->
+      <div class="popup-empty" id="no-date" style="display: none;">
+        <span class="empty-icon">&#128197;</span>
+        <p id="no-date-text" data-i18n="noDateFound">No date detected</p>
+      </div>
+
+      <!-- Date results -->
+      <div class="popup-results" id="results" style="display: none;">
+        <!-- Primary dates section -->
+        <section class="date-section" id="primary-dates"></section>
+
+        <!-- All detection sources -->
+        <section class="source-section" id="all-sources" style="display: none;">
+          <h2 class="section-title" data-i18n="detectionSource">Detection Source</h2>
+          <ul class="source-list" id="source-list"></ul>
+        </section>
+
+        <!-- Scroll to date -->
+        <button class="scroll-btn" id="scroll-btn" style="display: none;">
+          <span>&#8599;</span>
+          <span data-i18n="scrollToDate">Scroll to date element</span>
+        </button>
+      </div>
+    </main>
+
+    <footer class="popup-footer">
+      <div class="site-toggle" id="site-toggle">
+        <label class="toggle-label">
+          <span data-i18n="enableOnThisSite">Enable on this site</span>
+          <input type="checkbox" id="site-enabled" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

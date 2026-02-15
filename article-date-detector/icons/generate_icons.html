@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Icons for Article Date Detector</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    canvas { border: 1px solid #ccc; margin: 10px; background: white; }
+    .row { display: flex; align-items: center; gap: 16px; margin: 12px 0; }
+    a { display: inline-block; margin-top: 8px; padding: 6px 12px; background: #3b82f6; color: white; border-radius: 4px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>Article Date Detector - Icon Generator</h1>
+  <p>Right-click each canvas and "Save image as..." or use the download links.</p>
+
+  <div class="row">
+    <div>
+      <h3>16x16</h3>
+      <canvas id="c16" width="16" height="16"></canvas>
+      <br><a id="dl16" download="icon16.png">Download</a>
+    </div>
+    <div>
+      <h3>48x48</h3>
+      <canvas id="c48" width="48" height="48"></canvas>
+      <br><a id="dl48" download="icon48.png">Download</a>
+    </div>
+    <div>
+      <h3>128x128</h3>
+      <canvas id="c128" width="128" height="128"></canvas>
+      <br><a id="dl128" download="icon128.png">Download</a>
+    </div>
+  </div>
+
+  <script>
+    const svgSource = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#3b82f6"/>
+          <stop offset="100%" style="stop-color:#1d4ed8"/>
+        </linearGradient>
+      </defs>
+      <rect width="128" height="128" rx="20" fill="url(#bg)"/>
+      <rect x="28" y="32" width="72" height="68" rx="8" fill="white" opacity="0.95"/>
+      <rect x="28" y="32" width="72" height="22" rx="8" fill="#1e40af"/>
+      <rect x="28" y="46" width="72" height="8" fill="#1e40af"/>
+      <rect x="44" y="26" width="6" height="16" rx="3" fill="white"/>
+      <rect x="78" y="26" width="6" height="16" rx="3" fill="white"/>
+      <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#1e40af" text-anchor="middle">15</text>
+      <circle cx="92" cy="84" r="16" fill="#22c55e" stroke="white" stroke-width="3"/>
+      <line x1="92" y1="84" x2="92" y2="74" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="92" y1="84" x2="99" y2="84" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`;
+
+    function renderIcon(size) {
+      const canvas = document.getElementById('c' + size);
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      const blob = new Blob([svgSource], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        document.getElementById('dl' + size).href = canvas.toDataURL('image/png');
+      };
+      img.src = url;
+    }
+
+    [16, 48, 128].forEach(renderIcon);
+  </script>
+</body>
+</html>

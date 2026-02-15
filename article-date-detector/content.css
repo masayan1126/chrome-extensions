@@ -1,0 +1,143 @@
+/* Article Date Detector - Floating Badge */
+
+.article-date-detector-container {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #e0e0e0;
+  pointer-events: auto;
+  transition: all 0.25s ease;
+}
+
+/* Expanded state */
+.article-date-detector-expanded {
+  display: flex;
+  align-items: flex-start;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-left: 3px solid var(--article-date-detector-color, #22c55e);
+  border-radius: 8px;
+  padding: 10px 12px;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  min-width: 280px;
+  max-width: 520px;
+  animation: article-date-detector-fadein 0.3s ease;
+}
+
+/* Collapsed state */
+.article-date-detector-collapsed {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 40px;
+  margin-left: auto;
+}
+
+.article-date-detector-collapsed:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.article-date-detector-is-collapsed {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Header */
+.article-date-detector-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Freshness dot */
+.article-date-detector-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* Info section */
+.article-date-detector-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.article-date-detector-date-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  color: #e0e0e0;
+}
+
+.article-date-detector-modified {
+  color: #999;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Action buttons */
+.article-date-detector-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.article-date-detector-btn {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #999;
+  font-size: 14px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.article-date-detector-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+/* Collapsed time text */
+.article-date-detector-col-time {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ccc;
+  text-align: center;
+}
+
+/* Animation */
+@keyframes article-date-detector-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
