@@ -100,7 +100,7 @@ const processFootnotes = (content: string): string => {
   // 脚注セクションを末尾に追加
   processed += '\n\n---\n\n<section class="footnotes"><ol class="footnotes-list">';
   for (const [id, text] of footnotes) {
-    processed += `<li class="footnote-item" id="fn-${id}">${text} <a href="#fnref-${id}" class="footnote-backref">↩</a></li>`;
+    processed += `<li class="footnote-item" id="fn-${id}">${marked.parseInline(text)} <a href="#fnref-${id}" class="footnote-backref">↩</a></li>`;
   }
   processed += '</ol></section>';
 
