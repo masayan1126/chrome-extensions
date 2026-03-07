@@ -37,15 +37,17 @@ body {
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgb(55 65 81);
+  border-bottom: 2px solid rgb(55 65 81);
 }
 
 .markdown-preview h3 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid rgb(75 85 99);
 }
 
 .markdown-preview h4 {
@@ -183,6 +185,11 @@ body {
   margin-bottom: 1rem;
 }
 
+.markdown-preview strong,
+.markdown-preview b {
+  font-weight: 800;
+}
+
 .markdown-preview .task-list-item {
   list-style-type: none;
   margin-left: -1.5rem;
@@ -193,6 +200,35 @@ body {
 
 .markdown-preview .task-list-item input[type="checkbox"] {
   margin-top: 0.375rem;
+}
+
+/* 脚注スタイル */
+.markdown-preview .footnote-ref a {
+  text-decoration: none;
+  font-size: 0.75em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+.markdown-preview .footnotes {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+
+.markdown-preview .footnotes-list {
+  padding-left: 1.5rem;
+}
+
+.markdown-preview .footnote-item {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-preview .footnote-backref {
+  text-decoration: none;
+  margin-left: 0.25rem;
+  font-size: 0.875em;
 }
 
 /* highlight.js用のカスタマイズ */

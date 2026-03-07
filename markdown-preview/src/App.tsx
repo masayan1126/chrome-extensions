@@ -36,6 +36,7 @@ const App: React.FC = () => {
     activeContent,
     activeFile,
     openTab,
+    openDroppedFile,
     closeTab,
     selectTab,
     reorderTabs,
@@ -45,6 +46,7 @@ const App: React.FC = () => {
   const [showTOC, setShowTOC] = useState(true);
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const {
     isSearchOpen,
@@ -96,6 +98,33 @@ const App: React.FC = () => {
     },
     [updateSettings]
   );
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragOver(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    for (const file of files) {
+      if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+        openDroppedFile(file);
+      }
+    }
+  }, [openDroppedFile]);
 
   const handleSaveCustomTheme = useCallback(
     (theme: Theme) => {
@@ -152,7 +181,23 @@ const App: React.FC = () => {
           onRestore={restoreStoredDirectory}
         />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div
+          className="flex-1 flex flex-col overflow-hidden relative"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          {isDragOver && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 border-2 border-dashed border-blue-400 rounded-lg pointer-events-none">
+              <div className="text-center">
+                <svg className="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <p className="text-blue-400 text-lg font-medium">Markdownファイルをドロップ</p>
+                <p className="text-neutral-400 text-sm mt-1">.md / .markdown</p>
+              </div>
+            </div>
+          )}
           <TabBar
             tabs={tabs}
             activeTabId={activeTabId}

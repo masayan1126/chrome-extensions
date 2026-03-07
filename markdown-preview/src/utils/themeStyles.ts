@@ -1,7 +1,18 @@
 import type { Theme, ThemeColors } from '../types';
 
+// boldカラーがテキストカラーと同一の場合、コントラストを強化
+const ensureBoldContrast = (boldColor: string, textColor: string, isDark: boolean): string => {
+  if (boldColor.toLowerCase() !== textColor.toLowerCase()) return boldColor;
+  // ダークテーマ: 明るくする、ライトテーマ: 暗くする
+  if (isDark) {
+    return '#ffffff';
+  }
+  return '#000000';
+};
+
 export const generateThemeCSS = (theme: Theme): string => {
   const c = theme.colors;
+  const boldColor = ensureBoldContrast(c.bold, c.text, theme.isDark);
 
   return `
     .markdown-preview {
@@ -10,8 +21,8 @@ export const generateThemeCSS = (theme: Theme): string => {
     }
 
     .markdown-preview h1 { color: ${c.h1}; }
-    .markdown-preview h2 { color: ${c.h2}; }
-    .markdown-preview h3 { color: ${c.h3}; }
+    .markdown-preview h2 { color: ${c.h2}; border-bottom-color: ${c.h2}40; }
+    .markdown-preview h3 { color: ${c.h3}; border-left-color: ${c.h3}; }
     .markdown-preview h4 { color: ${c.h4}; }
     .markdown-preview h5 { color: ${c.h5}; }
     .markdown-preview h6 { color: ${c.h6}; }
@@ -63,7 +74,7 @@ export const generateThemeCSS = (theme: Theme): string => {
     }
 
     .markdown-preview strong, .markdown-preview b {
-      color: ${c.bold};
+      color: ${boldColor};
     }
 
     .markdown-preview em, .markdown-preview i {
@@ -72,6 +83,14 @@ export const generateThemeCSS = (theme: Theme): string => {
 
     .markdown-preview .task-list-item input[type="checkbox"] {
       accent-color: ${c.link};
+    }
+
+    .markdown-preview .footnote-ref a {
+      color: ${c.link};
+    }
+
+    .markdown-preview .footnote-backref {
+      color: ${c.link};
     }
   `;
 };
@@ -101,7 +120,7 @@ export const createDefaultThemeColors = (isDark: boolean): ThemeColors => {
       tableHeaderBackground: '#0f0f1a',
       tableRowEvenBackground: '#1e1e36',
       horizontalRule: '#333355',
-      bold: '#eaeaea',
+      bold: '#ffffff',
       italic: '#eaeaea',
     };
   }
@@ -129,7 +148,7 @@ export const createDefaultThemeColors = (isDark: boolean): ThemeColors => {
     tableHeaderBackground: '#f5f5f5',
     tableRowEvenBackground: '#fafafa',
     horizontalRule: '#dddddd',
-    bold: '#333333',
+    bold: '#111111',
     italic: '#333333',
   };
 };

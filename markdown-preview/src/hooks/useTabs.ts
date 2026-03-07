@@ -97,6 +97,36 @@ export const useTabs = () => {
     }
   }, [tabs]);
 
+  // ドロップされたファイルをタブとして開く
+  const openDroppedFile = useCallback(async (file: File) => {
+    if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) return;
+
+    const existingTab = tabs.find((t) => t.file.name === file.name && !t.file.handle);
+    if (existingTab) {
+      setActiveTabId(existingTab.id);
+      return;
+    }
+
+    try {
+      const content = await file.text();
+      const newTab: OpenTab = {
+        id: `tab-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        file: {
+          name: file.name,
+          path: file.name,
+          handle: null as unknown as FileSystemFileHandle,
+        },
+        content,
+        isDirty: false,
+      };
+
+      setTabs((prev) => [...prev, newTab]);
+      setActiveTabId(newTab.id);
+    } catch (error) {
+      console.error('Failed to open dropped file:', error);
+    }
+  }, [tabs]);
+
   // タブを閉じる
   const closeTab = useCallback((tabId: string) => {
     setTabs((prev) => {
@@ -204,6 +234,7 @@ export const useTabs = () => {
     activeFile,
     isInitialized,
     openTab,
+    openDroppedFile,
     closeTab,
     selectTab,
     reorderTabs,
