@@ -10,6 +10,6 @@
   </g>
 
   <!-- Text -->
-  <text x="220" y="185" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#fafafa" text-anchor="middle">Markdown Preview</text>
+  <text x="220" y="185" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#fafafa" text-anchor="middle">Rich Markdown Preview</text>
   <text x="220" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#a3a3a3" text-anchor="middle">Beautiful. Customizable. Fast.</text>
 </svg>

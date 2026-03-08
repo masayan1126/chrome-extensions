@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; width: 1280px; height: 800px; overflow: hidden; }
+
+.toolbar { height: 48px; background: #171717; border-bottom: 1px solid #404040; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.toolbar-left { display: flex; align-items: center; gap: 16px; }
+.toolbar-right { display: flex; align-items: center; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 24px; height: 24px; background: #262626; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fafafa; font-weight: 900; font-size: 11px; }
+.logo-text { font-weight: 600; color: #fff; font-size: 14px; }
+.separator { color: #525252; }
+.filename { color: #a3a3a3; font-size: 13px; }
+.tb-btn { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; font-size: 13px; color: #a3a3a3; background: none; border: none; cursor: pointer; }
+.tb-btn:hover { color: #fff; background: #404040; }
+.tb-select { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: #262626; border-radius: 4px; font-size: 12px; color: #d4d4d4; border: none; cursor: pointer; }
+.tb-size { display: flex; align-items: center; gap: 8px; color: #a3a3a3; font-size: 13px; }
+.tb-size-btn { background: none; border: none; color: #a3a3a3; cursor: pointer; font-size: 16px; padding: 2px; }
+.toc-toggle { width: 32px; height: 32px; border-radius: 4px; background: #525252; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+.main { display: flex; height: calc(100% - 48px); }
+
+/* Sidebar */
+.sidebar { width: 256px; background: #262626; border-right: 1px solid #404040; display: flex; flex-direction: column; }
+.sidebar-header { padding: 12px; border-bottom: 1px solid #404040; display: flex; gap: 8px; }
+.open-btn { flex: 1; padding: 8px 12px; background: #404040; border: none; border-radius: 4px; color: #fafafa; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.refresh-btn { width: 36px; height: 36px; background: #404040; border: none; border-radius: 4px; color: #fafafa; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.file-tree { padding: 8px 0; overflow-y: auto; flex: 1; }
+.tree-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 13px; color: #d4d4d4; cursor: pointer; }
+.tree-item:hover { background: rgba(82,82,82,0.3); }
+.tree-item.active { background: #525252; color: #fff; }
+.tree-item .indent { width: 0; flex-shrink: 0; }
+.tree-folder-icon { color: #a3a3a3; font-size: 14px; }
+.tree-file-icon { color: #737373; font-size: 14px; }
+
+/* Content */
+.content-area { flex: 1; display: flex; flex-direction: column; background: #0d1117; }
+.tab-bar { height: 36px; background: #262626; border-bottom: 1px solid #404040; display: flex; align-items: stretch; }
+.tab { display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 12px; color: #a3a3a3; border-right: 1px solid #404040; min-width: 120px; max-width: 180px; cursor: pointer; }
+.tab.active { background: #171717; color: #fff; }
+.tab-close { font-size: 10px; color: #737373; margin-left: auto; }
+.preview { flex: 1; overflow-y: auto; padding: 48px 64px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+.preview h1 { font-size: 32px; font-weight: 700; color: #c9d1d9; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #30363d; }
+.preview h2 { font-size: 24px; font-weight: 700; color: #c9d1d9; margin-top: 32px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #30363d; }
+.preview p { font-size: 16px; line-height: 1.8; margin-bottom: 16px; }
+.preview ul { padding-left: 24px; margin-bottom: 16px; }
+.preview li { font-size: 16px; line-height: 1.8; margin-bottom: 4px; }
+.preview li::marker { color: #58a6ff; }
+.preview a { color: #58a6ff; text-decoration: none; }
+.preview code { background: #161b22; color: #f0883e; padding: 2px 6px; border-radius: 4px; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 14px; }
+.preview pre { background: #161b22; border-radius: 8px; padding: 16px; margin-bottom: 16px; overflow-x: auto; }
+.preview pre code { background: none; color: #c9d1d9; padding: 0; font-size: 14px; line-height: 1.6; }
+.preview blockquote { border-left: 4px solid #58a6ff; padding: 8px 16px; margin-bottom: 16px; background: rgba(22,27,34,0.5); color: #8b949e; }
+.preview strong { color: #fff; }
+.kw { color: #ff7b72; }
+.str { color: #a5d6ff; }
+.fn { color: #d2a8ff; }
+.cm { color: #8b949e; }
+.num { color: #79c0ff; }
+
+/* TOC */
+.toc { width: 256px; background: #262626; border-left: 1px solid #404040; display: flex; flex-direction: column; }
+.toc-header { padding: 8px; border-bottom: 1px solid #404040; display: flex; align-items: center; justify-content: center; }
+.toc-title { font-size: 11px; font-weight: 600; color: #737373; text-transform: uppercase; letter-spacing: 1px; padding: 12px 16px 8px; }
+.toc-list { padding: 0 12px; }
+.toc-item { display: block; padding: 6px 8px; font-size: 13px; color: #d4d4d4; border-radius: 4px; cursor: pointer; text-decoration: none; }
+.toc-item:hover { background: rgba(82,82,82,0.3); color: #fff; }
+.toc-item.active { background: #525252; color: #fff; font-weight: 500; }
+.toc-item.indent { padding-left: 20px; }
+</style>
+</head>
+<body>
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="toolbar-left">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <span class="logo-text">Rich Markdown Preview</span>
+    </div>
+    <span class="separator">|</span>
+    <span class="filename">README.md</span>
+    <button class="tb-btn">📋 MDコピー</button>
+    <button class="tb-btn">🔗 HTMLコピー</button>
+  </div>
+  <div class="toolbar-right">
+    <div class="tb-select">Noto Sans JP ▾</div>
+    <div class="tb-size">
+      <button class="tb-size-btn">−</button>
+      <span>16</span>
+      <button class="tb-size-btn">+</button>
+    </div>
+    <div class="tb-select">間隔 ▾</div>
+    <div class="toc-toggle">
+      <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/></svg>
+    </div>
+    <div class="tb-select">
+      <span style="display:inline-block;width:16px;height:16px;border-radius:2px;background:#0d1117;border:1px solid #525252;"></span>
+      GitHub Dark ▾
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <button class="open-btn">📁 フォルダを開く</button>
+      <button class="refresh-btn">↻</button>
+    </div>
+    <div class="file-tree">
+      <div class="tree-item"><span class="tree-folder-icon">📂</span> my-project</div>
+      <div class="tree-item active" style="padding-left:28px"><span class="tree-file-icon">📄</span> README.md</div>
+      <div class="tree-item" style="padding-left:28px"><span class="tree-file-icon">📄</span> CHANGELOG.md</div>
+      <div class="tree-item" style="padding-left:28px"><span class="tree-file-icon">📄</span> CONTRIBUTING.md</div>
+      <div class="tree-item" style="padding-left:28px"><span class="tree-folder-icon">📂</span> docs</div>
+      <div class="tree-item" style="padding-left:44px"><span class="tree-file-icon">📄</span> setup.md</div>
+      <div class="tree-item" style="padding-left:44px"><span class="tree-file-icon">📄</span> api-reference.md</div>
+      <div class="tree-item" style="padding-left:44px"><span class="tree-file-icon">📄</span> deployment.md</div>
+      <div class="tree-item" style="padding-left:28px"><span class="tree-file-icon">📄</span> LICENSE.md</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+    <div class="tab-bar">
+      <div class="tab active"><span class="tree-file-icon">📄</span> README.md <span class="tab-close">✕</span></div>
+      <div class="tab"><span class="tree-file-icon">📄</span> CHANGELOG.md <span class="tab-close">✕</span></div>
+    </div>
+    <div class="preview">
+      <h1>My Project</h1>
+      <p>高速で安全な次世代Webフレームワーク。<strong>TypeScript</strong>で構築され、優れた開発者体験を提供します。</p>
+
+      <h2>主な機能</h2>
+      <ul>
+        <li>⚡ 高速なホットリロード対応の開発サーバー</li>
+        <li>📦 最適化されたビルド出力</li>
+        <li>🔧 豊富なプラグインエコシステム</li>
+        <li>📝 TypeScriptのネイティブサポート</li>
+      </ul>
+
+      <h2>クイックスタート</h2>
+      <pre><code><span class="cm">// プロジェクトの初期化</span>
+<span class="kw">npx</span> create-my-project<span class="str"> my-app</span>
+<span class="kw">cd</span> my-app
+<span class="kw">npm</span> run dev</code></pre>
+
+      <blockquote>
+        <strong>Note:</strong> Node.js 18以上が必要です。
+      </blockquote>
+
+      <p>詳細は<a href="#">ドキュメント</a>をご参照ください。</p>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-header">
+      <svg width="16" height="16" fill="none" stroke="#737373" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    </div>
+    <div class="toc-title">目次</div>
+    <div class="toc-list">
+      <a class="toc-item active">My Project</a>
+      <a class="toc-item indent">主な機能</a>
+      <a class="toc-item indent">クイックスタート</a>
+      <a class="toc-item indent">インストール</a>
+      <a class="toc-item indent">設定</a>
+      <a class="toc-item indent">ライセンス</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

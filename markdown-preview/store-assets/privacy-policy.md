@@ -1,10 +1,10 @@
-# Privacy Policy for Markdown Preview
+# Privacy Policy for Rich Markdown Preview
 
 **Last Updated: 2024**
 
 ## Overview
 
-Markdown Preview is a Chrome extension that allows users to preview local Markdown files. This privacy policy explains how the extension handles user data.
+Rich Markdown Preview is a Chrome extension that allows users to preview local Markdown files. This privacy policy explains how the extension handles user data.
 
 ## Data Collection
 
@@ -64,7 +64,7 @@ If you have any questions about this privacy policy, please create an issue on o
 
 ## 概要
 
-Markdown Previewは、ローカルのMarkdownファイルをプレビューするためのChrome拡張機能です。このプライバシーポリシーでは、本拡張機能がユーザーデータをどのように扱うかについて説明します。
+Rich Markdown Previewは、ローカルのMarkdownファイルをプレビューするためのChrome拡張機能です。このプライバシーポリシーでは、本拡張機能がユーザーデータをどのように扱うかについて説明します。
 
 ## データ収集
 

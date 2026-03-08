@@ -90,7 +90,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <svg className="w-6 h-6 text-neutral-300" viewBox="0 0 24 24" fill="currentColor">
             <path d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h4v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z" />
           </svg>
-          <span className="font-semibold text-white">Markdown Preview</span>
+          <span className="font-semibold text-white">Rich Markdown Preview</span>
         </div>
 
         {fileName && (

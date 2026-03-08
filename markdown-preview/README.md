@@ -1,4 +1,4 @@
-# Markdown Preview
+# Rich Markdown Preview
 
 Markdownファイルをリアルタイムでプレビューするツール
 

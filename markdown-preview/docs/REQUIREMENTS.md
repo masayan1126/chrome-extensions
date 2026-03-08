@@ -1,4 +1,4 @@
-# Markdown Preview Chrome拡張機能 - 要件定義書
+# Rich Markdown Preview Chrome拡張機能 - 要件定義書
 
 ## 1. プロジェクト概要
 

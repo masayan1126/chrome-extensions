@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1b26; color: #a9b1d6; width: 1280px; height: 800px; overflow: hidden; }
+
+.toolbar { height: 48px; background: #171717; border-bottom: 1px solid #404040; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.toolbar-left { display: flex; align-items: center; gap: 16px; }
+.toolbar-right { display: flex; align-items: center; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 24px; height: 24px; background: #262626; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fafafa; font-weight: 900; font-size: 11px; }
+.logo-text { font-weight: 600; color: #fff; font-size: 14px; }
+.separator { color: #525252; }
+.filename { color: #a3a3a3; font-size: 13px; }
+.tb-btn { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 4px; font-size: 13px; color: #a3a3a3; background: none; border: none; }
+.tb-select { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: #262626; border-radius: 4px; font-size: 12px; color: #d4d4d4; border: none; }
+.tb-size { display: flex; align-items: center; gap: 8px; color: #a3a3a3; font-size: 13px; }
+
+.main { display: flex; height: calc(100% - 48px); }
+
+.sidebar { width: 256px; background: #262626; border-right: 1px solid #404040; display: flex; flex-direction: column; }
+.sidebar-header { padding: 12px; border-bottom: 1px solid #404040; display: flex; gap: 8px; }
+.open-btn { flex: 1; padding: 8px 12px; background: #404040; border: none; border-radius: 4px; color: #fafafa; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.refresh-btn { width: 36px; height: 36px; background: #404040; border: none; border-radius: 4px; color: #fafafa; display: flex; align-items: center; justify-content: center; }
+.file-tree { padding: 8px 0; overflow-y: auto; flex: 1; }
+.tree-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 13px; color: #d4d4d4; cursor: pointer; }
+.tree-item:hover { background: rgba(82,82,82,0.3); }
+.tree-item.active { background: #525252; color: #fff; }
+
+.content-area { flex: 1; display: flex; flex-direction: column; background: #1a1b26; }
+.tab-bar { height: 36px; background: #262626; border-bottom: 1px solid #404040; display: flex; align-items: stretch; }
+.tab { display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 12px; color: #a3a3a3; border-right: 1px solid #404040; min-width: 120px; max-width: 180px; cursor: pointer; position: relative; }
+.tab.active { background: #171717; color: #fff; }
+.tab-close { font-size: 10px; color: #737373; margin-left: auto; }
+.tab-dirty { color: #ff9e64; font-size: 10px; margin-left: 2px; }
+.tab-drag { border-left: 2px solid #7aa2f7; }
+
+/* Drop zone */
+.drop-zone { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); border: 2px dashed #7aa2f7; border-radius: 12px; padding: 32px 48px; text-align: center; background: rgba(122,162,247,0.05); display: none; }
+
+.preview { flex: 1; overflow-y: auto; padding: 48px 64px; max-width: 900px; margin: 0 auto; width: 100%; }
+.preview h1 { font-size: 32px; font-weight: 700; color: #f7768e; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #30363d; }
+.preview h2 { font-size: 24px; font-weight: 700; color: #ff9e64; margin-top: 28px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #30363d; }
+.preview p { font-size: 16px; line-height: 1.8; margin-bottom: 16px; }
+.preview ul { padding-left: 24px; margin-bottom: 16px; }
+.preview li { font-size: 16px; line-height: 1.8; margin-bottom: 4px; }
+.preview li::marker { color: #f7768e; }
+.preview a { color: #7aa2f7; text-decoration: none; }
+.preview strong { color: #fff; }
+.preview table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.preview th { background: rgba(26,27,38,0.8); padding: 10px 16px; text-align: left; border: 1px solid #30363d; font-size: 14px; color: #c0caf5; }
+.preview td { padding: 10px 16px; border: 1px solid #30363d; font-size: 14px; }
+.preview tr:nth-child(even) td { background: rgba(26,27,38,0.3); }
+
+/* Context menu */
+.context-menu { position: absolute; top: 220px; left: 180px; background: #262626; border: 1px solid #404040; border-radius: 8px; padding: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 100; min-width: 180px; }
+.context-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 13px; color: #d4d4d4; border-radius: 4px; cursor: pointer; }
+.context-item:hover { background: #404040; color: #fff; }
+.context-sep { height: 1px; background: #404040; margin: 4px 8px; }
+
+.toc { width: 256px; background: #262626; border-left: 1px solid #404040; }
+.toc-header { padding: 8px; border-bottom: 1px solid #404040; display: flex; align-items: center; justify-content: center; }
+.toc-title { font-size: 11px; font-weight: 600; color: #737373; text-transform: uppercase; letter-spacing: 1px; padding: 12px 16px 8px; }
+.toc-list { padding: 0 12px; }
+.toc-item { display: block; padding: 6px 8px; font-size: 13px; color: #d4d4d4; border-radius: 4px; }
+.toc-item.active { background: #525252; color: #fff; font-weight: 500; }
+.toc-item.indent { padding-left: 20px; }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <div class="logo"><div class="logo-icon">M</div><span class="logo-text">Rich Markdown Preview</span></div>
+    <span class="separator">|</span>
+    <span class="filename">api-reference.md</span>
+    <button class="tb-btn">📋 MDコピー</button>
+    <button class="tb-btn">🔗 HTMLコピー</button>
+  </div>
+  <div class="toolbar-right">
+    <div class="tb-select">Noto Sans JP ▾</div>
+    <div class="tb-size"><span>−</span><span>16</span><span>+</span></div>
+    <div class="tb-select">間隔 ▾</div>
+    <div class="tb-select">
+      <span style="display:inline-block;width:16px;height:16px;border-radius:2px;background:#1a1b26;border:1px solid #525252;"></span>
+      Tokyo Night ▾
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-header"><button class="open-btn">📁 フォルダを開く</button><button class="refresh-btn">↻</button></div>
+    <div class="file-tree">
+      <div class="tree-item"><span>📂</span> my-api</div>
+      <div class="tree-item" style="padding-left:28px"><span>📄</span> README.md</div>
+      <div class="tree-item" style="padding-left:28px"><span>📂</span> docs</div>
+      <div class="tree-item active" style="padding-left:44px"><span>📄</span> api-reference.md</div>
+      <div class="tree-item" style="padding-left:44px"><span>📄</span> setup.md</div>
+      <div class="tree-item" style="padding-left:44px"><span>📄</span> authentication.md</div>
+      <div class="tree-item" style="padding-left:44px"><span>📄</span> errors.md</div>
+      <div class="tree-item" style="padding-left:28px"><span>📄</span> CHANGELOG.md</div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu">
+      <div class="context-item">📄 ファイルを開く</div>
+      <div class="context-sep"></div>
+      <div class="context-item">📋 パスをコピー</div>
+      <div class="context-item">📋 ファイル名をコピー</div>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <div class="tab-bar">
+      <div class="tab"><span>📄</span> README.md <span class="tab-close">✕</span></div>
+      <div class="tab active"><span>📄</span> api-reference.md <span class="tab-close">✕</span></div>
+      <div class="tab"><span>📄</span> setup.md <span class="tab-dirty">*</span><span class="tab-close">✕</span></div>
+      <div class="tab tab-drag"><span>📄</span> errors.md <span class="tab-close">✕</span></div>
+    </div>
+    <div class="preview">
+      <h1>API Reference</h1>
+      <p>このドキュメントでは、利用可能なすべてのAPIエンドポイントについて説明します。</p>
+
+      <h2>エンドポイント一覧</h2>
+      <table>
+        <thead>
+          <tr><th>メソッド</th><th>パス</th><th>説明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>GET</strong></td><td>/api/users</td><td>ユーザー一覧を取得</td></tr>
+          <tr><td><strong>POST</strong></td><td>/api/users</td><td>新規ユーザーを作成</td></tr>
+          <tr><td><strong>GET</strong></td><td>/api/users/:id</td><td>ユーザー詳細を取得</td></tr>
+          <tr><td><strong>PUT</strong></td><td>/api/users/:id</td><td>ユーザー情報を更新</td></tr>
+          <tr><td><strong>DELETE</strong></td><td>/api/users/:id</td><td>ユーザーを削除</td></tr>
+        </tbody>
+      </table>
+
+      <h2>認証</h2>
+      <p>すべてのAPIリクエストには、<a href="#">Bearer Token</a>による認証が必要です。</p>
+    </div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-header"><svg width="16" height="16" fill="none" stroke="#737373" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg></div>
+    <div class="toc-title">目次</div>
+    <div class="toc-list">
+      <a class="toc-item active">API Reference</a>
+      <a class="toc-item indent">エンドポイント一覧</a>
+      <a class="toc-item indent">認証</a>
+      <a class="toc-item indent">レスポンス形式</a>
+      <a class="toc-item indent">エラーハンドリング</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

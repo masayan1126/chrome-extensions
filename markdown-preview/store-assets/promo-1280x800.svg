@@ -11,7 +11,7 @@
   </g>
 
   <!-- Title and description -->
-  <text x="400" y="300" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#fafafa">Markdown Preview</text>
+  <text x="400" y="300" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#fafafa">Rich Markdown Preview</text>
   <text x="400" y="370" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#a3a3a3">Beautiful. Customizable. Fast.</text>
 
   <!-- Feature highlights -->
