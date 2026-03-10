@@ -13,6 +13,7 @@ export const defaultSettings: AppSettings = {
   showLineNumbers: true,
   showTOC: true,
   fontFamily: 'system',
+  showHiddenFiles: false,
 };
 
 // ブラウザ環境かChrome拡張環境かを判定

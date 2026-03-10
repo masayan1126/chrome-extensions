@@ -25,7 +25,8 @@ export const selectDirectory = async (): Promise<FileSystemDirectoryHandle | nul
 export const readDirectory = async (
   handle: FileSystemDirectoryHandle,
   depth: number = 0,
-  maxDepth: number = 5
+  maxDepth: number = 5,
+  showHiddenFiles: boolean = false
 ): Promise<DirectoryInfo> => {
   const files: FileInfo[] = [];
   const directories: DirectoryInfo[] = [];
@@ -47,8 +48,8 @@ export const readDirectory = async (
         path: `${handle.name}/${entry.name}`,
         handle: entry as FileSystemFileHandle,
       });
-    } else if (entry.kind === 'directory' && !entry.name.startsWith('.')) {
-      const subDir = await readDirectory(entry as FileSystemDirectoryHandle, depth + 1, maxDepth);
+    } else if (entry.kind === 'directory' && (showHiddenFiles || !entry.name.startsWith('.'))) {
+      const subDir = await readDirectory(entry as FileSystemDirectoryHandle, depth + 1, maxDepth, showHiddenFiles);
       // Markdownファイルを含むディレクトリのみ追加
       if (subDir.files.length > 0 || subDir.directories.length > 0) {
         directories.push(subDir);

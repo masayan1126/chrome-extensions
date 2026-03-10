@@ -40,15 +40,15 @@ renderer.code = ({ text, lang }) => {
   return `<pre class="hljs"><code class="language-${language}">${highlighted}</code></pre>`;
 };
 
-// タスクリスト対応（インライン要素を明示的にパース）
-renderer.listitem = ({ text, task, checked }) => {
-  const rendered = marked.parseInline(text) as string;
-  if (task) {
+// タスクリスト対応（通常関数で this.parser を使いネスト構造を保持）
+renderer.listitem = function (token) {
+  const body = this.parser.parse(token.tokens);
+  if (token.task) {
     return `<li class="task-list-item"><input type="checkbox" ${
-      checked ? 'checked' : ''
-    } disabled />${rendered}</li>`;
+      token.checked ? 'checked' : ''
+    } disabled />${body}</li>`;
   }
-  return `<li>${rendered}</li>`;
+  return `<li>${body}</li>`;
 };
 
 // markedの設定

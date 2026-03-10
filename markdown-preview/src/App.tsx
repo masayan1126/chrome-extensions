@@ -28,7 +28,7 @@ const App: React.FC = () => {
     toggleDirectory,
     refreshDirectory,
     restoreStoredDirectory,
-  } = useFileSystem();
+  } = useFileSystem(settings.showHiddenFiles);
 
   const {
     tabs,
@@ -113,18 +113,42 @@ const App: React.FC = () => {
     setIsDragOver(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
 
-    const files = Array.from(e.dataTransfer.files);
-    for (const file of files) {
-      if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+    const items = Array.from(e.dataTransfer.items);
+    for (const item of items) {
+      if (item.kind !== 'file') continue;
+
+      // FileSystemFileHandle を取得して監視可能にする
+      if ('getAsFileSystemHandle' in item) {
+        try {
+          const handle = await (item as DataTransferItem & { getAsFileSystemHandle(): Promise<FileSystemHandle> }).getAsFileSystemHandle();
+          if (handle && handle.kind === 'file') {
+            const fileHandle = handle as FileSystemFileHandle;
+            if (fileHandle.name.endsWith('.md') || fileHandle.name.endsWith('.markdown')) {
+              openTab({
+                name: fileHandle.name,
+                path: fileHandle.name,
+                handle: fileHandle,
+              });
+              continue;
+            }
+          }
+        } catch {
+          // フォールバック
+        }
+      }
+
+      // フォールバック: ハンドルなしで読み込み（監視不可）
+      const file = item.getAsFile();
+      if (file && (file.name.endsWith('.md') || file.name.endsWith('.markdown'))) {
         openDroppedFile(file);
       }
     }
-  }, [openDroppedFile]);
+  }, [openTab, openDroppedFile]);
 
   const handleSaveCustomTheme = useCallback(
     (theme: Theme) => {
@@ -179,6 +203,8 @@ const App: React.FC = () => {
           isLoading={fileLoading}
           canRestore={canRestore}
           onRestore={restoreStoredDirectory}
+          showHiddenFiles={settings.showHiddenFiles}
+          onToggleHiddenFiles={() => updateSettings({ showHiddenFiles: !settings.showHiddenFiles })}
         />
 
         <div

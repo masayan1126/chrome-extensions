@@ -8,7 +8,7 @@ import {
   restoreDirectoryWithPermission,
 } from '../utils/directoryStorage';
 
-export const useFileSystem = () => {
+export const useFileSystem = (showHiddenFiles: boolean = false) => {
   const [directory, setDirectory] = useState<DirectoryInfo | null>(null);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
   const [fileContent, setFileContent] = useState<string>('');
@@ -19,6 +19,7 @@ export const useFileSystem = () => {
 
   const watchIntervalRef = useRef<number | null>(null);
   const lastModifiedRef = useRef<number>(0);
+  const directoryHandleRef = useRef<FileSystemDirectoryHandle | null>(null);
 
   // 初期化時にストレージからディレクトリを復元
   useEffect(() => {
@@ -26,8 +27,9 @@ export const useFileSystem = () => {
       try {
         const storedHandle = await loadDirectoryFromStorage();
         if (storedHandle) {
-          const dirInfo = await readDirectory(storedHandle);
+          const dirInfo = await readDirectory(storedHandle, 0, 5, showHiddenFiles);
           setDirectory(dirInfo);
+          directoryHandleRef.current = storedHandle;
         } else {
           // 権限がないが保存されたディレクトリがある場合
           const hasStored = await hasStoredDirectory();
@@ -43,7 +45,24 @@ export const useFileSystem = () => {
     };
 
     restoreDirectory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // showHiddenFiles が変更されたらディレクトリを再読み込み
+  useEffect(() => {
+    if (!isInitialized || !directoryHandleRef.current) return;
+
+    const refresh = async () => {
+      try {
+        const dirInfo = await readDirectory(directoryHandleRef.current!, 0, 5, showHiddenFiles);
+        setDirectory(dirInfo);
+      } catch (err) {
+        console.error('Failed to refresh directory:', err);
+      }
+    };
+
+    refresh();
+  }, [showHiddenFiles, isInitialized]);
 
   // ユーザー操作で権限を要求してディレクトリを復元
   const restoreStoredDirectory = useCallback(async () => {
@@ -53,8 +72,9 @@ export const useFileSystem = () => {
     try {
       const handle = await restoreDirectoryWithPermission();
       if (handle) {
-        const dirInfo = await readDirectory(handle);
+        const dirInfo = await readDirectory(handle, 0, 5, showHiddenFiles);
         setDirectory(dirInfo);
+        directoryHandleRef.current = handle;
         setCanRestore(false);
       }
     } catch (err) {
@@ -62,7 +82,7 @@ export const useFileSystem = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [showHiddenFiles]);
 
   const openDirectory = useCallback(async () => {
     setIsLoading(true);
@@ -71,8 +91,9 @@ export const useFileSystem = () => {
     try {
       const handle = await selectDirectory();
       if (handle) {
-        const dirInfo = await readDirectory(handle);
+        const dirInfo = await readDirectory(handle, 0, 5, showHiddenFiles);
         setDirectory(dirInfo);
+        directoryHandleRef.current = handle;
         setSelectedFile(null);
         setFileContent('');
         // ディレクトリをストレージに保存
@@ -83,7 +104,7 @@ export const useFileSystem = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [showHiddenFiles]);
 
   const selectFile = useCallback(async (file: FileInfo) => {
     setIsLoading(true);
@@ -117,18 +138,18 @@ export const useFileSystem = () => {
   }, []);
 
   const refreshDirectory = useCallback(async () => {
-    if (!directory) return;
+    if (!directoryHandleRef.current) return;
 
     setIsLoading(true);
     try {
-      const dirInfo = await readDirectory(directory.handle);
+      const dirInfo = await readDirectory(directoryHandleRef.current, 0, 5, showHiddenFiles);
       setDirectory(dirInfo);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'ディレクトリを更新できませんでした');
     } finally {
       setIsLoading(false);
     }
-  }, [directory]);
+  }, [showHiddenFiles]);
 
   // ファイル変更の監視
   const startWatching = useCallback(() => {

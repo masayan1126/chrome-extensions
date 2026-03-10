@@ -85,6 +85,7 @@ export interface AppSettings {
   showLineNumbers: boolean;
   showTOC: boolean;
   fontFamily: FontFamily;
+  showHiddenFiles: boolean;
 }
 
 export interface StoredDirectory {

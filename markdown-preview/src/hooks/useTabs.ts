@@ -9,6 +9,10 @@ export const useTabs = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const watchIntervalsRef = useRef<Map<string, number>>(new Map());
   const lastModifiedRef = useRef<Map<string, number>>(new Map());
+  const tabsRef = useRef<OpenTab[]>([]);
+
+  // tabsRef を常に最新に保つ
+  tabsRef.current = tabs;
 
   const activeTab = tabs.find((t) => t.id === activeTabId) || null;
   const activeContent = activeTab?.content || '';
@@ -72,7 +76,7 @@ export const useTabs = () => {
 
   // タブを開く（既に開いていれば選択する）
   const openTab = useCallback(async (file: FileInfo) => {
-    const existingTab = tabs.find((t) => t.file.path === file.path);
+    const existingTab = tabsRef.current.find((t) => t.file.path === file.path);
 
     if (existingTab) {
       setActiveTabId(existingTab.id);
@@ -95,13 +99,13 @@ export const useTabs = () => {
     } catch (error) {
       console.error('Failed to open tab:', error);
     }
-  }, [tabs]);
+  }, []);
 
-  // ドロップされたファイルをタブとして開く
+  // ドロップされたファイルをタブとして開く（ハンドルなしのフォールバック）
   const openDroppedFile = useCallback(async (file: File) => {
     if (!file.name.endsWith('.md') && !file.name.endsWith('.markdown')) return;
 
-    const existingTab = tabs.find((t) => t.file.name === file.name && !t.file.handle);
+    const existingTab = tabsRef.current.find((t) => t.file.name === file.name && !t.file.handle);
     if (existingTab) {
       setActiveTabId(existingTab.id);
       return;
@@ -125,7 +129,7 @@ export const useTabs = () => {
     } catch (error) {
       console.error('Failed to open dropped file:', error);
     }
-  }, [tabs]);
+  }, []);
 
   // タブを閉じる
   const closeTab = useCallback((tabId: string) => {
@@ -165,11 +169,8 @@ export const useTabs = () => {
     setTabs(newTabs);
   }, []);
 
-  // ファイル変更の監視を開始
+  // ファイル変更の監視を開始（tabsRef を使って常に最新のタブを参照）
   const startWatchingTab = useCallback((tabId: string) => {
-    const tab = tabs.find((t) => t.id === tabId);
-    if (!tab) return;
-
     // 既存の監視を停止
     const existingInterval = watchIntervalsRef.current.get(tabId);
     if (existingInterval) {
@@ -178,8 +179,8 @@ export const useTabs = () => {
 
     const interval = window.setInterval(async () => {
       try {
-        const currentTab = tabs.find((t) => t.id === tabId);
-        if (!currentTab) return;
+        const currentTab = tabsRef.current.find((t) => t.id === tabId);
+        if (!currentTab?.file.handle) return;
 
         const lastModified = await getFileLastModified(currentTab.file.handle);
         const prevLastModified = lastModifiedRef.current.get(tabId) || 0;
@@ -199,7 +200,7 @@ export const useTabs = () => {
     }, 1000);
 
     watchIntervalsRef.current.set(tabId, interval);
-  }, [tabs]);
+  }, []);
 
   // ファイル変更の監視を停止
   const stopWatchingTab = useCallback((tabId: string) => {
