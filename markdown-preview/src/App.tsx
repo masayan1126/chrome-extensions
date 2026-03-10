@@ -142,7 +142,7 @@ const App: React.FC = () => {
         }
       }
 
-      // フォールバック: ハンドルなしで読み込み（監視不可）
+      // フォールバック: ハンドルなしで読み込み（ファイル変更の自動検知は不可）
       const file = item.getAsFile();
       if (file && (file.name.endsWith('.md') || file.name.endsWith('.markdown'))) {
         openDroppedFile(file);

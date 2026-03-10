@@ -54,15 +54,16 @@ export const saveTabsToStorage = async (
     // 既存のデータをクリア
     store.clear();
 
-    // タブデータを保存
+    // タブデータを保存（ハンドルがないタブは復元不可のため除外）
+    const validTabs = tabs.filter((tab) => tab.file.handle);
     const data: TabStorageData = {
-      tabs: tabs.map((tab) => ({
+      tabs: validTabs.map((tab) => ({
         id: tab.id,
         filePath: tab.file.path,
         fileName: tab.file.name,
         fileHandle: tab.file.handle,
       })),
-      activeTabId,
+      activeTabId: validTabs.some((tab) => tab.id === activeTabId) ? activeTabId : null,
     };
 
     store.put({ id: 'tabData', ...data });
@@ -108,6 +109,11 @@ export const loadTabsFromStorage = async (): Promise<{
 
         for (const storedTab of data.tabs) {
           try {
+            // ハンドルがないタブ（D&Dで開いたファイルなど）はスキップ
+            if (!storedTab.fileHandle) {
+              continue;
+            }
+
             // 権限の確認（型をキャスト）
             const handle = storedTab.fileHandle as FileSystemFileHandleWithPermission;
             const permission = await handle.queryPermission({ mode: 'read' });
