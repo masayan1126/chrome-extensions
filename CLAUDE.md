@@ -1,0 +1,2 @@
+- 実装変更後は必ずzipを作り直すこと
+- manifest.jsonのversionも更新すること
