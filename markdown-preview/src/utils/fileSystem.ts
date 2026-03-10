@@ -2,7 +2,7 @@ import type { DirectoryInfo, FileInfo } from '../types';
 
 const MARKDOWN_EXTENSIONS = ['.md', '.markdown', '.mdx', '.mkd'];
 
-const isMarkdownFile = (name: string): boolean => {
+export const isMarkdownFile = (name: string): boolean => {
   const lowerName = name.toLowerCase();
   return MARKDOWN_EXTENSIONS.some((ext) => lowerName.endsWith(ext));
 };
@@ -26,10 +26,14 @@ export const readDirectory = async (
   handle: FileSystemDirectoryHandle,
   depth: number = 0,
   maxDepth: number = 5,
-  showHiddenFiles: boolean = false
+  showHiddenFiles: boolean = false,
+  isInsideHiddenDir: boolean = false
 ): Promise<DirectoryInfo> => {
   const files: FileInfo[] = [];
   const directories: DirectoryInfo[] = [];
+
+  // 隠しディレクトリ内かつshowHiddenFiles時はすべてのファイル・ディレクトリを表示
+  const showAllContents = showHiddenFiles && isInsideHiddenDir;
 
   if (depth >= maxDepth) {
     return {
@@ -42,16 +46,38 @@ export const readDirectory = async (
   }
 
   for await (const entry of handle.values()) {
-    if (entry.kind === 'file' && isMarkdownFile(entry.name)) {
-      files.push({
-        name: entry.name,
-        path: `${handle.name}/${entry.name}`,
-        handle: entry as FileSystemFileHandle,
-      });
+    if (entry.kind === 'file') {
+      const isMd = isMarkdownFile(entry.name);
+
+      // 通常モード: マークダウンファイルのみ表示
+      // 隠しディレクトリ内: すべてのファイルを表示
+      if (showAllContents || isMd) {
+        // showHiddenFilesがfalseの場合、ドットで始まるファイルはスキップ
+        if (!showHiddenFiles && entry.name.startsWith('.')) {
+          continue;
+        }
+        files.push({
+          name: entry.name,
+          path: `${handle.name}/${entry.name}`,
+          handle: entry as FileSystemFileHandle,
+          isMarkdown: isMd,
+        });
+      }
     } else if (entry.kind === 'directory' && (showHiddenFiles || !entry.name.startsWith('.'))) {
-      const subDir = await readDirectory(entry as FileSystemDirectoryHandle, depth + 1, maxDepth, showHiddenFiles);
-      // Markdownファイルを含むディレクトリのみ追加
-      if (subDir.files.length > 0 || subDir.directories.length > 0) {
+      const isHiddenDir = entry.name.startsWith('.');
+      const childInsideHidden = isInsideHiddenDir || isHiddenDir;
+      const subDir = await readDirectory(
+        entry as FileSystemDirectoryHandle,
+        depth + 1,
+        maxDepth,
+        showHiddenFiles,
+        childInsideHidden
+      );
+
+      // 隠しディレクトリ内: すべてのサブディレクトリを表示
+      // 隠しディレクトリ自体: showHiddenFiles時に常に表示
+      // それ以外: コンテンツを含む場合のみ
+      if (showAllContents || subDir.files.length > 0 || subDir.directories.length > 0 || (isHiddenDir && showHiddenFiles)) {
         directories.push(subDir);
       }
     }

@@ -25,8 +25,8 @@ interface ContextMenuState {
 }
 
 
-const FileIcon: React.FC = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const FileIcon: React.FC<{ isMarkdown?: boolean }> = ({ isMarkdown = true }) => (
+  <svg className={`w-4 h-4 ${isMarkdown ? '' : 'opacity-50'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -103,22 +103,27 @@ const DirectoryTree: React.FC<{
               onContextMenu={onContextMenu}
             />
           ))}
-          {dir.files.map((file) => (
-            <button
-              key={file.path}
-              onClick={() => onSelectFile(file)}
-              onContextMenu={(e) => onContextMenu(e, 'file', file, undefined)}
-              className={`flex items-center gap-2 px-2 py-1 w-full text-left text-sm rounded transition-colors ${
-                selectedFile?.path === file.path
-                  ? 'bg-neutral-600 text-white'
-                  : 'hover:bg-neutral-700/50 text-neutral-300'
-              }`}
-              style={{ paddingLeft: `${(depth + 1) * 12 + 8}px` }}
-            >
-              <FileIcon />
-              <span className="truncate">{file.name}</span>
-            </button>
-          ))}
+          {dir.files.map((file) => {
+            const isMarkdown = file.isMarkdown !== false;
+            return (
+              <button
+                key={file.path}
+                onClick={isMarkdown ? () => onSelectFile(file) : undefined}
+                onContextMenu={(e) => onContextMenu(e, 'file', file, undefined)}
+                className={`flex items-center gap-2 px-2 py-1 w-full text-left text-sm rounded transition-colors ${
+                  !isMarkdown
+                    ? 'text-neutral-500 cursor-default'
+                    : selectedFile?.path === file.path
+                      ? 'bg-neutral-600 text-white'
+                      : 'hover:bg-neutral-700/50 text-neutral-300'
+                }`}
+                style={{ paddingLeft: `${(depth + 1) * 12 + 8}px` }}
+              >
+                <FileIcon isMarkdown={isMarkdown} />
+                <span className="truncate">{file.name}</span>
+              </button>
+            );
+          })}
         </>
       )}
     </div>

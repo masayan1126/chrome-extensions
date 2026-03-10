@@ -51,6 +51,7 @@ export interface FileInfo {
   name: string;
   path: string;
   handle: FileSystemFileHandle;
+  isMarkdown?: boolean;
 }
 
 export interface DirectoryInfo {
