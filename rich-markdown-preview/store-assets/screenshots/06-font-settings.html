@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; width: 1280px; height: 800px; overflow: hidden; }
+
+.toolbar { height: 48px; background: #171717; border-bottom: 1px solid #404040; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.toolbar-left { display: flex; align-items: center; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 24px; height: 24px; background: #262626; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fafafa; font-weight: 900; font-size: 11px; }
+.logo-text { font-weight: 600; color: #fff; font-size: 14px; }
+
+.main { display: flex; height: calc(100% - 48px); }
+.sidebar { width: 256px; background: #262626; border-right: 1px solid #404040; }
+.sidebar-header { padding: 12px; border-bottom: 1px solid #404040; display: flex; gap: 8px; }
+.open-btn { flex: 1; padding: 8px 12px; background: #404040; border: none; border-radius: 4px; color: #fafafa; font-size: 13px; }
+.refresh-btn { width: 36px; height: 36px; background: #404040; border: none; border-radius: 4px; color: #fafafa; }
+.file-tree { padding: 8px 0; }
+.tree-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 13px; color: #d4d4d4; }
+.tree-item.active { background: #525252; color: #fff; }
+
+.content-area { flex: 1; background: #0d1117; position: relative; }
+.tab-bar { height: 36px; background: #262626; border-bottom: 1px solid #404040; display: flex; }
+.tab { display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 12px; color: #fff; background: #171717; border-right: 1px solid #404040; min-width: 120px; }
+
+.preview-dim { padding: 48px 64px; opacity: 0.3; filter: blur(1px); }
+.preview-dim h1 { font-size: 28px; color: #c9d1d9; margin-bottom: 12px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+.preview-dim p { font-size: 15px; line-height: 1.7; color: #8b949e; margin-bottom: 12px; }
+
+/* Modal overlay */
+.modal-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; }
+.modal { background: #262626; border-radius: 12px; width: 520px; max-height: 700px; overflow: hidden; border: 1px solid #404040; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+.modal-header { padding: 12px 16px; border-bottom: 1px solid #404040; display: flex; align-items: center; justify-content: space-between; }
+.modal-header h2 { font-size: 16px; font-weight: 600; color: #fff; }
+.modal-close { width: 24px; height: 24px; background: none; border: none; color: #737373; font-size: 18px; cursor: pointer; }
+.modal-body { padding: 14px 20px; overflow-y: auto; max-height: 620px; }
+
+/* Setting group */
+.setting-group { margin-bottom: 16px; }
+.setting-group:last-child { margin-bottom: 0; }
+.setting-label { font-size: 12px; font-weight: 500; color: #a3a3a3; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+.setting-value { font-size: 12px; color: #737373; font-weight: 400; background: #333; padding: 2px 8px; border-radius: 4px; }
+
+/* Font selector */
+.font-grid { display: grid; grid-template-columns: 1fr; gap: 4px; }
+.font-btn { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 6px; border: 1px solid #404040; background: none; cursor: pointer; text-align: left; transition: all 0.15s; }
+.font-btn.selected { border-color: #a3a3a3; background: rgba(82,82,82,0.3); }
+.font-btn:hover { border-color: #525252; }
+.font-sample { font-size: 18px; color: #e5e5e5; width: 32px; text-align: center; flex-shrink: 0; }
+.font-info { display: flex; flex-direction: column; }
+.font-name { font-size: 12px; color: #e5e5e5; font-weight: 500; }
+.font-desc { font-size: 10px; color: #737373; }
+
+/* Slider */
+.slider-row { display: flex; align-items: center; gap: 12px; }
+.slider-track { flex: 1; height: 6px; background: #404040; border-radius: 3px; position: relative; overflow: visible; }
+.slider-fill { height: 100%; border-radius: 3px; background: #a3a3a3; }
+.slider-thumb { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #fff; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.slider-min, .slider-max { font-size: 11px; color: #525252; min-width: 36px; }
+.slider-min { text-align: right; }
+
+/* Width selector */
+.width-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.width-btn { padding: 8px 4px; border-radius: 6px; border: 1px solid #404040; background: none; cursor: pointer; text-align: center; }
+.width-btn.selected { border-color: #a3a3a3; background: rgba(82,82,82,0.3); }
+.width-icon { display: block; margin: 0 auto 4px; height: 20px; }
+.width-icon-bar { display: block; margin: 0 auto; background: #737373; height: 3px; border-radius: 2px; }
+.width-btn.selected .width-icon-bar { background: #e5e5e5; }
+.width-name { font-size: 11px; color: #a3a3a3; }
+.width-btn.selected .width-name { color: #e5e5e5; }
+
+.modal-footer { padding: 10px 16px; border-top: 1px solid #404040; display: flex; justify-content: flex-end; gap: 8px; }
+.btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; border: none; cursor: pointer; }
+.btn-ghost { background: none; color: #a3a3a3; border: 1px solid #404040; }
+.btn-primary { background: #525252; color: #fff; }
+
+.toc { width: 256px; background: #262626; border-left: 1px solid #404040; opacity: 0.3; }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <div class="logo"><div class="logo-icon">M</div><span class="logo-text">Rich Markdown Preview</span></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-header"><button class="open-btn">📁 フォルダを開く</button><button class="refresh-btn">↻</button></div>
+    <div class="file-tree">
+      <div class="tree-item"><span>📂</span> project</div>
+      <div class="tree-item active" style="padding-left:28px"><span>📄</span> README.md</div>
+      <div class="tree-item" style="padding-left:28px"><span>📄</span> guide.md</div>
+      <div class="tree-item" style="padding-left:28px"><span>📄</span> changelog.md</div>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <div class="tab-bar"><div class="tab">📄 README.md ✕</div></div>
+    <div class="preview-dim">
+      <h1>Project Documentation</h1>
+      <p>This is a sample markdown file being previewed with the Rich Markdown Preview extension.</p>
+      <p>Select a theme from the theme panel to customize the appearance of your preview.</p>
+    </div>
+
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>🔤 フォント・テキスト設定</h2>
+          <button class="modal-close">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Font Family -->
+          <div class="setting-group">
+            <div class="setting-label">フォントファミリー</div>
+            <div class="font-grid">
+              <button class="font-btn selected">
+                <div class="font-sample" style="font-family: sans-serif;">Aa</div>
+                <div class="font-info"><span class="font-name">Noto Sans JP</span><span class="font-desc">ゴシック体 — すっきりモダン</span></div>
+              </button>
+              <button class="font-btn">
+                <div class="font-sample" style="font-family: serif;">Aa</div>
+                <div class="font-info"><span class="font-name">Noto Serif JP</span><span class="font-desc">明朝体 — 落ち着いた品のある書体</span></div>
+              </button>
+              <button class="font-btn">
+                <div class="font-sample" style="font-family: sans-serif; font-weight: 400;">Aa</div>
+                <div class="font-info"><span class="font-name">Zen Kaku Gothic New</span><span class="font-desc">ゴシック体 — ニュートラルな雰囲気</span></div>
+              </button>
+              <button class="font-btn">
+                <div class="font-sample" style="font-family: sans-serif; letter-spacing: 1px;">Aa</div>
+                <div class="font-info"><span class="font-name">Zen Maru Gothic</span><span class="font-desc">丸ゴシック — 柔らかい印象</span></div>
+              </button>
+              <button class="font-btn">
+                <div class="font-sample" style="font-family: sans-serif; font-weight: 300;">Aa</div>
+                <div class="font-info"><span class="font-name">M PLUS Rounded 1c</span><span class="font-desc">丸ゴシック — やさしく親しみやすい</span></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Font Size -->
+          <div class="setting-group">
+            <div class="setting-label">フォントサイズ <span class="setting-value">16px</span></div>
+            <div class="slider-row">
+              <span class="slider-min">12</span>
+              <div class="slider-track">
+                <div class="slider-fill" style="width: 20%;"></div>
+                <div class="slider-thumb" style="left: 20%;"></div>
+              </div>
+              <span class="slider-max">32px</span>
+            </div>
+          </div>
+
+          <!-- Line Height -->
+          <div class="setting-group">
+            <div class="setting-label">行間（Line Height） <span class="setting-value">1.8</span></div>
+            <div class="slider-row">
+              <span class="slider-min">1.0</span>
+              <div class="slider-track">
+                <div class="slider-fill" style="width: 40%;"></div>
+                <div class="slider-thumb" style="left: 40%;"></div>
+              </div>
+              <span class="slider-max">3.0</span>
+            </div>
+          </div>
+
+          <!-- Letter Spacing -->
+          <div class="setting-group">
+            <div class="setting-label">文字間隔（Letter Spacing） <span class="setting-value">0.02em</span></div>
+            <div class="slider-row">
+              <span class="slider-min">-0.05</span>
+              <div class="slider-track">
+                <div class="slider-fill" style="width: 28%;"></div>
+                <div class="slider-thumb" style="left: 28%;"></div>
+              </div>
+              <span class="slider-max">0.2em</span>
+            </div>
+          </div>
+
+          <!-- Content Width -->
+          <div class="setting-group">
+            <div class="setting-label">コンテンツ幅</div>
+            <div class="width-grid">
+              <button class="width-btn">
+                <div class="width-icon"><div class="width-icon-bar" style="width: 24px;"></div></div>
+                <span class="width-name">狭い</span>
+              </button>
+              <button class="width-btn selected">
+                <div class="width-icon"><div class="width-icon-bar" style="width: 36px;"></div></div>
+                <span class="width-name">中</span>
+              </button>
+              <button class="width-btn">
+                <div class="width-icon"><div class="width-icon-bar" style="width: 48px;"></div></div>
+                <span class="width-name">広い</span>
+              </button>
+              <button class="width-btn">
+                <div class="width-icon"><div class="width-icon-bar" style="width: 60px;"></div></div>
+                <span class="width-name">全幅</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost">キャンセル</button>
+          <button class="btn btn-primary">適用</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toc"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rich Markdown Preview — Chrome Extension</title>
+  <meta name="description" content="The best way to read local Markdown. 25 themes, Japanese fonts, folder browsing, live sync with your editor, and tab management.">
+
+  <!-- OGP -->
+  <meta property="og:title" content="Rich Markdown Preview — Chrome Extension">
+  <meta property="og:description" content="Read local Markdown files — beautifully, freely, your way.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/01-main-preview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rich Markdown Preview">
+  <meta name="twitter:description" content="The best way to read local Markdown. 25 themes, Japanese fonts, live sync.">
+  <meta name="twitter:image" content="images/01-main-preview.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/icon-128.svg" type="image/svg+xml">
+
+  <style>
+    /* ========================================
+       CSS Custom Properties
+       ======================================== */
+    :root {
+      --bg-main: #000000;
+      --bg-card: #111111;
+      --bg-elevated: #181818;
+      --text-primary: #f0f0f0;
+      --text-secondary: #888888;
+      --text-tertiary: #555555;
+      --border: #1e1e1e;
+      --border-light: #151515;
+      --accent: #ffffff;
+      --accent-hover: #cccccc;
+      --accent-muted: rgba(255, 255, 255, 0.08);
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --purple: #c084fc;
+      --pink: #f472b6;
+      --orange: #fb923c;
+      --font-display: 'Instrument Serif', 'Noto Sans JP', serif;
+      --font-body: 'Instrument Sans', 'Noto Sans JP', sans-serif;
+      --font-jp: 'Noto Sans JP', sans-serif;
+      --font-mono: 'Instrument Sans', monospace;
+      --nav-height: 72px;
+      --section-gap: 160px;
+      --content-max: 1320px;
+    }
+
+    /* ========================================
+       Reset & Base
+       ======================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--nav-height) + 24px);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
+    img { max-width: 100%; display: block; }
+
+    /* ========================================
+       Language Switching
+       ======================================== */
+    html[lang="ja"] [data-en] { display: none !important; }
+    html[lang="en"] [data-ja] { display: none !important; }
+
+    /* ========================================
+       Typography
+       ======================================== */
+    h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; letter-spacing: -0.02em; }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      max-width: 600px;
+    }
+
+    /* ========================================
+       Navigation
+       ======================================== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .nav.scrolled {
+      border-bottom-color: var(--border);
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    .nav-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 16px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      padding: 4px 0;
+      transition: color 0.2s;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 1px;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .lang-toggle:hover {
+      border-color: #444;
+      color: var(--text-primary);
+      background: var(--accent-muted);
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: var(--bg-main) !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+    }
+
+    /* ========================================
+       Hero Section
+       ======================================== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--nav-height) + 40px) 0 60px;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+    }
+
+    .orb-1 {
+      width: 700px;
+      height: 700px;
+      background: rgba(255, 255, 255, 0.04);
+      top: -250px;
+      left: -150px;
+      animation: orbFloat1 30s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 255, 255, 0.03);
+      top: 20%;
+      right: -150px;
+      animation: orbFloat2 25s ease-in-out infinite;
+    }
+
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.02);
+      bottom: -100px;
+      left: 25%;
+      animation: orbFloat3 20s ease-in-out infinite;
+    }
+
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -30px) scale(1.08); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-50px, 30px) scale(1.1); }
+    }
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -40px); }
+    }
+
+    /* Ghost markdown pattern */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 50% 50%, transparent 60%, var(--bg-main) 100%);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: var(--content-max);
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-text {
+      text-align: left;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: rgba(17, 17, 17, 0.6);
+      backdrop-filter: blur(10px);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 0 32px;
+      line-height: 1.8;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 18px;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid;
+      letter-spacing: 0.02em;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .hero-pill:hover {
+      transform: translateY(-2px);
+    }
+
+    .pill-blue,
+    .pill-green,
+    .pill-purple,
+    .pill-orange,
+    .pill-pink {
+      color: #aaa;
+      border-color: #2a2a2a;
+      background: #0a0a0a;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: var(--bg-main) !important;
+      padding: 16px 36px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      background: var(--accent-hover);
+    }
+
+    .cta-primary svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Browser Frame Mockup */
+    .browser-frame {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--bg-card);
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.8),
+        0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;
+    }
+
+    .browser-frame:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 32px 100px rgba(0, 0, 0, 0.9),
+        0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .browser-bar {
+      height: 44px;
+      background: var(--bg-main);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+    }
+
+    .browser-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .browser-dot:nth-child(1) { background: #333; }
+    .browser-dot:nth-child(2) { background: #333; }
+    .browser-dot:nth-child(3) { background: #333; }
+
+    .browser-bar-url {
+      flex: 1;
+      margin-left: 12px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(110, 118, 129, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .browser-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .hero-screenshot {
+      max-width: 100%;
+    }
+
+    /* ========================================
+       Feature Sections
+       ======================================== */
+    .features {
+      padding: 0 24px;
+    }
+
+    .feature {
+      max-width: var(--content-max);
+      margin: 0 auto var(--section-gap);
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .feature--reversed {
+      grid-template-columns: 7fr 5fr;
+    }
+
+    .feature--reversed .feature-text { order: 2; }
+    .feature--reversed .feature-image { order: 1; }
+
+    .feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: #aaa;
+      margin-bottom: 16px;
+      padding: 5px 14px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+
+    .feature h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 400;
+      margin-bottom: 20px;
+    }
+
+    .feature-desc {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .feature-list li::before {
+      content: '→';
+      color: #555;
+      font-weight: 400;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .feature-image .browser-frame {
+      max-width: 100%;
+    }
+
+    /* ========================================
+       Additional Features Grid
+       ======================================== */
+    .more-features {
+      max-width: var(--content-max);
+      margin: 0 auto var(--section-gap);
+      padding: 0 24px;
+    }
+
+    .more-features-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(17, 17, 17, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .card:hover {
+      border-color: #333;
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-family: var(--font-body);
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ========================================
+       Comparison Table
+       ======================================== */
+    .comparison {
+      max-width: var(--content-max);
+      margin: 0 auto var(--section-gap);
+      padding: 0 24px;
+    }
+
+    .comparison-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .table-wrapper {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--bg-card);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table thead th {
+      background: var(--bg-main);
+      padding: 18px 24px;
+      text-align: left;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .comparison-table thead th:first-child {
+      width: 30%;
+    }
+
+    .comparison-table thead th:nth-child(2) {
+      color: var(--text-primary);
+    }
+
+    .comparison-table tbody td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table tbody tr {
+      transition: background 0.2s;
+    }
+
+    .comparison-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .comparison-table td:first-child {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .check { color: var(--green); font-weight: 700; }
+    .cross { color: var(--red); font-weight: 700; }
+    .partial { color: var(--yellow); font-weight: 700; }
+
+    .check::before { content: '✓ '; }
+    .cross::before { content: '✕ '; }
+    .partial::before { content: '△ '; }
+
+    /* ========================================
+       How To Use
+       ======================================== */
+    .howto {
+      max-width: 800px;
+      margin: 0 auto var(--section-gap);
+      padding: 0 24px;
+    }
+
+    .howto-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .steps {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      padding-left: 64px;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, #333, transparent);
+      border-radius: 1px;
+    }
+
+    .step {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .step-number {
+      position: absolute;
+      left: -64px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg-main);
+      border: 1px solid #333;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 20px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .step-content h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      padding-top: 10px;
+    }
+
+    .step-content p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .howto-tip {
+      margin-top: 48px;
+      padding: 20px 28px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .howto-tip strong {
+      color: var(--text-primary);
+    }
+
+    /* ========================================
+       Privacy Section
+       ======================================== */
+    .privacy-section {
+      max-width: 800px;
+      margin: 0 auto var(--section-gap);
+      padding: 0 24px;
+    }
+
+    .privacy-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 56px 48px;
+      text-align: center;
+    }
+
+    .privacy-card .shield-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .privacy-card h2 {
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      font-weight: 400;
+      margin-bottom: 20px;
+    }
+
+    .privacy-card p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      max-width: 520px;
+      margin: 0 auto 28px;
+      line-height: 1.8;
+    }
+
+    .privacy-features {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .privacy-feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .privacy-feature-icon {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .privacy-link {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* ========================================
+       Footer
+       ======================================== */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
+    }
+
+    .footer-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .footer-logo img { width: 22px; height: 22px; }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text-primary); }
+
+    .footer-copy {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    /* ========================================
+       Scroll Reveal Animations
+       ======================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* Hero load animations */
+    .hero-anim {
+      opacity: 0;
+      transform: translateY(28px);
+      animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes heroFadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-anim-1 { animation-delay: 0s; }
+    .hero-anim-2 { animation-delay: 0.15s; }
+    .hero-anim-3 { animation-delay: 0.3s; }
+    .hero-anim-4 { animation-delay: 0.45s; }
+    .hero-anim-5 { animation-delay: 0.6s; }
+    .hero-anim-6 { animation-delay: 0.8s; }
+
+    /* ========================================
+       Divider
+       ======================================== */
+    .section-divider {
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 0 auto var(--section-gap);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    .section-divider-icon {
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    /* ========================================
+       Responsive
+       ======================================== */
+    @media (max-width: 900px) {
+      :root {
+        --section-gap: 100px;
+      }
+
+      .nav-links { display: none; }
+
+      .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-text {
+        text-align: center;
+      }
+
+      .hero-pills {
+        justify-content: center;
+      }
+
+      .hero-cta-group {
+        justify-content: center;
+      }
+
+      .hero-sub {
+        margin: 0 auto 32px;
+      }
+
+      .feature {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .feature--reversed {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-image { order: -1; }
+      .feature--reversed .feature-text { order: 2; }
+      .feature--reversed .feature-image { order: -1; }
+
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero h1 {
+        font-size: clamp(1.8rem, 7vw, 2.8rem);
+      }
+
+      .privacy-card {
+        padding: 40px 28px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      :root {
+        --section-gap: 80px;
+        --nav-height: 64px;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-pills {
+        gap: 8px;
+      }
+
+      .hero-pill {
+        font-size: 11px;
+        padding: 5px 12px;
+      }
+
+      .comparison-table thead th,
+      .comparison-table tbody td {
+        padding: 12px 14px;
+        font-size: 13px;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      .comparison-table {
+        min-width: 580px;
+      }
+
+      .steps {
+        padding-left: 56px;
+      }
+
+      .step-number {
+        left: -56px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .privacy-features {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .cta-primary {
+        padding: 14px 28px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== Navigation ======== -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="images/icon-128.svg" alt="Rich Markdown Preview" width="28" height="28">
+        <span>Rich Markdown Preview</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#features">
+          <span data-ja>機能</span>
+          <span data-en>Features</span>
+        </a>
+        <a href="#comparison">
+          <span data-ja>比較</span>
+          <span data-en>Compare</span>
+        </a>
+        <a href="#howto">
+          <span data-ja>使い方</span>
+          <span data-en>How to Use</span>
+        </a>
+      </div>
+
+      <div class="nav-actions">
+        <button class="lang-toggle" id="langToggle" aria-label="Toggle language">
+          <span data-ja>EN</span>
+          <span data-en>JA</span>
+        </button>
+        <a href="https://chromewebstore.google.com/detail/rich-markdown-preview/ojgdkdohicphaegmilnmlgaledfcopca" class="nav-cta" target="_blank" rel="noopener">
+          <span data-ja>インストール</span>
+          <span data-en>Install</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======== Hero ======== -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge hero-anim hero-anim-1">
+          <span class="hero-badge-dot"></span>
+          <span data-ja>Chrome 拡張機能</span>
+          <span data-en>Chrome Extension</span>
+        </div>
+
+        <h1 class="hero-anim hero-anim-2">
+          <span data-ja>ローカルMarkdownを、<br>最も美しく、最も自由に。</span>
+          <span data-en>Read local Markdown files —<br>beautifully, freely, your way.</span>
+        </h1>
+
+        <p class="hero-sub hero-anim hero-anim-3">
+          <span data-ja>Markdownプレビューに物足りなさを感じていませんか。25テーマ、日本語フォント、フォルダ管理、ライブ同期——妥協しないプレビュー環境を、ブラウザの中に。</span>
+          <span data-en>Tired of bare-bones Markdown previews? 25 themes, Japanese fonts, folder management, live sync — an uncompromising preview environment, right in your browser.</span>
+        </p>
+
+        <div class="hero-pills hero-anim hero-anim-4">
+          <span class="hero-pill pill-blue">
+            <span data-ja>25 テーマ</span>
+            <span data-en>25 Themes</span>
+          </span>
+          <span class="hero-pill pill-purple">
+            <span data-ja>170+ 言語</span>
+            <span data-en>170+ Languages</span>
+          </span>
+          <span class="hero-pill pill-green">
+            <span data-ja>日本語フォント</span>
+            <span data-en>JP Fonts</span>
+          </span>
+          <span class="hero-pill pill-orange">
+            <span data-ja>ライブ同期</span>
+            <span data-en>Live Sync</span>
+          </span>
+          <span class="hero-pill pill-pink">
+            <span data-ja>タブ管理</span>
+            <span data-en>Tab Management</span>
+          </span>
+        </div>
+
+        <div class="hero-cta-group hero-anim hero-anim-5">
+          <a href="https://chromewebstore.google.com/detail/rich-markdown-preview/ojgdkdohicphaegmilnmlgaledfcopca" class="cta-primary" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14"/><path d="M18 13l-6 6-6-6"/></svg>
+            <span data-ja>Chrome Web Store からインストール</span>
+            <span data-en>Install from Chrome Web Store</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-screenshot hero-anim hero-anim-6">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-bar-url">chrome-extension://rich-markdown-preview</div>
+          </div>
+          <img src="images/01-main-preview.png" alt="Rich Markdown Preview main interface" width="1280" height="800">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== Features ======== -->
+  <section class="features" id="features">
+
+    <!-- Feature 1: Beautiful Rendering & Text Settings -->
+    <div class="feature reveal">
+      <div class="feature-text">
+        <div class="feature-tag">📖
+          <span data-ja>レンダリング & テキスト設定</span>
+          <span data-en>Rendering & Text Settings</span>
+        </div>
+        <h2>
+          <span data-ja>美しいMarkdownレンダリング</span>
+          <span data-en>Beautiful Markdown Rendering</span>
+        </h2>
+        <p class="feature-desc">
+          <span data-ja>テーブル、リスト、引用、画像を美しくレンダリング。日本語フォント5書体やフォントサイズ、行間、文字間隔まで細かく調整でき、あなただけの読みやすさを実現します。</span>
+          <span data-en>Beautiful rendering of tables, lists, blockquotes, and images. Switch between 5 Japanese fonts, fine-tune font size, line height, and letter spacing for your perfect reading experience.</span>
+        </p>
+        <ul class="feature-list">
+          <li>
+            <span data-ja>日本語フォント5書体をワンクリックで切り替え</span>
+            <span data-en>5 Japanese fonts switchable with one click</span>
+          </li>
+          <li>
+            <span data-ja>フォントサイズ 12〜32px で自由に調整</span>
+            <span data-en>Font size adjustable from 12–32px</span>
+          </li>
+          <li>
+            <span data-ja>行間 1〜3倍、文字間隔 -0.05〜0.2em で細かく設定</span>
+            <span data-en>Line height 1–3×, letter spacing -0.05 to 0.2em</span>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-image">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-bar-url">preview</div>
+          </div>
+          <img src="images/01-main-preview.png" alt="Markdown rendering preview" loading="lazy" width="1280" height="800">
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: Table of Contents -->
+    <div class="feature feature--reversed reveal">
+      <div class="feature-text">
+        <div class="feature-tag">📑
+          <span data-ja>目次</span>
+          <span data-en>TOC</span>
+        </div>
+        <h2>
+          <span data-ja>目次の自動生成</span>
+          <span data-en>Auto-Generated Table of Contents</span>
+        </h2>
+        <p class="feature-desc">
+          <span data-ja>H1〜H6の見出しから目次を自動構築。クリックで該当箇所へスムーズスクロール。スクロール位置に応じて現在の見出しをリアルタイムでハイライトし、目次パネルも現在位置に自動スクロール。</span>
+          <span data-en>Automatically builds a table of contents from H1–H6 headings. Click to smoothly scroll to any section. Real-time highlight of the current heading based on scroll position, with the TOC panel auto-scrolling to keep the active item visible.</span>
+        </p>
+        <ul class="feature-list">
+          <li>
+            <span data-ja>H1〜H6の見出しから目次を自動構築</span>
+            <span data-en>Auto-builds TOC from H1–H6 headings</span>
+          </li>
+          <li>
+            <span data-ja>クリックで該当箇所へスムーズスクロール</span>
+            <span data-en>Click to smoothly scroll to any section</span>
+          </li>
+          <li>
+            <span data-ja>スクロール位置に応じて現在の見出しをリアルタイムでハイライト</span>
+            <span data-en>Real-time highlight of current heading based on scroll position</span>
+          </li>
+          <li>
+            <span data-ja>目次パネルも現在位置に自動スクロール</span>
+            <span data-en>TOC panel auto-scrolls to keep active item visible</span>
+          </li>
+          <li>
+            <span data-ja>表示/非表示をワンクリックで切り替え</span>
+            <span data-en>Toggle visibility with one click</span>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-image">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-bar-url">table-of-contents</div>
+          </div>
+          <img src="images/01-main-preview.png" alt="Table of contents" loading="lazy" width="1280" height="800">
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: Themes -->
+    <div class="feature reveal">
+      <div class="feature-text">
+        <div class="feature-tag">🎨
+          <span data-ja>テーマ</span>
+          <span data-en>Themes</span>
+        </div>
+        <h2>
+          <span data-ja>25種類のテーマ +<br>カスタムテーマ</span>
+          <span data-en>25 Themes +<br>Custom Themes</span>
+        </h2>
+        <p class="feature-desc">
+          <span data-ja>GitHub Dark/Light、Dracula、Nord、Tokyo Night、Monokai、Catppuccinなど人気テーマを網羅。カスタムテーマでは21の色要素を個別設定可能。H1〜H6の見出し色を個別に指定できる拡張はほぼ存在しません。</span>
+          <span data-en>Popular themes including GitHub Dark/Light, Dracula, Nord, Tokyo Night, Monokai, and Catppuccin. Custom themes with 21 individually configurable color elements — almost no other extension lets you set H1–H6 heading colors separately.</span>
+        </p>
+        <ul class="feature-list">
+          <li>
+            <span data-ja>ライト10種 / ダーク15種を瞬時に切り替え</span>
+            <span data-en>10 light + 15 dark themes — switch instantly</span>
+          </li>
+          <li>
+            <span data-ja>21の色要素を個別にカスタマイズ</span>
+            <span data-en>21 color elements individually customizable</span>
+          </li>
+          <li>
+            <span data-ja>アクセント・テキスト・背景・ボーダー色の一括設定</span>
+            <span data-en>Bulk color settings for accent, text, background, and border</span>
+          </li>
+          <li>
+            <span data-ja>カスタムテーマの保存・管理・削除</span>
+            <span data-en>Create, save, manage, and delete custom themes</span>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-image">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-bar-url">themes</div>
+          </div>
+          <img src="images/02-themes.png" alt="Theme selection" loading="lazy" width="1280" height="800">
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 4: Folder & Tabs -->
+    <div class="feature feature--reversed reveal">
+      <div class="feature-text">
+        <div class="feature-tag">📁
+          <span data-ja>ファイル管理</span>
+          <span data-en>File Management</span>
+        </div>
+        <h2>
+          <span data-ja>統合エディタのような<br>フォルダ管理 &タブ管理</span>
+          <span data-en>Integrated editor-like<br>folder management & tab management</span>
+        </h2>
+        <p class="feature-desc">
+          <span data-ja>フォルダを選択するだけでMarkdownファイルをツリー表示（最大5階層）。複数ファイルをブラウザライクなタブで管理。ドラッグ&ドロップで並べ替え。前回のセッションを自動復元。</span>
+          <span data-en>Select a folder to display Markdown files in a tree view (up to 5 levels deep). Manage multiple files with browser-like tabs. Drag and drop to reorder. Automatically restores your previous session.</span>
+        </p>
+        <ul class="feature-list">
+          <li>
+            <span data-ja>.md / .markdown / .mdx / .mkd に対応</span>
+            <span data-en>Supports .md / .markdown / .mdx / .mkd</span>
+          </li>
+          <li>
+            <span data-ja>エディタでの保存を1秒以内に自動検知</span>
+            <span data-en>Auto-detects file changes within 1 second</span>
+          </li>
+          <li>
+            <span data-ja>隠しファイルの表示/非表示切り替え</span>
+            <span data-en>Toggle hidden files (dotfiles) on/off</span>
+          </li>
+          <li>
+            <span data-ja>リフレッシュボタンで最新状態を即時反映</span>
+            <span data-en>Refresh button for instant directory updates</span>
+          </li>
+          <li>
+            <span data-ja>右クリックでファイルパス・ファイル名をコピー</span>
+            <span data-en>Right-click to copy file path or filename</span>
+          </li>
+          <li>
+            <span data-ja>フォルダ・タブを次回起動時に自動復元</span>
+            <span data-en>Folders & tabs auto-restored on next launch</span>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-image">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-bar-url">file-browser</div>
+          </div>
+          <img src="images/03-file-tabs.png" alt="Folder and tab management" loading="lazy" width="1280" height="800">
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ======== Comparison ======== -->
+  <section class="comparison" id="comparison">
+    <div class="comparison-header reveal">
+      <h2 class="section-title">
+        <span data-ja>他の拡張機能との違い</span>
+        <span data-en>How It Compares</span>
+      </h2>
+      <p class="section-subtitle" style="margin: 0 auto;">
+        <span data-ja>一般的なMarkdownプレビュー拡張機能との比較</span>
+        <span data-en>Compared to typical Markdown preview extensions</span>
+      </p>
+    </div>
+
+    <div class="table-wrapper reveal">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Rich Markdown Preview</th>
+            <th>
+              <span data-ja>一般的な拡張</span>
+              <span data-en>Typical Extensions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span data-ja>フォルダ管理 & ライブ同期</span>
+              <span data-en>Folder management & live sync</span>
+            </td>
+            <td>
+              <span class="check">
+                <span data-ja>ツリー表示 + 1秒以内に自動反映</span>
+                <span data-en>Tree view + auto-refresh within 1 second</span>
+              </span>
+            </td>
+            <td>
+              <span class="cross">
+                <span data-ja>単一ファイル / 手動リロード</span>
+                <span data-en>Single file / manual reload</span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-ja>タブ & セッション復元</span>
+              <span data-en>Tabs & session restore</span>
+            </td>
+            <td>
+              <span class="check">
+                <span data-ja>複数タブ + 次回起動時に自動復元</span>
+                <span data-en>Multiple tabs + auto-restored on launch</span>
+              </span>
+            </td>
+            <td>
+              <span class="cross">
+                <span data-ja>1ファイルずつ / 毎回開き直す</span>
+                <span data-en>One at a time / start from scratch</span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-ja>テーマ & カスタマイズ</span>
+              <span data-en>Themes & customization</span>
+            </td>
+            <td>
+              <span class="check">
+                <span data-ja>25種類 + 21要素を個別設定</span>
+                <span data-en>25 presets + 21 color elements</span>
+              </span>
+            </td>
+            <td>
+              <span class="partial">
+                <span data-ja>数種類 / 背景色程度</span>
+                <span data-en>A few options / background only</span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-ja>日本語フォント & テキスト設定</span>
+              <span data-en>Japanese fonts & text settings</span>
+            </td>
+            <td>
+              <span class="check">
+                <span data-ja>5書体 + サイズ・行間・文字間隔</span>
+                <span data-en>5 typefaces + size, height, spacing</span>
+              </span>
+            </td>
+            <td>
+              <span class="cross">
+                <span data-ja>未対応が多い</span>
+                <span data-en>Rarely supported</span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-ja>目次 + スクロール同期</span>
+              <span data-en>TOC + scroll sync</span>
+            </td>
+            <td>
+              <span class="check">
+                <span data-ja>リアルタイム追従</span>
+                <span data-en>Real-time tracking</span>
+              </span>
+            </td>
+            <td>
+              <span class="partial">
+                <span data-ja>静的な目次</span>
+                <span data-en>Static TOC</span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span data-ja>Mermaidダイアグラム</span>
+              <span data-en>Mermaid diagrams</span>
+            </td>
+            <td>
+              <span class="check">
+                <span data-ja>テーマ自動切替対応</span>
+                <span data-en>With auto theme switching</span>
+              </span>
+            </td>
+            <td>
+              <span class="cross">
+                <span data-ja>未対応が多い</span>
+                <span data-en>Rarely supported</span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ======== How to Use ======== -->
+  <section class="howto" id="howto">
+    <div class="howto-header reveal">
+      <h2 class="section-title">
+        <span data-ja>使い方</span>
+        <span data-en>How to Use</span>
+      </h2>
+      <p class="section-subtitle" style="margin: 0 auto;">
+        <span data-ja>4つのステップで簡単に始められます。</span>
+        <span data-en>Get started in just 4 simple steps.</span>
+      </p>
+    </div>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>
+            <span data-ja>拡張機能をインストール</span>
+            <span data-en>Install the Extension</span>
+          </h3>
+          <p>
+            <span data-ja>Chrome Web Store からインストールして、拡張機能のアイコンをクリック。</span>
+            <span data-en>Install from Chrome Web Store and click the extension icon.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>
+            <span data-ja>フォルダを開く</span>
+            <span data-en>Open a Folder</span>
+          </h3>
+          <p>
+            <span data-ja>「フォルダを開く」からMarkdownファイルが含まれるフォルダを選択。デスクトップからファイルをドラッグ&ドロップして開くことも可能。</span>
+            <span data-en>Select "Open Folder" to choose a folder containing your Markdown files. You can also drag and drop files from your desktop to open them.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>
+            <span data-ja>ファイルを選択</span>
+            <span data-en>Select a File</span>
+          </h3>
+          <p>
+            <span data-ja>ファイルリストからプレビューしたいファイルを選択。</span>
+            <span data-en>Select a file from the list to preview it instantly.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3>
+            <span data-ja>カスタマイズ</span>
+            <span data-en>Customize</span>
+          </h3>
+          <p>
+            <span data-ja>お好みのテーマやフォントを設定してお楽しみください。</span>
+            <span data-en>Customize your theme and font settings to your liking.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="howto-tip reveal">
+      <span data-ja><strong>💡 ヒント:</strong> ファイルを直接ブラウザにドラッグ&ドロップで開くこともできます。</span>
+      <span data-en><strong>💡 Tip:</strong> You can also drag and drop files directly into the browser to open them.</span>
+    </div>
+  </section>
+
+  <!-- ======== Privacy ======== -->
+  <section class="privacy-section">
+    <div class="privacy-card reveal">
+      <div class="shield-icon">🛡️</div>
+      <h2>
+        <span data-ja>プライバシーを最優先に</span>
+        <span data-en>Privacy First</span>
+      </h2>
+      <p>
+        <span data-ja>Rich Markdown Preview はユーザーのプライバシーを尊重します。データを外部に送信せず、すべてのデータはローカルに保存されます。</span>
+        <span data-en>Rich Markdown Preview respects your privacy. No data is sent externally — everything is stored locally on your device.</span>
+      </p>
+      <div class="privacy-features">
+        <div class="privacy-feature">
+          <span class="privacy-feature-icon">✓</span>
+          <span data-ja>外部データ送信なし</span>
+          <span data-en>No external data transmission</span>
+        </div>
+        <div class="privacy-feature">
+          <span class="privacy-feature-icon">✓</span>
+          <span data-ja>インターネット接続不要</span>
+          <span data-en>No internet required</span>
+        </div>
+        <div class="privacy-feature">
+          <span class="privacy-feature-icon">✓</span>
+          <span data-ja>ローカル保存のみ</span>
+          <span data-en>Local storage only</span>
+        </div>
+        <div class="privacy-feature">
+          <span class="privacy-feature-icon">✓</span>
+          <span data-ja>DOMPurifyで悪意あるスクリプトを無害化</span>
+          <span data-en>DOMPurify sanitizes malicious scripts</span>
+        </div>
+      </div>
+      <a href="privacy.html" class="privacy-link">
+        <span data-ja>プライバシーポリシーの全文を読む →</span>
+        <span data-en>Read the full Privacy Policy →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ======== Footer ======== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="images/icon-128.svg" alt="" width="22" height="22">
+        <span>Rich Markdown Preview</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://chromewebstore.google.com/detail/rich-markdown-preview/ojgdkdohicphaegmilnmlgaledfcopca" target="_blank" rel="noopener">Chrome Web Store</a>
+        <a href="privacy.html">
+          <span data-ja>プライバシーポリシー</span>
+          <span data-en>Privacy Policy</span>
+        </a>
+      </div>
+      <div class="footer-copy">
+        © 2026 Rich Markdown Preview. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======== JavaScript ======== -->
+  <script>
+    // ----------------------------
+    // Language Switcher
+    // ----------------------------
+    const langToggle = document.getElementById('langToggle');
+    const html = document.documentElement;
+
+    // Detect browser language preference
+    const savedLang = localStorage.getItem('rmp-lang');
+    if (savedLang) {
+      html.lang = savedLang;
+    }
+
+    langToggle.addEventListener('click', () => {
+      const newLang = html.lang === 'ja' ? 'en' : 'ja';
+      html.lang = newLang;
+      localStorage.setItem('rmp-lang', newLang);
+    });
+
+    // ----------------------------
+    // Scroll Reveal (Intersection Observer)
+    // ----------------------------
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // ----------------------------
+    // Nav scroll effect
+    // ----------------------------
+    const nav = document.getElementById('nav');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      if (currentScroll > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+      lastScroll = currentScroll;
+    }, { passive: true });
+
+    // ----------------------------
+    // Smooth scroll for anchor links
+    // ----------------------------
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const targetId = anchor.getAttribute('href');
+        if (targetId === '#') return;
+        const target = document.querySelector(targetId);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+@import "tailwindcss";
+
+/* 基本スタイル */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* Markdownプレビューの基本スタイル */
+.rich-markdown-preview {
+  max-width: none;
+}
+
+.rich-markdown-preview h1 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgb(55 65 81);
+}
+
+.rich-markdown-preview h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgb(55 65 81);
+}
+
+.rich-markdown-preview h3 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid rgb(75 85 99);
+}
+
+.rich-markdown-preview h4 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-markdown-preview h5 {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-markdown-preview h6 {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-markdown-preview p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.625;
+}
+
+.rich-markdown-preview a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rich-markdown-preview a:hover {
+  text-decoration: none;
+}
+
+.rich-markdown-preview ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rich-markdown-preview ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rich-markdown-preview li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.rich-markdown-preview li > ul,
+.rich-markdown-preview li > ol {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ネストされたリストのマーカースタイル */
+.rich-markdown-preview ul ul {
+  list-style-type: circle;
+}
+
+.rich-markdown-preview ul ul ul {
+  list-style-type: square;
+}
+
+.rich-markdown-preview ul ul ul ul {
+  list-style-type: disc;
+}
+
+.rich-markdown-preview ol ol {
+  list-style-type: lower-alpha;
+}
+
+.rich-markdown-preview ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.rich-markdown-preview blockquote {
+  border-left-width: 4px;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.rich-markdown-preview pre {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.rich-markdown-preview code:not(pre code) {
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.rich-markdown-preview pre code {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.rich-markdown-preview table {
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+}
+
+.rich-markdown-preview th,
+.rich-markdown-preview td {
+  border-width: 1px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: left;
+}
+
+.rich-markdown-preview th {
+  font-weight: 600;
+}
+
+.rich-markdown-preview hr {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border: none;
+  height: 1px;
+}
+
+.rich-markdown-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rich-markdown-preview strong,
+.rich-markdown-preview b {
+  font-weight: 800;
+}
+
+.rich-markdown-preview .task-list-item {
+  list-style-type: none;
+  margin-left: -1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.rich-markdown-preview .task-list-item input[type="checkbox"] {
+  margin-top: 0.375rem;
+}
+
+/* 脚注スタイル */
+.rich-markdown-preview .footnote-ref a {
+  text-decoration: none;
+  font-size: 0.75em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+.rich-markdown-preview .footnotes {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+
+.rich-markdown-preview .footnotes-list {
+  padding-left: 1.5rem;
+}
+
+.rich-markdown-preview .footnote-item {
+  margin-bottom: 0.5rem;
+}
+
+.rich-markdown-preview .footnote-backref {
+  text-decoration: none;
+  margin-left: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* highlight.js用のカスタマイズ */
+.hljs {
+  background: transparent;
+}
+
+/* TOCスタイル */
+.toc ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.toc li {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.toc a {
+  text-decoration: none;
+}
+
+.toc a:hover {
+  text-decoration: underline;
+}
+
+/* スクロールバーのカスタマイズ */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgb(38 38 38);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(82 82 82);
+  border-radius: 0.25rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(115 115 115);
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Mermaidダイアグラムのスタイル */
+.rich-markdown-preview .mermaid-container {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.rich-markdown-preview .mermaid {
+  background: transparent;
+  padding: 1rem;
+}
+
+.rich-markdown-preview .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 検索ハイライトのスタイル */
+.search-highlight {
+  background-color: rgba(255, 230, 0, 0.5);
+  border-radius: 3px;
+  padding: 1px 3px;
+  margin: 0 -1px;
+  box-shadow: 0 0 0 1px rgba(255, 200, 0, 0.4);
+}
+
+.search-highlight-active {
+  background-color: rgba(255, 120, 0, 0.9);
+  color: white !important;
+  outline: 3px solid rgba(255, 100, 0, 1);
+  outline-offset: 1px;
+  animation: search-pulse 1.2s ease-in-out infinite;
+  border-radius: 3px;
+}
+
+@keyframes search-pulse {
+  0%, 100% {
+    outline-color: rgba(255, 100, 0, 1);
+    box-shadow: 0 0 8px rgba(255, 100, 0, 0.6);
+  }
+  50% {
+    outline-color: rgba(255, 150, 0, 1);
+    box-shadow: 0 0 20px rgba(255, 100, 0, 0.9);
+  }
+}

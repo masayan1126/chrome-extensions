@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Rich Markdown Preview</title>
+  <meta name="description" content="Privacy Policy for Rich Markdown Preview Chrome Extension">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/icon-128.svg" type="image/svg+xml">
+
+  <style>
+    :root {
+      --bg-main: #000000;
+      --bg-card: #111111;
+      --text-primary: #f0f0f0;
+      --text-secondary: #888888;
+      --text-tertiary: #555555;
+      --border: #1e1e1e;
+      --accent: #ffffff;
+      --accent-hover: #cccccc;
+      --green: #4ade80;
+      --font-display: 'Instrument Serif', 'Noto Sans JP', serif;
+      --font-body: 'Instrument Sans', 'Noto Sans JP', sans-serif;
+      --nav-height: 72px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
+
+    html[lang="ja"] [data-en] { display: none !important; }
+    html[lang="en"] [data-ja] { display: none !important; }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .nav-logo img { width: 28px; height: 28px; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lang-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .back-link {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Content */
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: calc(var(--nav-height) + 60px) 24px 80px;
+    }
+
+    .content h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 400;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .last-updated {
+      color: var(--text-tertiary);
+      font-size: 14px;
+      margin-bottom: 48px;
+    }
+
+    .content h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-top: 48px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .content p {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+
+    .content ul {
+      color: var(--text-secondary);
+      font-size: 15px;
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    .content li {
+      margin-bottom: 8px;
+    }
+
+    .content strong {
+      color: var(--text-primary);
+    }
+
+    .content code {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 13px;
+    }
+
+    .highlight-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+
+    .highlight-box p {
+      margin-bottom: 0;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .footer-copy {
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      :root { --nav-height: 64px; }
+      .content { padding-top: calc(var(--nav-height) + 40px); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="images/icon-128.svg" alt="Rich Markdown Preview" width="28" height="28">
+        <span>Rich Markdown Preview</span>
+      </a>
+      <div class="nav-actions">
+        <button class="lang-toggle" id="langToggle">
+          <span data-ja>EN</span>
+          <span data-en>JA</span>
+        </button>
+        <a href="index.html" class="back-link">
+          <span data-ja>← トップに戻る</span>
+          <span data-en>← Back to Top</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="content">
+    <!-- ======== English ======== -->
+    <div data-en>
+      <h1>Privacy Policy</h1>
+      <p class="last-updated">Last Updated: 2024</p>
+
+      <h2>Overview</h2>
+      <p>Rich Markdown Preview is a Chrome extension that allows users to preview local Markdown files. This privacy policy explains how the extension handles user data.</p>
+
+      <h2>Data Collection</h2>
+
+      <h3>What We Collect</h3>
+      <div class="highlight-box">
+        <p>We do not collect any personal data.</p>
+      </div>
+      <p>The extension only stores the following information locally on your device:</p>
+      <ul>
+        <li>Theme preferences (selected theme, custom themes)</li>
+        <li>Display settings (font size, font family, content width)</li>
+        <li>No personal information is ever collected</li>
+      </ul>
+
+      <h3>What We Don't Collect</h3>
+      <ul>
+        <li>Personal information (name, email, etc.)</li>
+        <li>Browsing history</li>
+        <li>File contents</li>
+        <li>Usage analytics</li>
+        <li>Location data</li>
+      </ul>
+
+      <h2>Data Storage</h2>
+      <p>All data is stored locally using:</p>
+      <ul>
+        <li>Chrome's <code>storage.local</code> API for extension settings</li>
+        <li>Browser's localStorage for web app mode</li>
+      </ul>
+      <div class="highlight-box">
+        <p>No data is transmitted to external servers.</p>
+      </div>
+
+      <h2>Third-Party Services</h2>
+      <h3>Google Fonts</h3>
+      <p>The extension may load fonts from Google Fonts when a non-system font is selected. This is the only external connection made by the extension. Please refer to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a> for information about how Google handles data.</p>
+
+      <h2>Permissions</h2>
+      <p>The extension requires the following permissions:</p>
+      <ul>
+        <li><code>storage</code>: To save user preferences locally</li>
+      </ul>
+
+      <h2>Data Sharing</h2>
+      <p>We do not share, sell, or transfer any user data to third parties.</p>
+
+      <h2>Changes to This Policy</h2>
+      <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date.</p>
+
+      <h2>Contact</h2>
+      <p>If you have any questions about this privacy policy, please create an issue on our GitHub repository.</p>
+    </div>
+
+    <!-- ======== Japanese ======== -->
+    <div data-ja>
+      <h1>プライバシーポリシー</h1>
+      <p class="last-updated">最終更新日: 2024年</p>
+
+      <h2>概要</h2>
+      <p>Rich Markdown Previewは、ローカルのMarkdownファイルをプレビューするためのChrome拡張機能です。このプライバシーポリシーでは、本拡張機能がユーザーデータをどのように扱うかについて説明します。</p>
+
+      <h2>データ収集</h2>
+
+      <h3>収集するデータ</h3>
+      <div class="highlight-box">
+        <p>個人データは一切収集しません。</p>
+      </div>
+      <p>本拡張機能は、以下の情報のみをユーザーのデバイス上にローカル保存します：</p>
+      <ul>
+        <li>テーマ設定（選択したテーマ、カスタムテーマ）</li>
+        <li>表示設定（フォントサイズ、フォントファミリー、コンテンツ幅）</li>
+        <li>個人情報は一切収集されません</li>
+      </ul>
+
+      <h3>収集しないデータ</h3>
+      <ul>
+        <li>個人情報（名前、メールアドレスなど）</li>
+        <li>閲覧履歴</li>
+        <li>ファイルの内容</li>
+        <li>使用状況の分析</li>
+        <li>位置情報</li>
+      </ul>
+
+      <h2>データ保存</h2>
+      <p>すべてのデータは以下の方法でローカルに保存されます：</p>
+      <ul>
+        <li>拡張機能の設定にはChromeの <code>storage.local</code> API</li>
+        <li>WebアプリモードではブラウザのlocalStorage</li>
+      </ul>
+      <div class="highlight-box">
+        <p>外部サーバーにデータが送信されることはありません。</p>
+      </div>
+
+      <h2>サードパーティサービス</h2>
+      <h3>Google Fonts</h3>
+      <p>システムフォント以外のフォントが選択された場合、Google Fontsからフォントを読み込むことがあります。これが本拡張機能が行う唯一の外部接続です。Googleがデータをどのように扱うかについては、<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Googleのプライバシーポリシー</a>をご参照ください。</p>
+
+      <h2>権限</h2>
+      <p>本拡張機能は以下の権限を必要とします：</p>
+      <ul>
+        <li><code>storage</code>: ユーザー設定をローカルに保存するため</li>
+      </ul>
+
+      <h2>データ共有</h2>
+      <p>ユーザーデータを第三者と共有、販売、または転送することはありません。</p>
+
+      <h2>ポリシーの変更</h2>
+      <p>このプライバシーポリシーは随時更新される場合があります。変更があった場合は、更新日を記載してこのページに掲載します。</p>
+
+      <h2>お問い合わせ</h2>
+      <p>このプライバシーポリシーに関するご質問は、GitHubリポジトリでissueを作成してください。</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-copy">
+      © 2024 Rich Markdown Preview. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const langToggle = document.getElementById('langToggle');
+    const html = document.documentElement;
+
+    const savedLang = localStorage.getItem('rmp-lang');
+    if (savedLang) {
+      html.lang = savedLang;
+    }
+
+    langToggle.addEventListener('click', () => {
+      const newLang = html.lang === 'ja' ? 'en' : 'ja';
+      html.lang = newLang;
+      localStorage.setItem('rmp-lang', newLang);
+    });
+  </script>
+</body>
+</html>
