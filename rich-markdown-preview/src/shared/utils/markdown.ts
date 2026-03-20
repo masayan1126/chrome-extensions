@@ -28,7 +28,7 @@ export const parseMarkdown = (content: string): { html: string; toc: TOCItem[] }
   const rawHtml = marked.parse(contentWithEmoji) as string;
   const html = DOMPurify.sanitize(rawHtml, {
     ADD_TAGS: ['details', 'summary', 'mark', 'input'],
-    ADD_ATTR: ['open', 'id', 'class', 'type', 'checked', 'disabled', 'data-match-index', 'data-footnote-id'],
+    ADD_ATTR: ['open', 'id', 'class', 'type', 'checked', 'disabled', 'data-match-index', 'data-footnote-id', 'data-comment-id'],
     FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form'],
     FORBID_ATTR: ['onerror', 'onclick', 'onload', 'onmouseover', 'onfocus', 'ontoggle'],
   });

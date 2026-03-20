@@ -4,10 +4,12 @@ import { useTabs } from './features/tabs';
 import { useSearch } from './features/search';
 import { ThemePanel, useSettings } from './features/theme';
 import { Toolbar } from './features/toolbar';
+import { useReviewComments } from './features/review';
+import { ExportPanel } from './features/export';
 import { useDragDrop } from './shared/hooks/useDragDrop';
 import { useAppHandlers } from './useAppHandlers';
 import { MainContent } from './MainContent';
-import type { TOCItem } from './shared/types';
+import type { TOCItem, ReviewComment } from './shared/types';
 
 const App: React.FC = () => {
   const {
@@ -27,6 +29,13 @@ const App: React.FC = () => {
   const [showTOC, setShowTOC] = useState(true);
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
+  const [showReviewPanel, setShowReviewPanel] = useState(false);
+  const [isExportPanelOpen, setIsExportPanelOpen] = useState(false);
+  const activeFilePath = activeFile?.path || null;
+  const {
+    comments, unresolvedComments, addComment, updateComment,
+    removeComment, resolveComment, unresolveComment,
+  } = useReviewComments(activeFilePath, activeContent);
 
   const {
     isSearchOpen, searchQuery, matchCount, currentMatch,
@@ -42,6 +51,25 @@ const App: React.FC = () => {
   } = useAppHandlers({
     updateSettings, customThemes: settings.customThemes, addCustomTheme, updateCustomTheme,
   });
+
+  const handleAddComment = useCallback(async (comment: ReviewComment) => {
+    await addComment(comment);
+  }, [addComment]);
+
+  const handleUpdateComment = useCallback(async (comment: ReviewComment) => {
+    await updateComment(comment.id, {
+      comment: comment.comment,
+      type: comment.type,
+      anchor: comment.anchor,
+    });
+  }, [updateComment]);
+
+  const handleEditComment = useCallback(async (comment: ReviewComment) => {
+    await updateComment(comment.id, {
+      comment: comment.comment,
+      type: comment.type,
+    });
+  }, [updateComment]);
 
   if (settingsLoading) {
     return (
@@ -61,6 +89,10 @@ const App: React.FC = () => {
         onFontFamilyChange={handleFontFamilyChange} onLineHeightChange={handleLineHeightChange}
         onLetterSpacingChange={handleLetterSpacingChange} onOpenThemePanel={() => setIsThemePanelOpen(true)}
         showTOC={showTOC} onToggleTOC={() => setShowTOC(!showTOC)}
+        showReviewPanel={showReviewPanel}
+        onToggleReviewPanel={() => setShowReviewPanel(!showReviewPanel)}
+        reviewCount={unresolvedComments.length}
+        onOpenExport={() => setIsExportPanelOpen(true)}
       />
       <div className="flex-1 flex overflow-hidden">
         <Sidebar
@@ -81,12 +113,29 @@ const App: React.FC = () => {
           onNextMatch={handleNextMatch} onPrevMatch={handlePrevMatch} onMatchCountChange={setMatchCount}
           onTOCUpdate={handleTOCUpdate} onActiveHeadingChange={handleActiveHeadingChange}
           onToggleTOC={() => setShowTOC(!showTOC)}
+          filePath={activeFilePath}
+          comments={comments}
+          showReviewPanel={showReviewPanel}
+          onToggleReviewPanel={() => setShowReviewPanel(!showReviewPanel)}
+          onAddComment={handleAddComment}
+          onUpdateComment={handleUpdateComment}
+          onEditComment={handleEditComment}
+          onDeleteComment={removeComment}
+          onResolveComment={resolveComment}
+          onUnresolveComment={unresolveComment}
+          onOpenExport={() => setIsExportPanelOpen(true)}
         />
       </div>
       <ThemePanel
         currentTheme={currentTheme} allThemes={allThemes} onSelectTheme={setCurrentTheme}
         onSaveCustomTheme={handleSaveCustomTheme} onDeleteCustomTheme={deleteCustomTheme}
         isOpen={isThemePanelOpen} onClose={() => setIsThemePanelOpen(false)}
+      />
+      <ExportPanel
+        comments={comments}
+        filePath={activeFilePath}
+        isOpen={isExportPanelOpen}
+        onClose={() => setIsExportPanelOpen(false)}
       />
     </div>
   );

@@ -95,3 +95,26 @@ export interface OpenTab {
   content: string;
   isDirty: boolean;
 }
+
+/** コメントのアンカー情報 */
+export interface CommentAnchor {
+  selectedText: string;
+  prefix: string;
+  suffix: string;
+  markdownLineStart: number;
+  markdownLineEnd: number;
+  nearestHeadingId: string | null;
+  nearestHeadingText: string | null;
+}
+
+/** レビューコメント */
+export interface ReviewComment {
+  id: string;
+  filePath: string;
+  anchor: CommentAnchor;
+  comment: string;
+  type: 'modify' | 'delete' | 'add' | 'question';
+  createdAt: string;
+  updatedAt: string;
+  resolved: boolean;
+}

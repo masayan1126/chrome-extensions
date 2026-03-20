@@ -6,5 +6,53 @@
   "extensionDescription": {
     "message": "Preview local Markdown files beautifully. Customizable themes, font selection, and auto-generated table of contents.",
     "description": "Description of the extension"
+  },
+  "reviewPanel": {
+    "message": "Review",
+    "description": "Review panel title"
+  },
+  "addComment": {
+    "message": "Add Comment",
+    "description": "Add comment button"
+  },
+  "commentTypeModify": {
+    "message": "Modify",
+    "description": "Comment type: modify"
+  },
+  "commentTypeDelete": {
+    "message": "Delete",
+    "description": "Comment type: delete"
+  },
+  "commentTypeAdd": {
+    "message": "Add",
+    "description": "Comment type: add"
+  },
+  "commentTypeQuestion": {
+    "message": "Question",
+    "description": "Comment type: question"
+  },
+  "exportTitle": {
+    "message": "Export AI Agent Instructions",
+    "description": "Export modal title"
+  },
+  "copyToClipboard": {
+    "message": "Copy to Clipboard",
+    "description": "Copy to clipboard button"
+  },
+  "download": {
+    "message": "Download",
+    "description": "Download button"
+  },
+  "filterAll": {
+    "message": "All",
+    "description": "Filter: all"
+  },
+  "filterUnresolved": {
+    "message": "Unresolved",
+    "description": "Filter: unresolved"
+  },
+  "filterResolved": {
+    "message": "Resolved",
+    "description": "Filter: resolved"
   }
 }

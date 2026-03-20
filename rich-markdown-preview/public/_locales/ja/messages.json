@@ -6,5 +6,53 @@
   "extensionDescription": {
     "message": "ローカルのMarkdownファイルを美しくプレビュー。カスタマイズ可能なテーマ、フォント選択、目次の自動生成に対応。",
     "description": "拡張機能の説明"
+  },
+  "reviewPanel": {
+    "message": "レビュー",
+    "description": "レビューパネルのタイトル"
+  },
+  "addComment": {
+    "message": "コメント追加",
+    "description": "コメント追加ボタン"
+  },
+  "commentTypeModify": {
+    "message": "修正",
+    "description": "コメント種類: 修正"
+  },
+  "commentTypeDelete": {
+    "message": "削除",
+    "description": "コメント種類: 削除"
+  },
+  "commentTypeAdd": {
+    "message": "追加",
+    "description": "コメント種類: 追加"
+  },
+  "commentTypeQuestion": {
+    "message": "質問",
+    "description": "コメント種類: 質問"
+  },
+  "exportTitle": {
+    "message": "AIエージェント指示書エクスポート",
+    "description": "エクスポートモーダルのタイトル"
+  },
+  "copyToClipboard": {
+    "message": "クリップボードにコピー",
+    "description": "クリップボードコピーボタン"
+  },
+  "download": {
+    "message": "ダウンロード",
+    "description": "ダウンロードボタン"
+  },
+  "filterAll": {
+    "message": "すべて",
+    "description": "フィルター: すべて"
+  },
+  "filterUnresolved": {
+    "message": "未解決",
+    "description": "フィルター: 未解決"
+  },
+  "filterResolved": {
+    "message": "解決済み",
+    "description": "フィルター: 解決済み"
   }
 }
