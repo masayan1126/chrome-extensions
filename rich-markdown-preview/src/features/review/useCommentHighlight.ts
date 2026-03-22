@@ -6,8 +6,6 @@ const HIGHLIGHT_ATTR = 'data-comment-id';
 const typeClassMap: Record<ReviewComment['type'], string> = {
   modify: 'review-highlight review-highlight-modify',
   delete: 'review-highlight review-highlight-delete',
-  add: 'review-highlight review-highlight-add',
-  question: 'review-highlight review-highlight-question',
 };
 
 /**

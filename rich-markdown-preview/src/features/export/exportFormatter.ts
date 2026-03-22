@@ -20,8 +20,6 @@ interface ExportData {
 const typeLabels: Record<ReviewComment['type'], string> = {
   modify: '修正',
   delete: '削除',
-  add: '追加',
-  question: '質問',
 };
 
 const toExportComment = (comment: ReviewComment): ExportComment => {

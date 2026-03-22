@@ -13,22 +13,16 @@ interface CommentItemProps {
 const typeLabels: Record<ReviewComment['type'], string> = {
   modify: '修正',
   delete: '削除',
-  add: '追加',
-  question: '質問',
 };
 
 const typeBadgeColors: Record<ReviewComment['type'], string> = {
   modify: 'bg-blue-500',
   delete: 'bg-red-500',
-  add: 'bg-green-500',
-  question: 'bg-yellow-500',
 };
 
 const commentTypes: { value: ReviewComment['type']; label: string; color: string }[] = [
   { value: 'modify', label: '修正', color: 'bg-blue-500' },
   { value: 'delete', label: '削除', color: 'bg-red-500' },
-  { value: 'add', label: '追加', color: 'bg-green-500' },
-  { value: 'question', label: '質問', color: 'bg-yellow-500' },
 ];
 
 export const CommentItem: React.FC<CommentItemProps> = ({

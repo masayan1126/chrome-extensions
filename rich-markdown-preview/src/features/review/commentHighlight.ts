@@ -68,7 +68,5 @@ const getTypeColorClass = (type: ReviewComment['type']): string => {
   switch (type) {
     case 'modify': return 'review-highlight-modify';
     case 'delete': return 'review-highlight-delete';
-    case 'add': return 'review-highlight-add';
-    case 'question': return 'review-highlight-question';
   }
 };

@@ -113,7 +113,7 @@ export interface ReviewComment {
   filePath: string;
   anchor: CommentAnchor;
   comment: string;
-  type: 'modify' | 'delete' | 'add' | 'question';
+  type: 'modify' | 'delete';
   createdAt: string;
   updatedAt: string;
   resolved: boolean;

@@ -23,14 +23,6 @@
     "message": "削除",
     "description": "コメント種類: 削除"
   },
-  "commentTypeAdd": {
-    "message": "追加",
-    "description": "コメント種類: 追加"
-  },
-  "commentTypeQuestion": {
-    "message": "質問",
-    "description": "コメント種類: 質問"
-  },
   "exportTitle": {
     "message": "AIエージェント指示書エクスポート",
     "description": "エクスポートモーダルのタイトル"

@@ -13,8 +13,6 @@ interface CommentFormProps {
 const commentTypes = [
   { value: 'modify' as const, label: '修正', color: 'bg-blue-500' },
   { value: 'delete' as const, label: '削除', color: 'bg-red-500' },
-  { value: 'add' as const, label: '追加', color: 'bg-green-500' },
-  { value: 'question' as const, label: '質問', color: 'bg-yellow-500' },
 ];
 
 export const CommentForm: React.FC<CommentFormProps> = ({

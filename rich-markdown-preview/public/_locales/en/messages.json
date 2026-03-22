@@ -23,14 +23,6 @@
     "message": "Delete",
     "description": "Comment type: delete"
   },
-  "commentTypeAdd": {
-    "message": "Add",
-    "description": "Comment type: add"
-  },
-  "commentTypeQuestion": {
-    "message": "Question",
-    "description": "Comment type: question"
-  },
   "exportTitle": {
     "message": "Export AI Agent Instructions",
     "description": "Export modal title"

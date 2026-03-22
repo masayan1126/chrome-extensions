@@ -9,15 +9,11 @@ interface CommentTooltipProps {
 const typeLabels: Record<ReviewComment['type'], string> = {
   modify: '修正',
   delete: '削除',
-  add: '追加',
-  question: '質問',
 };
 
 const typeBadgeColors: Record<ReviewComment['type'], string> = {
   modify: 'bg-blue-500',
   delete: 'bg-red-500',
-  add: 'bg-green-500',
-  question: 'bg-yellow-500',
 };
 
 export const CommentTooltip: React.FC<CommentTooltipProps> = ({ comments, containerRef }) => {

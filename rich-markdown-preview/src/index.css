@@ -384,17 +384,6 @@ body {
   text-decoration-color: rgba(185, 28, 28, 0.7);
 }
 
-.review-highlight-add {
-  background-color: rgba(74, 222, 128, 0.5);
-  border-bottom: 2px solid rgba(34, 197, 94, 0.9);
-  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2);
-}
-
-.review-highlight-question {
-  background-color: rgba(250, 204, 21, 0.55);
-  border-bottom: 2px solid rgba(202, 138, 4, 0.9);
-  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.2);
-}
 
 .review-highlight-flash {
   animation: review-flash 1.5s ease-in-out;

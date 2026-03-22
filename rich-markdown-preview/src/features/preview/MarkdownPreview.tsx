@@ -189,11 +189,34 @@ export const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
 
   if (!content) return <EmptyState />;
 
+  const unresolvedCount = comments.filter((c) => !c.resolved).length;
+
   return (
-    <div className="relative flex-1 overflow-hidden">
+    <div className={`relative flex-1 overflow-hidden ${reviewMode ? 'ring-2 ring-blue-500/40 rounded' : ''}`}>
+      {/* レビューモード通知バー */}
+      {reviewMode && (
+        <div className="bg-blue-600/90 text-white text-xs flex items-center justify-between px-4 py-1.5 flex-shrink-0 z-10 relative">
+          <div className="flex items-center gap-2">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            <span className="font-medium">レビューモード</span>
+            <span className="text-blue-200">
+              — テキストを選択してコメントを追加
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            {unresolvedCount > 0 && (
+              <span className="bg-white/20 rounded-full px-2 py-0.5 text-[10px]">
+                未解決 {unresolvedCount}件
+              </span>
+            )}
+          </div>
+        </div>
+      )}
       <div
         ref={containerRef}
-        className={`rich-markdown-preview h-full overflow-y-auto p-8 ${contentWidthMap[contentWidth]} mx-auto`}
+        className={`rich-markdown-preview overflow-y-auto p-8 ${contentWidthMap[contentWidth]} mx-auto ${reviewMode ? 'h-[calc(100%-32px)]' : 'h-full'}`}
         style={{
           fontSize: `${fontSize}px`,
           lineHeight: lineHeight,

@@ -101,12 +101,34 @@ export const ReviewPanel: React.FC<ReviewPanelProps> = ({
 
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {filteredComments.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-neutral-500">
-                  {comments.length === 0
-                    ? 'テキストを選択してコメントを追加'
-                    : 'コメントがありません'}
-                </p>
+              <div className="text-center py-8 px-4">
+                {comments.length === 0 ? (
+                  <>
+                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-600/10 flex items-center justify-center">
+                      <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-medium text-neutral-300 mb-1.5">レビューコメント</p>
+                    <p className="text-xs text-neutral-500 leading-relaxed">
+                      プレビュー上でテキストを選択すると<br />コメントを追加できます
+                    </p>
+                    <div className="mt-4 space-y-2 text-left">
+                      <div className="flex items-center gap-2 text-[11px] text-neutral-500">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                        <span>修正 — 内容の変更指示</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] text-neutral-500">
+                        <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                        <span>削除 — 不要な箇所の削除</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-sm text-neutral-500">
+                    該当するコメントがありません
+                  </p>
+                )}
               </div>
             ) : (
               filteredComments.map((comment) => (
