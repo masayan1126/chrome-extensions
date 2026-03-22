@@ -4,7 +4,7 @@
 Rich Markdown Preview
 
 ## Short Description (132 characters max)
-The best way to read local Markdown. 25 themes, Japanese fonts, folder browsing, live sync with your editor, and tab management.
+The best way to read local Markdown. 25 themes, Japanese fonts, folder management, live sync, review comments & AI export.
 
 ## Detailed Description
 
@@ -89,6 +89,16 @@ Rich Markdown Preview is different.
 - Footnotes ([^1] syntax with auto-generated footnote section)
 - details / summary collapsible elements
 
+💬 **Review Comments & AI Export**
+- Select text in the preview to add review comments
+- Two comment types: "Modify" and "Delete"
+- Unresolved / resolved status management for each comment
+- Highlighted comment anchors with click-to-scroll navigation
+- Export review comments as AI agent instructions (Markdown / JSON format)
+- Structured output organized by file and section
+- Clipboard copy & file download support
+- Comments persisted via IndexedDB and auto-restored on next launch
+
 📋 **Copy Features**
 - Copy Markdown source with one click
 - Copy as rendered HTML (great for pasting into other apps)
@@ -119,6 +129,7 @@ Rich Markdown Preview is different.
 | Japanese fonts | ✅ 5 typefaces | ❌ Rarely supported |
 | Mermaid diagrams | ✅ Auto theme switching | ❌ Rarely supported |
 | TOC + scroll sync | ✅ Real-time tracking | △ Static TOC |
+| Review comments | ✅ Select text to add + AI instruction export | ❌ Not supported |
 
 ---
 
