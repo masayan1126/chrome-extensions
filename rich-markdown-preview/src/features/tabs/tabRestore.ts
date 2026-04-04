@@ -60,9 +60,9 @@ export const loadTabsFromStorage = async (): Promise<{
                 });
               }
             }
-          } catch {
+          } catch (error) {
             // 権限取得に失敗したタブはスキップ
-            console.warn(`Failed to restore tab for file: ${storedTab.fileName}`);
+            console.warn(`Failed to restore tab for file: ${storedTab.fileName}`, error);
           }
         }
 

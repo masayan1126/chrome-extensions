@@ -15,9 +15,13 @@ export const useTabRestore = (
 
   // 初期化時にストレージからタブを復元
   useEffect(() => {
+    let isCancelled = false;
+
     const restoreTabs = async () => {
       try {
         const storedData = await loadTabsFromStorage();
+        if (isCancelled) return;
+
         if (storedData && storedData.tabs.length > 0) {
           const restoredTabs: OpenTab[] = [];
           for (const tab of storedData.tabs) {
@@ -32,12 +36,12 @@ export const useTabRestore = (
                 isDirty: false,
               });
               lastModifiedRef.current.set(tab.id, lastModified);
-            } catch {
-              console.warn(`Failed to read content for: ${tab.file.name}`);
+            } catch (error) {
+              console.warn(`Failed to read content for: ${tab.file.name}`, error);
             }
           }
 
-          if (restoredTabs.length > 0) {
+          if (!isCancelled && restoredTabs.length > 0) {
             setTabs(restoredTabs);
             const validActiveTabId = restoredTabs.some((t) => t.id === storedData.activeTabId)
               ? storedData.activeTabId
@@ -46,13 +50,14 @@ export const useTabRestore = (
           }
         }
       } catch (error) {
-        console.error('Failed to restore tabs:', error);
+        if (!isCancelled) console.error('Failed to restore tabs:', error);
       } finally {
-        setIsInitialized(true);
+        if (!isCancelled) setIsInitialized(true);
       }
     };
 
     restoreTabs();
+    return () => { isCancelled = true; };
   }, []);
 
   // タブが変更されたらストレージに保存

@@ -46,8 +46,9 @@ export const useDragDrop = (
               continue;
             }
           }
-        } catch {
-          // フォールバック
+        } catch (error) {
+          // getAsFileSystemHandle が未対応またはアクセス拒否の場合はフォールバック
+          console.warn('getAsFileSystemHandle failed, falling back to File API:', error);
         }
       }
 

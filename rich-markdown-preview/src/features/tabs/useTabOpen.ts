@@ -14,7 +14,28 @@ export const useTabOpen = (
   };
 
   const openTab = useCallback(async (file: FileInfo) => {
-    const existingTab = tabsRef.current.find((t) => t.file.path === file.path);
+    let existingTab: OpenTab | undefined;
+    if (file.handle) {
+      for (const t of tabsRef.current) {
+        if (!t.file.handle) continue;
+        try {
+          if (await t.file.handle.isSameEntry(file.handle)) {
+            existingTab = t;
+            break;
+          }
+        } catch (error) {
+          if (error instanceof DOMException && (error.name === 'InvalidStateError' || error.name === 'SecurityError')) {
+            console.debug('isSameEntry skipped: handle is invalid or permission revoked', { tabId: t.id });
+          } else {
+            console.warn('isSameEntry threw unexpected error, treating as no-match:', error);
+          }
+        }
+      }
+    } else {
+      existingTab = tabsRef.current.find(
+        (t) => !t.file.handle && t.file.path === file.path && t.file.name === file.name
+      );
+    }
     if (existingTab) {
       setActiveTabId(existingTab.id);
       return;
@@ -45,7 +66,12 @@ export const useTabOpen = (
   const openDroppedFile = useCallback(async (file: File) => {
     if (!isMarkdownFile(file.name)) return;
 
-    const existingTab = tabsRef.current.find((t) => t.file.name === file.name && !t.file.handle);
+    // D&Dフォールバック（handle なし）は name + size + lastModified で同一性を判定
+    // File API の制約上フルパスは取得不可のため、これが最善の重複チェック
+    const dropKey = `${file.name}::${file.size}::${file.lastModified}`;
+    const existingTab = tabsRef.current.find(
+      (t) => !t.file.handle && t.file.path === dropKey
+    );
     if (existingTab) {
       setActiveTabId(existingTab.id);
       return;
@@ -55,7 +81,7 @@ export const useTabOpen = (
       const content = await file.text();
       const newTab: OpenTab = {
         id: `tab-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        file: { name: file.name, path: file.name, handle: null },
+        file: { name: file.name, path: dropKey, handle: null },
         content,
         isDirty: false,
       };
