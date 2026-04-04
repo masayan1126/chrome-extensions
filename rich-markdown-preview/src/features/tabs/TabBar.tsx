@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { OpenTab } from '../../shared/types';
 import { useTabDrag } from './useTabDrag';
 import { TabItem } from './TabItem';
+import { sanitizeFileName, getDisambiguatedLabels } from '../../shared/utils/fileSystem';
 
 interface TabBarProps {
   tabs: OpenTab[];
@@ -13,6 +14,18 @@ interface TabBarProps {
 
 export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTabId, onSelectTab, onCloseTab, onReorderTabs }) => {
   const drag = useTabDrag(onReorderTabs);
+
+  // 同名ファイルに対して最小限のパス情報で曖昧さを解消したラベルを計算
+  const displayLabels = useMemo(() => {
+    const labels = getDisambiguatedLabels(tabs.map((tab) => tab.file));
+    return new Map(
+      tabs.map((tab) => [tab.id, sanitizeFileName(labels.get(tab.file.path) ?? tab.file.name)])
+    );
+  }, [tabs]);
+
+  const getDisplayLabel = (tab: OpenTab): string => {
+    return displayLabels.get(tab.id) ?? sanitizeFileName(tab.file.name);
+  };
 
   if (tabs.length === 0) return null;
 
@@ -27,6 +40,7 @@ export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTabId, onSelectTab, 
             isDragOver={drag.dragOverTabId === tab.id}
             isDragged={tab.id === drag.draggedTabId}
             draggedTabRef={drag.draggedTabRef}
+            displayLabel={getDisplayLabel(tab)}
             onSelect={() => onSelectTab(tab.id)}
             onClose={(e) => { e.stopPropagation(); onCloseTab(tab.id); }}
             onDragStart={(e) => drag.handleDragStart(e, tab.id)}

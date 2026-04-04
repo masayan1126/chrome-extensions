@@ -6,10 +6,12 @@ export const readDirectory = async (
   depth: number = 0,
   maxDepth: number = 5,
   showHiddenFiles: boolean = false,
-  isInsideHiddenDir: boolean = false
+  isInsideHiddenDir: boolean = false,
+  parentPath: string = ''
 ): Promise<DirectoryInfo> => {
   const files: FileInfo[] = [];
   const directories: DirectoryInfo[] = [];
+  const currentPath = parentPath ? `${parentPath}/${handle.name}` : handle.name;
 
   // 隠しディレクトリ内かつshowHiddenFiles時はすべてのファイル・ディレクトリを表示
   const showAllContents = showHiddenFiles && isInsideHiddenDir;
@@ -34,7 +36,7 @@ export const readDirectory = async (
         }
         files.push({
           name: entry.name,
-          path: `${handle.name}/${entry.name}`,
+          path: `${currentPath}/${entry.name}`,
           handle: entry as FileSystemFileHandle,
           isMarkdown: isMd,
         });
@@ -47,7 +49,8 @@ export const readDirectory = async (
         depth + 1,
         maxDepth,
         showHiddenFiles,
-        childInsideHidden
+        childInsideHidden,
+        currentPath
       );
 
       if (showAllContents || subDir.files.length > 0 || subDir.directories.length > 0 || (isHiddenDir && showHiddenFiles)) {

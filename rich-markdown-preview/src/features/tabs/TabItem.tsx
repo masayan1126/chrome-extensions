@@ -8,6 +8,7 @@ interface TabItemProps {
   isDragOver: boolean;
   isDragged: boolean;
   draggedTabRef: React.RefObject<HTMLDivElement | null>;
+  displayLabel: string;
   onSelect: () => void;
   onClose: (e: React.MouseEvent) => void;
   onDragStart: (e: React.DragEvent) => void;
@@ -18,7 +19,7 @@ interface TabItemProps {
 }
 
 export const TabItem: React.FC<TabItemProps> = ({
-  tab, isActive, isDragOver, isDragged, draggedTabRef,
+  tab, isActive, isDragOver, isDragged, draggedTabRef, displayLabel,
   onSelect, onClose, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop,
 }) => {
   return (
@@ -33,7 +34,7 @@ export const TabItem: React.FC<TabItemProps> = ({
       onClick={onSelect}
       className={`
         group flex items-center gap-2 px-3 h-full cursor-pointer select-none
-        border-r border-neutral-700 min-w-32 max-w-48
+        border-r border-neutral-700 min-w-32 max-w-64
         transition-colors duration-150
         ${isActive ? 'bg-neutral-900 text-white' : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-750 hover:text-neutral-200'}
         ${isDragOver ? 'border-l-2 border-l-blue-500' : ''}
@@ -42,9 +43,9 @@ export const TabItem: React.FC<TabItemProps> = ({
       <svg className="w-4 h-4 flex-shrink-0 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
-      <span className="text-sm truncate flex-1" title={sanitizeFileName(tab.file.name)}>
+      <span className="text-sm truncate flex-1" title={sanitizeFileName(tab.file.path) || displayLabel}>
         {tab.isDirty && <span className="text-orange-400 mr-1">*</span>}
-        {sanitizeFileName(tab.file.name)}
+        {displayLabel}
       </span>
       <button
         onClick={onClose}
