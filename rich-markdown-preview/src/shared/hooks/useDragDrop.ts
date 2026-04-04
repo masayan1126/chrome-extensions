@@ -4,7 +4,8 @@ import { isMarkdownFile } from '../utils/fileSystem';
 
 export const useDragDrop = (
   openTab: (file: FileInfo) => void,
-  openDroppedFile: (file: File) => void
+  openDroppedFile: (file: File) => void,
+  directoryHandle?: FileSystemDirectoryHandle | null
 ) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -38,9 +39,21 @@ export const useDragDrop = (
           if (handle && handle.kind === 'file') {
             const fileHandle = handle as FileSystemFileHandle;
             if (isMarkdownFile(fileHandle.name)) {
+              // ディレクトリが開かれている場合、resolve() で相対パスを取得
+              let filePath = fileHandle.name;
+              if (directoryHandle) {
+                try {
+                  const resolved = await directoryHandle.resolve(fileHandle);
+                  if (resolved) {
+                    filePath = `${directoryHandle.name}/${resolved.join('/')}`;
+                  }
+                } catch {
+                  // resolve() 失敗時はファイル名のみ
+                }
+              }
               openTab({
                 name: fileHandle.name,
-                path: fileHandle.name,
+                path: filePath,
                 handle: fileHandle,
               });
               continue;

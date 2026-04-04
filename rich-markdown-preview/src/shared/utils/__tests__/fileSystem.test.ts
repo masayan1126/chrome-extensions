@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isMarkdownFile } from '../fileSystem';
+import { isMarkdownFile, getDisambiguatedLabels } from '../fileSystem';
 
 describe('isMarkdownFile', () => {
   it('.md ファイルは true を返す', () => {
@@ -48,5 +48,71 @@ describe('isMarkdownFile', () => {
 
   it('.txt ファイルは false を返す', () => {
     expect(isMarkdownFile('file.txt')).toBe(false);
+  });
+});
+
+describe('getDisambiguatedLabels', () => {
+  it('同名ファイルがない場合はファイル名のみ', () => {
+    const files = [
+      { name: 'README.md', path: 'docs/README.md' },
+      { name: 'memo.md', path: 'input/memo.md' },
+    ];
+    const labels = getDisambiguatedLabels(files);
+    expect(labels.get('docs/README.md')).toBe('README.md');
+    expect(labels.get('input/memo.md')).toBe('memo.md');
+  });
+
+  it('同名ファイルは親ディレクトリで区別', () => {
+    const files = [
+      { name: 'memo.md', path: 'input/memo.md' },
+      { name: 'memo.md', path: 'output/memo.md' },
+    ];
+    const labels = getDisambiguatedLabels(files);
+    expect(labels.get('input/memo.md')).toBe('input/memo.md');
+    expect(labels.get('output/memo.md')).toBe('output/memo.md');
+  });
+
+  it('親ディレクトリも同名の場合はさらに上位で区別', () => {
+    const files = [
+      { name: 'memo.md', path: 'a/docs/memo.md' },
+      { name: 'memo.md', path: 'b/docs/memo.md' },
+    ];
+    const labels = getDisambiguatedLabels(files);
+    expect(labels.get('a/docs/memo.md')).toBe('a/docs/memo.md');
+    expect(labels.get('b/docs/memo.md')).toBe('b/docs/memo.md');
+  });
+
+  it('パス情報がないファイル（D&D経由）はファイル名のみ', () => {
+    const files = [
+      { name: 'memo.md', path: 'memo.md' },
+      { name: 'memo.md', path: 'input/memo.md' },
+    ];
+    const labels = getDisambiguatedLabels(files);
+    expect(labels.get('memo.md')).toBe('memo.md');
+    expect(labels.get('input/memo.md')).toBe('input/memo.md');
+  });
+
+  it('3つ以上の同名ファイルでも正しく区別', () => {
+    const files = [
+      { name: 'memo.md', path: 'a/memo.md' },
+      { name: 'memo.md', path: 'b/memo.md' },
+      { name: 'memo.md', path: 'c/memo.md' },
+    ];
+    const labels = getDisambiguatedLabels(files);
+    expect(labels.get('a/memo.md')).toBe('a/memo.md');
+    expect(labels.get('b/memo.md')).toBe('b/memo.md');
+    expect(labels.get('c/memo.md')).toBe('c/memo.md');
+  });
+
+  it('異なるファイル名の組み合わせでも正しく処理', () => {
+    const files = [
+      { name: 'memo.md', path: 'input/memo.md' },
+      { name: 'memo.md', path: 'output/memo.md' },
+      { name: 'README.md', path: 'docs/README.md' },
+    ];
+    const labels = getDisambiguatedLabels(files);
+    expect(labels.get('input/memo.md')).toBe('input/memo.md');
+    expect(labels.get('output/memo.md')).toBe('output/memo.md');
+    expect(labels.get('docs/README.md')).toBe('README.md');
   });
 });

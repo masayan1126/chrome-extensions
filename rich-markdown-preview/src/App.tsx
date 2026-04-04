@@ -23,7 +23,7 @@ const App: React.FC = () => {
   } = useFileSystem(settings.showHiddenFiles);
 
   const { tabs, activeTabId, activeContent, activeFile, openTab, openDroppedFile, closeTab, selectTab, reorderTabs } = useTabs();
-  const { isDragOver, handleDragOver, handleDragLeave, handleDrop } = useDragDrop(openTab, openDroppedFile);
+  const { isDragOver, handleDragOver, handleDragLeave, handleDrop } = useDragDrop(openTab, openDroppedFile, directory?.handle);
 
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [showTOC, setShowTOC] = useState(true);

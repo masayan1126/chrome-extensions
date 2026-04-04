@@ -34,7 +34,7 @@ export const TabItem: React.FC<TabItemProps> = ({
       onClick={onSelect}
       className={`
         group flex items-center gap-2 px-3 h-full cursor-pointer select-none
-        border-r border-neutral-700 min-w-32 max-w-48
+        border-r border-neutral-700 min-w-32 max-w-64
         transition-colors duration-150
         ${isActive ? 'bg-neutral-900 text-white' : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-750 hover:text-neutral-200'}
         ${isDragOver ? 'border-l-2 border-l-blue-500' : ''}

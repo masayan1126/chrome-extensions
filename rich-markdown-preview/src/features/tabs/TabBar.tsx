@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import type { OpenTab } from '../../shared/types';
 import { useTabDrag } from './useTabDrag';
 import { TabItem } from './TabItem';
-import { sanitizeFileName, getDirName } from '../../shared/utils/fileSystem';
+import { sanitizeFileName, getDisambiguatedLabels } from '../../shared/utils/fileSystem';
 
 interface TabBarProps {
   tabs: OpenTab[];
@@ -15,28 +15,16 @@ interface TabBarProps {
 export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTabId, onSelectTab, onCloseTab, onReorderTabs }) => {
   const drag = useTabDrag(onReorderTabs);
 
-  // 同名ファイルが複数タブで開かれているファイル名のセットを計算
-  const duplicateNames = useMemo(() => {
-    const nameCounts = new Map<string, number>();
-    tabs.forEach((tab) => {
-      nameCounts.set(tab.file.name, (nameCounts.get(tab.file.name) ?? 0) + 1);
-    });
-    return new Set(
-      Array.from(nameCounts.entries())
-        .filter(([, count]) => count > 1)
-        .map(([name]) => name)
+  // 同名ファイルに対して最小限のパス情報で曖昧さを解消したラベルを計算
+  const displayLabels = useMemo(() => {
+    const labels = getDisambiguatedLabels(tabs.map((tab) => tab.file));
+    return new Map(
+      tabs.map((tab) => [tab.id, sanitizeFileName(labels.get(tab.file.path) ?? tab.file.name)])
     );
   }, [tabs]);
 
   const getDisplayLabel = (tab: OpenTab): string => {
-    if (!duplicateNames.has(tab.file.name)) {
-      return sanitizeFileName(tab.file.name);
-    }
-    const dirName = getDirName(tab.file);
-    if (dirName) {
-      return sanitizeFileName(`${dirName}/${tab.file.name}`);
-    }
-    return sanitizeFileName(tab.file.name);
+    return displayLabels.get(tab.id) ?? sanitizeFileName(tab.file.name);
   };
 
   if (tabs.length === 0) return null;
