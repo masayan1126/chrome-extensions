@@ -20,7 +20,7 @@
 1. `public/manifest.json` の `version` を更新
 2. `npm run build` — TypeScript コンパイル + Vite ビルド
 3. `npm run test` — Vitest（73テスト）
-4. `rm -f rich-markdown-preview.zip && zip -r rich-markdown-preview.zip dist/ public/` — zip 再作成
+4. `rm -f rich-markdown-preview.zip && zip -r rich-markdown-preview.zip dist/` — zip 再作成（`dist/` のみ。`public/` を含めるとマニフェスト重複エラーになる）
 
 ## リリースノート
 - `internal-comms` スキルで作成（GitHub Releases 向け + Chrome ストア向けの2種類）
