@@ -25,6 +25,50 @@ function applyI18n() {
       el.textContent = message;
     }
   });
+  // textarea などプレースホルダ専用
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    const message = i18n(key);
+    if (message) el.setAttribute('placeholder', message);
+  });
+}
+
+// 入力テキストを抽出する（箇条書き / カンマ区切り / 改行区切りの3パターン対応）
+// content.js の parseMarkdownList と同じロジック。
+function parseMarkdownList(text) {
+  if (!text || typeof text !== 'string') return [];
+  const lines = text.split(/\r?\n/);
+  const results = [];
+  let inCodeBlock = false;
+
+  for (const rawLine of lines) {
+    if (/^\s*```/.test(rawLine)) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+    if (inCodeBlock) continue;
+
+    let line = rawLine.trim();
+    if (!line) continue;
+    if (/^#{1,6}\s/.test(line)) continue;
+
+    const listMatch = line.match(/^(?:[-*+]|\d+[.)])\s+(.+)$/);
+    if (listMatch) line = listMatch[1].trim();
+
+    line = line.replace(/^\[[ xX]\]\s+/, '').trim();
+    if (!line) continue;
+
+    if (/[,、]/.test(line)) {
+      line.split(/[,、]/).forEach(part => {
+        const t = part.trim();
+        if (t) results.push(t);
+      });
+    } else {
+      results.push(line);
+    }
+  }
+
+  return results;
 }
 
 async function init() {
@@ -151,6 +195,103 @@ function setupEventListeners() {
 
   // 全削除ボタン
   document.getElementById('clearBtn').addEventListener('click', clearAllAnnotations);
+
+  // インポート関連
+  setupImportListeners();
+}
+
+function setupImportListeners() {
+  const fileBtn = document.getElementById('importFileBtn');
+  const fileInput = document.getElementById('importFile');
+  const runBtn = document.getElementById('importRunBtn');
+  const textarea = document.getElementById('importTextarea');
+  const colorRow = document.getElementById('importColorRow');
+  const modeRadios = document.querySelectorAll('input[name="importMode"]');
+
+  if (!fileBtn || !runBtn || !textarea) return;
+
+  // ファイル選択 → textarea へ流し込み
+  fileBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      textarea.value = String(reader.result || '');
+    };
+    reader.onerror = () => {
+      showToast(i18n('importFileReadFailed') || 'File read failed');
+    };
+    reader.readAsText(file, 'utf-8');
+    fileInput.value = ''; // 同じファイルを再選択できるようにリセット
+  });
+
+  // モード切り替え（sticky の場合は色選択を非表示）
+  const updateColorVisibility = () => {
+    const mode = document.querySelector('input[name="importMode"]:checked').value;
+    colorRow.style.display = mode === 'highlight' ? '' : 'none';
+  };
+  modeRadios.forEach(r => r.addEventListener('change', updateColorVisibility));
+  updateColorVisibility();
+
+  // 色選択
+  colorRow.querySelectorAll('.import-color-swatch').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      colorRow.querySelectorAll('.import-color-swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+    });
+  });
+
+  // 実行
+  runBtn.addEventListener('click', runImport);
+}
+
+async function runImport() {
+  const textarea = document.getElementById('importTextarea');
+  const colorRow = document.getElementById('importColorRow');
+
+  const raw = textarea.value;
+  const texts = parseMarkdownList(raw);
+
+  if (texts.length === 0) {
+    showToast(i18n('importNoText') || 'No list items found');
+    return;
+  }
+
+  const mode = document.querySelector('input[name="importMode"]:checked').value;
+  const activeSwatch = colorRow.querySelector('.import-color-swatch.active');
+  const color = activeSwatch ? activeSwatch.dataset.color : '#fef08a';
+
+  // chrome:// などはスキップ
+  if (currentTab.url.startsWith('chrome://') ||
+      currentTab.url.startsWith('chrome-extension://') ||
+      currentTab.url.startsWith('about:')) {
+    showToast(i18n('notAvailable'));
+    return;
+  }
+
+  try {
+    const response = await chrome.tabs.sendMessage(currentTab.id, {
+      action: 'importTexts',
+      texts,
+      mode,
+      color
+    });
+
+    if (!response || response.success === false) {
+      showToast(i18n('importFailed') || 'Import failed');
+      return;
+    }
+
+    const msg = i18n('importResult', [String(response.found), String(response.added)]) ||
+      `Found ${response.found} / Added ${response.added}`;
+    showToast(msg);
+
+    await loadAnnotations();
+  } catch (e) {
+    console.error('Import failed:', e);
+    showToast(i18n('pleaseReload'));
+  }
 }
 
 function switchTab(tabName) {

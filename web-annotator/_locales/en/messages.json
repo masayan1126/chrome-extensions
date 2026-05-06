@@ -128,5 +128,53 @@
   "stickyNotePlaceholder": {
     "message": "Write a note...",
     "description": "Sticky note placeholder"
+  },
+  "importTexts": {
+    "message": "Import texts",
+    "description": "Import section title"
+  },
+  "modeHighlight": {
+    "message": "Highlights",
+    "description": "Import mode: highlight"
+  },
+  "modeNotes": {
+    "message": "Notes",
+    "description": "Import mode: sticky notes"
+  },
+  "color": {
+    "message": "Color",
+    "description": "Color label"
+  },
+  "chooseFile": {
+    "message": "Choose file...",
+    "description": "Import file picker button"
+  },
+  "runImport": {
+    "message": "Import",
+    "description": "Import run button"
+  },
+  "importNoText": {
+    "message": "No texts found in the input",
+    "description": "Toast when nothing was parsed"
+  },
+  "importResult": {
+    "message": "Found $FOUND$ texts, added $ADDED$ annotations",
+    "description": "Import result toast",
+    "placeholders": {
+      "found": { "content": "$1", "example": "8" },
+      "added": { "content": "$2", "example": "12" }
+    }
+  },
+  "importFailed": {
+    "message": "Import failed",
+    "description": "Toast when content script returns failure"
+  },
+  "importFileReadFailed": {
+    "message": "Failed to read file",
+    "description": "Toast when file reader errored"
+  },
+  "helpImport": {
+    "message": "Import: paste list / comma-separated / line-separated text, choose mode, click Import",
+    "description": "Help text for import"
   }
 }

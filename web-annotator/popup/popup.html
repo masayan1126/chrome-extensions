@@ -38,6 +38,35 @@
       </section>
     </main>
 
+    <details class="import-section">
+      <summary data-i18n="importTexts">Import texts</summary>
+      <div class="import-body">
+        <div class="import-mode">
+          <label>
+            <input type="radio" name="importMode" value="highlight" checked>
+            <span data-i18n="modeHighlight">Highlights</span>
+          </label>
+          <label>
+            <input type="radio" name="importMode" value="sticky">
+            <span data-i18n="modeNotes">Notes</span>
+          </label>
+        </div>
+        <div class="import-color" id="importColorRow">
+          <span class="import-color-label" data-i18n="color">Color</span>
+          <button type="button" class="import-color-swatch active" data-color="#fef08a" style="background-color: #fef08a"></button>
+          <button type="button" class="import-color-swatch" data-color="#86efac" style="background-color: #86efac"></button>
+          <button type="button" class="import-color-swatch" data-color="#93c5fd" style="background-color: #93c5fd"></button>
+          <button type="button" class="import-color-swatch" data-color="#fca5a5" style="background-color: #fca5a5"></button>
+        </div>
+        <textarea id="importTextarea" rows="6" placeholder="- foo&#10;* bar&#10;1. baz&#10;&#10;または カンマ区切り: foo, bar, baz&#10;または 改行区切り（マーカー無し）"></textarea>
+        <div class="import-actions">
+          <input type="file" id="importFile" accept=".md,.txt,text/plain,text/markdown" hidden>
+          <button id="importFileBtn" class="btn" type="button" data-i18n="chooseFile">Choose file...</button>
+          <button id="importRunBtn" class="btn btn-primary" type="button" data-i18n="runImport">Import</button>
+        </div>
+      </div>
+    </details>
+
     <footer class="footer">
       <button id="exportBtn" class="btn btn-primary" data-i18n="exportMarkdown">
         Export as Markdown
@@ -55,6 +84,7 @@
           <li data-i18n="helpRemove">Remove: Ctrl/Cmd + Click on highlight</li>
           <li data-i18n="helpAddNote">Add note: Alt + Double click</li>
           <li data-i18n="helpShortcut">Shortcut: Ctrl/Cmd + Shift + H</li>
+          <li data-i18n="helpImport">Import: paste a Markdown list, choose mode, click Import</li>
         </ul>
       </details>
     </div>

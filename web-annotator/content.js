@@ -12,12 +12,31 @@
   let stickyNotes = [];
 
   // カラーパレット（黄色、緑、青、赤）
+  // 保存値は ライトモード時の hex を維持（既存ストレージ後方互換）
   const HIGHLIGHT_COLORS = [
     '#fef08a', // 黄色（やわらかい）
     '#86efac', // 緑（やわらかい）
     '#93c5fd', // 青（やわらかい）
     '#fca5a5'  // 赤（やわらかい）
   ];
+
+  // hex → CSS variable 名の対応。
+  // ハイライト適用時は inline style に
+  //   "var(--web-annotator-hl-yellow, #fef08a)" の形で設定する。
+  // これにより、html[data-web-annotator-theme="dark"] 時に CSS 側の
+  // CSS variables 値（濃い色）に切り替わる。fallback の hex により
+  // CSS が読まれない・テーマ未判定でも従来動作。
+  const HIGHLIGHT_COLOR_NAMES = {
+    '#fef08a': 'yellow',
+    '#86efac': 'green',
+    '#93c5fd': 'blue',
+    '#fca5a5': 'red'
+  };
+
+  function colorToCssValue(color) {
+    const name = HIGHLIGHT_COLOR_NAMES[color];
+    return name ? `var(--web-annotator-hl-${name}, ${color})` : color;
+  }
 
   // SVGアイコン
   const ICONS = {
@@ -35,6 +54,8 @@
 
   async function init() {
     await loadData();
+    applyTheme();
+    setupThemeListener();
     renderStickyNotes();
     setupEventListeners();
     createFloatingToolbar();
@@ -42,6 +63,67 @@
     // DOMが完全に構築されるまで待機（SPAの初期レンダリング完了を待つ）
     // 複数回に分けてリトライする
     scheduleHighlightRender();
+  }
+
+  // ============================================
+  // テーマ判定（ダーク/ライト）
+  // ============================================
+  // ハイライト色（pastel）が白文字ページで見えにくい問題を解決するため、
+  // ページの背景色輝度を見て <html data-web-annotator-theme="..."> を付与し、
+  // CSS variables で濃い色に切り替える。
+
+  function parseRgb(rgbStr) {
+    if (!rgbStr) return null;
+    const m = rgbStr.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?\s*\)/i);
+    if (!m) return null;
+    return {
+      r: parseFloat(m[1]),
+      g: parseFloat(m[2]),
+      b: parseFloat(m[3]),
+      a: m[4] !== undefined ? parseFloat(m[4]) : 1
+    };
+  }
+
+  function effectiveBackgroundColor() {
+    // body / html を順に見て、不透明な背景色を見つける
+    const candidates = [document.body, document.documentElement];
+    for (const el of candidates) {
+      if (!el) continue;
+      const bg = getComputedStyle(el).backgroundColor;
+      const parsed = parseRgb(bg);
+      if (parsed && parsed.a > 0.5) return parsed;
+    }
+    return null;
+  }
+
+  function relativeLuminance({ r, g, b }) {
+    // ITU-R BT.709 / sRGB 近似（0..1）
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  }
+
+  function detectPageTheme() {
+    const bg = effectiveBackgroundColor();
+    if (bg) {
+      return relativeLuminance(bg) < 0.5 ? 'dark' : 'light';
+    }
+    // 背景が透明等で取れない場合は OS 設定に従う
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  }
+
+  function applyTheme() {
+    const theme = detectPageTheme();
+    document.documentElement.setAttribute('data-web-annotator-theme', theme);
+  }
+
+  function setupThemeListener() {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => applyTheme();
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else if (mq.addListener) mq.addListener(handler); // Safari < 14
   }
 
   function scheduleHighlightRender() {
@@ -218,8 +300,11 @@
       if (nodeInfos.length > 1) {
         span.dataset.highlightPart = index;
       }
-      span.style.setProperty('background-color', color, 'important');
+      span.style.setProperty('background-color', colorToCssValue(color), 'important');
       span.style.cursor = 'pointer';
+      // 色名を data 属性で保持（CSS 側でテーマ別細部調整に利用可）
+      const colorName = HIGHLIGHT_COLOR_NAMES[color];
+      if (colorName) span.dataset.waColor = colorName;
 
       try {
         // splitTextベースの安全なラップ処理
@@ -510,7 +595,7 @@
     return 'sn-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
   }
 
-  function createStickyNote(x, y, content = '', id = null) {
+  function createStickyNote(x, y, content = '', id = null, anchorText = null, anchorXPath = null) {
     const noteId = id || createStickyNoteId();
 
     const note = document.createElement('div');
@@ -556,6 +641,9 @@
         content: content,
         createdAt: Date.now()
       };
+      // テキスト紐付け情報があれば保存（インポート由来の付箋）
+      if (anchorText) noteData.anchorText = anchorText;
+      if (anchorXPath) noteData.anchorXPath = anchorXPath;
       stickyNotes.push(noteData);
       saveData();
     }
@@ -607,10 +695,64 @@
   function renderStickyNotes() {
     stickyNotes.forEach((note) => {
       const existing = document.querySelector(`[data-note-id="${note.id}"]`);
-      if (!existing) {
-        createStickyNote(note.x, note.y, note.content, note.id);
+      if (existing) return;
+
+      let posX = note.x;
+      let posY = note.y;
+
+      // anchorText があればテキスト位置を再計算（SPAでDOM構造が変わっても追従）
+      if (note.anchorText) {
+        const anchored = findAnchorPosition(note.anchorText);
+        if (anchored) {
+          posX = anchored.x;
+          posY = anchored.y;
+        }
       }
+
+      createStickyNote(posX, posY, note.content, note.id, note.anchorText, note.anchorXPath);
     });
+  }
+
+  // テキストを検索して付箋を表示すべき座標 (右横) を返す
+  function findAnchorPosition(searchText) {
+    if (!searchText) return null;
+    const text = searchText.trim();
+    if (!text) return null;
+
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (node) => {
+          if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          if (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') return NodeFilter.FILTER_REJECT;
+          if (parent.closest('.web-annotator-sticky-note')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    let node;
+    while (node = walker.nextNode()) {
+      const idx = node.textContent.indexOf(text);
+      if (idx === -1) continue;
+      try {
+        const range = document.createRange();
+        range.setStart(node, idx);
+        range.setEnd(node, idx + text.length);
+        const rect = range.getBoundingClientRect();
+        if (rect.width === 0 && rect.height === 0) continue;
+        return {
+          x: rect.right + window.scrollX + 8,
+          y: rect.top + window.scrollY
+        };
+      } catch (_) {
+        continue;
+      }
+    }
+    return null;
   }
 
   function removeStickyNote(noteId) {
@@ -638,6 +780,263 @@
       note.y = y;
       saveData();
     }
+  }
+
+  // ============================================
+  // インポート機能（テキスト一覧 → ハイライト/付箋を一括付与）
+  // ============================================
+
+  /**
+   * 入力テキストから検索対象の文字列配列を抽出する。
+   * 以下の3パターンを統一的にサポート（混在もOK）:
+   *
+   *   1. 箇条書き（Markdown リスト記法）
+   *        - foo
+   *        * bar
+   *        + baz
+   *        1. qux
+   *        - [x] done
+   *      → ["foo", "bar", "baz", "qux", "done"]
+   *
+   *   2. カンマ区切り（半角 `,` または全角 `、`）
+   *        foo, bar, baz
+   *        りんご、みかん、ぶどう
+   *      → ["foo", "bar", "baz"]
+   *
+   *   3. 改行区切り（マーカーなしのプレーンテキスト）
+   *        foo
+   *        bar
+   *        baz
+   *      → ["foo", "bar", "baz"]
+   *
+   * 混在例: `- りんご, みかん\nぶどう` → ["りんご", "みかん", "ぶどう"]
+   *
+   * 除外:
+   *  - 空行
+   *  - 見出し行（`#` で始まる）
+   *  - コードブロック ``` ... ``` の中
+   *
+   * @param {string} text - 入力テキスト全体
+   * @returns {string[]} - 抽出されたテキスト配列
+   */
+  function parseMarkdownList(text) {
+    if (!text || typeof text !== 'string') return [];
+    const lines = text.split(/\r?\n/);
+    const results = [];
+    let inCodeBlock = false;
+
+    for (const rawLine of lines) {
+      // コードブロックは無視（``` で開始/終了）
+      if (/^\s*```/.test(rawLine)) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+      if (inCodeBlock) continue;
+
+      let line = rawLine.trim();
+      if (!line) continue;
+
+      // 見出しはスキップ
+      if (/^#{1,6}\s/.test(line)) continue;
+
+      // リスト記法（- / * / + / 数字.）のマーカーを除去
+      const listMatch = line.match(/^(?:[-*+]|\d+[.)])\s+(.+)$/);
+      if (listMatch) line = listMatch[1].trim();
+
+      // checkbox 記法 [ ] / [x] を除去
+      line = line.replace(/^\[[ xX]\]\s+/, '').trim();
+      if (!line) continue;
+
+      // 行内にカンマ（半角/全角）があれば split
+      if (/[,、]/.test(line)) {
+        line.split(/[,、]/).forEach(part => {
+          const t = part.trim();
+          if (t) results.push(t);
+        });
+      } else {
+        results.push(line);
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * ページ内から指定テキストの全ての出現箇所を Range として収集する。
+   * 既存の findAndHighlightText (line 350) の「最初の1件」版を「全件」版にしたもの。
+   * 既存ハイライト内は除外することで二重ハイライトを防ぐ。
+   *
+   * @param {string} searchText
+   * @returns {Range[]}
+   */
+  function findAllOccurrences(searchText) {
+    const ranges = [];
+    if (!searchText) return ranges;
+    const text = searchText.trim();
+    if (!text) return ranges;
+
+    // 方法1: 単一テキストノード内での完全一致を全件収集
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (node) => {
+          if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          if (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') return NodeFilter.FILTER_REJECT;
+          if (parent.closest('.web-annotator-highlight')) return NodeFilter.FILTER_REJECT;
+          if (parent.closest('.web-annotator-sticky-note')) return NodeFilter.FILTER_REJECT;
+          if (parent.closest('#web-annotator-toolbar')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const nodes = [];
+    let node;
+    while (node = walker.nextNode()) nodes.push(node);
+
+    let foundExact = false;
+    for (const n of nodes) {
+      const content = n.textContent;
+      let fromIndex = 0;
+      while (true) {
+        const idx = content.indexOf(text, fromIndex);
+        if (idx === -1) break;
+        try {
+          const r = document.createRange();
+          r.setStart(n, idx);
+          r.setEnd(n, idx + text.length);
+          ranges.push(r);
+          foundExact = true;
+        } catch (_) { /* skip */ }
+        fromIndex = idx + text.length;
+      }
+    }
+
+    if (foundExact) return ranges;
+
+    // 方法2: 正規化マッチ（空白を1個に圧縮）で全件収集
+    //
+    // ★ 学習ポイント: ここはあなたが実装してください（5〜10行）
+    //
+    // やること:
+    //  - 各テキストノード n について、n.textContent を /\s+/g で空白圧縮した
+    //    normalizedContent を作成
+    //  - 検索テキスト text も同様に正規化した normalizedSearch を作成
+    //  - normalizedContent.indexOf(normalizedSearch, fromIndex) を while で回す
+    //  - ヒット位置を findOriginalIndex(n.textContent, idx) で元のオフセットに変換
+    //  - Range を作成して ranges.push
+    //
+    // ヒント: 既存の findOriginalIndex(original, normalizedIndex) (line 468)
+    //        が使えます。fromIndex は (idx + normalizedSearch.length) で進める。
+
+    const normalizedSearch = text.replace(/\s+/g, ' ');
+    for (const n of nodes) {
+      const content = n.textContent;
+      const normalizedContent = content.replace(/\s+/g, ' ');
+      let fromIndex = 0;
+      while (true) {
+        const idx = normalizedContent.indexOf(normalizedSearch, fromIndex);
+        if (idx === -1) break;
+        try {
+          const startOffset = findOriginalIndex(content, idx);
+          const endOffset = Math.min(findOriginalIndex(content, idx + normalizedSearch.length), content.length);
+          const r = document.createRange();
+          r.setStart(n, startOffset);
+          r.setEnd(n, endOffset);
+          ranges.push(r);
+        } catch (_) { /* skip */ }
+        fromIndex = idx + normalizedSearch.length;
+      }
+    }
+
+    return ranges;
+  }
+
+  /**
+   * テキスト配列をハイライトとして一括インポートする。
+   * @param {string[]} texts
+   * @param {string} color
+   * @returns {{processed:number, found:number, added:number}}
+   */
+  function importHighlights(texts, color) {
+    const usedColor = color && HIGHLIGHT_COLORS.includes(color) ? color : HIGHLIGHT_COLORS[currentColorIndex];
+    let found = 0;
+    let added = 0;
+
+    isRenderingHighlights = true;
+    try {
+      texts.forEach(text => {
+        const ranges = findAllOccurrences(text);
+        if (ranges.length > 0) found++;
+
+        ranges.forEach(range => {
+          try {
+            const id = createHighlightId();
+            const startXPath = getXPathForNode(range.startContainer);
+            const endXPath = getXPathForNode(range.endContainer);
+            const startOffset = range.startOffset;
+            const endOffset = range.endOffset;
+
+            applyHighlight(range, id, usedColor);
+
+            highlights.push({
+              id,
+              text,
+              color: usedColor,
+              startXPath,
+              startOffset,
+              endXPath,
+              endOffset,
+              createdAt: Date.now(),
+              importedAt: Date.now()
+            });
+            added++;
+          } catch (e) {
+            console.warn('[Web Annotator] Import highlight failed for one range:', e);
+          }
+        });
+      });
+    } finally {
+      setTimeout(() => { isRenderingHighlights = false; }, 100);
+    }
+
+    if (added > 0) saveData();
+    return { processed: texts.length, found, added };
+  }
+
+  /**
+   * テキスト配列を付箋として一括インポートする。
+   * 各テキストの右横に付箋を表示し、anchorText を保存することで
+   * 再描画時もテキスト位置を追従する。
+   * @param {string[]} texts
+   * @returns {{processed:number, found:number, added:number}}
+   */
+  function importStickyNotes(texts) {
+    let found = 0;
+    let added = 0;
+
+    texts.forEach(text => {
+      const ranges = findAllOccurrences(text);
+      if (ranges.length > 0) found++;
+
+      ranges.forEach(range => {
+        try {
+          const rect = range.getBoundingClientRect();
+          const x = rect.right + window.scrollX + 8;
+          const y = rect.top + window.scrollY;
+          const anchorXPath = getXPathForNode(range.startContainer);
+          createStickyNote(x, y, text, null, text, anchorXPath);
+          added++;
+        } catch (e) {
+          console.warn('[Web Annotator] Import sticky note failed for one range:', e);
+        }
+      });
+    });
+
+    return { processed: texts.length, found, added };
   }
 
   // ============================================
@@ -738,7 +1137,7 @@
       ${HIGHLIGHT_COLORS.map((color, i) => `
         <button class="web-annotator-toolbar-color ${i === currentColorIndex ? 'active' : ''}"
              data-color-index="${i}"
-             style="background-color: ${color}"
+             style="background-color: ${colorToCssValue(color)}"
              title="色を変更"></button>
       `).join('')}
     `;
@@ -959,6 +1358,18 @@
         // ポップアップからのハイライト指示
         highlightSelection();
         sendResponse({ success: true });
+      } else if (request.action === 'importTexts') {
+        try {
+          const texts = Array.isArray(request.texts) ? request.texts : [];
+          const mode = request.mode === 'sticky' ? 'sticky' : 'highlight';
+          const result = mode === 'sticky'
+            ? importStickyNotes(texts)
+            : importHighlights(texts, request.color);
+          sendResponse({ success: true, mode, ...result });
+        } catch (e) {
+          console.error('[Web Annotator] importTexts failed:', e);
+          sendResponse({ success: false, error: e.message });
+        }
       }
       return true;
     });
