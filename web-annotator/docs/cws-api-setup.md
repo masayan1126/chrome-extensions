@@ -31,18 +31,18 @@ $ node scripts/upload-to-cws.mjs ./web-annotator-v1.X.Y.zip
 
 ## Step 1: Extension ID の確認
 
-Chrome Web Store Developer Dashboard を開き、Web Annotator のアイテムを選択。
-URL の最後にある UUID 形式の文字列が Extension ID です。
+⚠️ **注意**: Chrome Web Store Developer Dashboard には **2 種類の ID** が混在しています。
+Publish API で使うのは **公開ストアの 32 文字英数字 ID** の方です。
 
-例:
-```
-https://chrome.google.com/webstore/devconsole/329b08a0-c72b-41e1-bc65-961abd55d356
-                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                              これが Extension ID
-```
+| 表示場所 | 形式 | API で使うか |
+|---|---|---|
+| Dashboard URL 末尾の UUID (`329b08a0-c72b-...`) | UUID 形式 | ❌ Dashboard 内部用、API では 404 になる |
+| Dashboard 内「アイテム ID」表示 / 公開ストア URL | 32 文字英数字 (`gckpllfnimaepbbelfmhcelibclnkena`) | ✅ **これを使う** |
 
-> ※ 公開後の `chromewebstore.google.com/detail/<32 文字英数>` の ID とは別物。
-> Developer Dashboard の URL の方が API で使う ID です。
+確認方法:
+1. https://chrome.google.com/webstore/devconsole にログイン
+2. Web Annotator を選択
+3. 「アイテム ID」と表示されている 32 文字英数字をコピー（または公開後の URL `https://chromewebstore.google.com/detail/<ID>` の `<ID>` 部分）
 
 `CWS_EXTENSION_ID` として後で .env に記載します。
 
@@ -110,8 +110,9 @@ cp .env.example .env
 エディタで `.env` を開いて、Step 5 で取得した値と Extension ID を埋める:
 
 ```bash
-# Web Annotator → Developer Dashboard URL の UUID
-CWS_EXTENSION_ID=329b08a0-c72b-41e1-bc65-961abd55d356
+# Developer Dashboard 内「アイテム ID」（32 文字英数字）
+# ※ URL 末尾の UUID ではない！URL の UUID を使うと 404 になります
+CWS_EXTENSION_ID=gckpllfnimaepbbelfmhcelibclnkena
 
 # Step 5 で取得
 CWS_CLIENT_ID=xxxxxxxxxxxxxxxx.apps.googleusercontent.com
@@ -179,6 +180,10 @@ node scripts/upload-to-cws.mjs ./web-annotator-v1.X.Y.zip
 ### `403 Forbidden`
 - Chrome Web Store API が無効化されている → Step 3 を再確認
 - OAuth スコープが不足 → Step 6 のスクリプトで `https://www.googleapis.com/auth/chromewebstore` を要求しているか確認
+
+### `404 Not Found`
+- `CWS_EXTENSION_ID` が誤っている可能性が高い。**Dashboard URL 末尾の UUID ではなく、Dashboard 内の「アイテム ID」(32 文字英数字)** を使用しているか確認 (Step 1)
+- 認証した Google アカウントがその拡張機能のオーナー or 編集権限を持っていない場合も 404 になる
 
 ---
 
