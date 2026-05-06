@@ -1,0 +1,7 @@
+# Chrome Web Store API credentials — 絶対にコミットしないこと
+.env
+.env.*
+!.env.example
+
+# 動作確認用一時ファイル
+*.local
