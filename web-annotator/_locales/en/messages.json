@@ -173,6 +173,13 @@
     "message": "Failed to read file",
     "description": "Toast when file reader errored"
   },
+  "importPartialFailure": {
+    "message": " ($COUNT$ failed — see DevTools console for details)",
+    "description": "Toast suffix when some items failed",
+    "placeholders": {
+      "count": { "content": "$1", "example": "3" }
+    }
+  },
   "helpImport": {
     "message": "Import: paste list / comma-separated / line-separated text, choose mode, click Import",
     "description": "Help text for import"

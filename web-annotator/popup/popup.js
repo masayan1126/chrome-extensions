@@ -34,7 +34,8 @@ function applyI18n() {
 }
 
 // 入力テキストを抽出する（箇条書き / カンマ区切り / 改行区切りの3パターン対応）
-// content.js の parseMarkdownList と同じロジック。
+// 注意: popup と content script は別 context のため module 共有不可。
+// content.js の parseMarkdownList と同じ実装を保つこと（片方修正時は両方修正）。
 function parseMarkdownList(text) {
   if (!text || typeof text !== 'string') return [];
   const lines = text.split(/\r?\n/);
@@ -220,7 +221,9 @@ function setupImportListeners() {
       textarea.value = String(reader.result || '');
     };
     reader.onerror = () => {
-      showToast(i18n('importFileReadFailed') || 'File read failed');
+      console.error('[Web Annotator] File read failed', reader.error);
+      const detail = reader.error ? `: ${reader.error.name}` : '';
+      showToast((i18n('importFileReadFailed') || 'File read failed') + detail);
     };
     reader.readAsText(file, 'utf-8');
     fileInput.value = ''; // 同じファイルを再選択できるようにリセット
@@ -279,18 +282,26 @@ async function runImport() {
     });
 
     if (!response || response.success === false) {
-      showToast(i18n('importFailed') || 'Import failed');
+      const errMsg = response && response.error ? `: ${response.error}` : '';
+      showToast((i18n('importFailed') || 'Import failed') + errMsg);
       return;
     }
 
-    const msg = i18n('importResult', [String(response.found), String(response.added)]) ||
+    const failed = response.failed || 0;
+    let msg = i18n('importResult', [String(response.found), String(response.added)]) ||
       `Found ${response.found} / Added ${response.added}`;
+    if (failed > 0) {
+      const failedSuffix = i18n('importPartialFailure', [String(failed)]) || ` (${failed} failed)`;
+      msg += failedSuffix;
+    }
     showToast(msg);
 
     await loadAnnotations();
   } catch (e) {
-    console.error('Import failed:', e);
-    showToast(i18n('pleaseReload'));
+    // sendMessage 失敗の典型ケース: content script 未注入 / tab 消失 / content 内例外の rethrow
+    console.error('[Web Annotator] Import failed:', e);
+    const detail = e && e.message ? `: ${e.message}` : '';
+    showToast((i18n('importFailed') || 'Import failed') + detail);
   }
 }
 

@@ -173,6 +173,13 @@
     "message": "ファイルの読み込みに失敗しました",
     "description": "Toast when file reader errored"
   },
+  "importPartialFailure": {
+    "message": "（$COUNT$件は失敗 — 詳細は DevTools コンソール参照）",
+    "description": "Toast suffix when some items failed",
+    "placeholders": {
+      "count": { "content": "$1", "example": "3" }
+    }
+  },
   "helpImport": {
     "message": "インポート: 箇条書き/カンマ区切り/改行区切りを貼り付け、モードを選んでインポート",
     "description": "Help text for import"

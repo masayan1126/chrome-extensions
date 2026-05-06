@@ -11,21 +11,14 @@
   let highlights = [];
   let stickyNotes = [];
 
-  // カラーパレット（黄色、緑、青、赤）
-  // 保存値は ライトモード時の hex を維持（既存ストレージ後方互換）
+  // カラーパレット（保存値は hex のまま、描画時に var() でラップして CSS variables 経由でテーマ追従）
   const HIGHLIGHT_COLORS = [
-    '#fef08a', // 黄色（やわらかい）
-    '#86efac', // 緑（やわらかい）
-    '#93c5fd', // 青（やわらかい）
-    '#fca5a5'  // 赤（やわらかい）
+    '#fef08a', // yellow
+    '#86efac', // green
+    '#93c5fd', // blue
+    '#fca5a5'  // red
   ];
 
-  // hex → CSS variable 名の対応。
-  // ハイライト適用時は inline style に
-  //   "var(--web-annotator-hl-yellow, #fef08a)" の形で設定する。
-  // これにより、html[data-web-annotator-theme="dark"] 時に CSS 側の
-  // CSS variables 値（濃い色）に切り替わる。fallback の hex により
-  // CSS が読まれない・テーマ未判定でも従来動作。
   const HIGHLIGHT_COLOR_NAMES = {
     '#fef08a': 'yellow',
     '#86efac': 'green',
@@ -97,7 +90,8 @@
   }
 
   function relativeLuminance({ r, g, b }) {
-    // ITU-R BT.709 / sRGB 近似（0..1）
+    // 簡易輝度（0..1）。ガンマ補正なしの線形重み付き平均で、ダーク/ライト判定の閾値比較用途には十分。
+    // 厳密な WCAG 準拠の relativeLuminance ではないので、コントラスト比計算用には使わないこと。
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   }
 
@@ -595,7 +589,7 @@
     return 'sn-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
   }
 
-  function createStickyNote(x, y, content = '', id = null, anchorText = null, anchorXPath = null) {
+  function createStickyNote(x, y, content = '', id = null, anchorText = null, anchorXPath = null, skipPersist = false) {
     const noteId = id || createStickyNoteId();
 
     const note = document.createElement('div');
@@ -608,13 +602,31 @@
     const stickyPlaceholder = chrome.i18n.getMessage('stickyNotePlaceholder') || 'Write a note...';
     const deleteTitle = chrome.i18n.getMessage('delete') || 'Delete';
 
-    note.innerHTML = `
-      <div class="web-annotator-sticky-header">
-        <span class="web-annotator-sticky-title">${stickyTitle}</span>
-        <button class="web-annotator-sticky-delete" title="${deleteTitle}">&times;</button>
-      </div>
-      <textarea class="web-annotator-sticky-content" placeholder="${stickyPlaceholder}">${content}</textarea>
-    `;
+    // DOM 構築（innerHTML を使うとインポート由来の content で
+    // </textarea>...<img onerror=...> 脱出が成立してしまうため、
+    // 全要素を createElement で組み立てる）
+    const header = document.createElement('div');
+    header.className = 'web-annotator-sticky-header';
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'web-annotator-sticky-title';
+    titleEl.textContent = stickyTitle;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'web-annotator-sticky-delete';
+    deleteBtn.title = deleteTitle;
+    deleteBtn.textContent = '×';
+
+    header.appendChild(titleEl);
+    header.appendChild(deleteBtn);
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'web-annotator-sticky-content';
+    textarea.placeholder = stickyPlaceholder;
+    textarea.value = content;
+
+    note.appendChild(header);
+    note.appendChild(textarea);
 
     document.body.appendChild(note);
 
@@ -622,17 +634,17 @@
     makeDraggable(note);
 
     // 削除ボタン
-    note.querySelector('.web-annotator-sticky-delete').addEventListener('click', () => {
+    deleteBtn.addEventListener('click', () => {
       removeStickyNote(noteId);
     });
 
     // 内容変更時に保存
-    const textarea = note.querySelector('.web-annotator-sticky-content');
     textarea.addEventListener('input', () => {
       updateStickyNoteContent(noteId, textarea.value);
     });
 
-    // 新規作成時のみデータを追加
+    // 新規作成時のみデータを追加。skipPersist=true なら push は行うが saveData は呼び出し側で一括実行する
+    // （インポート時の chrome.storage.local.set 連続発火を避けるため）
     if (!id) {
       const noteData = {
         id: noteId,
@@ -641,11 +653,10 @@
         content: content,
         createdAt: Date.now()
       };
-      // テキスト紐付け情報があれば保存（インポート由来の付箋）
       if (anchorText) noteData.anchorText = anchorText;
       if (anchorXPath) noteData.anchorXPath = anchorXPath;
       stickyNotes.push(noteData);
-      saveData();
+      if (!skipPersist) saveData();
     }
 
     return note;
@@ -748,7 +759,8 @@
           x: rect.right + window.scrollX + 8,
           y: rect.top + window.scrollY
         };
-      } catch (_) {
+      } catch (e) {
+        console.warn('[Web Annotator] findAnchorPosition: range build failed, falling back to next candidate', { text, error: e.message });
         continue;
       }
     }
@@ -789,32 +801,11 @@
   /**
    * 入力テキストから検索対象の文字列配列を抽出する。
    * 以下の3パターンを統一的にサポート（混在もOK）:
-   *
-   *   1. 箇条書き（Markdown リスト記法）
-   *        - foo
-   *        * bar
-   *        + baz
-   *        1. qux
-   *        - [x] done
-   *      → ["foo", "bar", "baz", "qux", "done"]
-   *
-   *   2. カンマ区切り（半角 `,` または全角 `、`）
-   *        foo, bar, baz
-   *        りんご、みかん、ぶどう
-   *      → ["foo", "bar", "baz"]
-   *
-   *   3. 改行区切り（マーカーなしのプレーンテキスト）
-   *        foo
-   *        bar
-   *        baz
-   *      → ["foo", "bar", "baz"]
-   *
-   * 混在例: `- りんご, みかん\nぶどう` → ["りんご", "みかん", "ぶどう"]
-   *
-   * 除外:
-   *  - 空行
-   *  - 見出し行（`#` で始まる）
-   *  - コードブロック ``` ... ``` の中
+   *   1. 箇条書き（`-` `*` `+` `1.` `[x]`）
+   *   2. カンマ区切り（半角 `,` / 全角 `、`）
+   *   3. 改行区切り（マーカーなし）
+   * 例: `- りんご, みかん\nぶどう` → ["りんご", "みかん", "ぶどう"]
+   * 除外: 空行 / 見出し行 / コードブロック内
    *
    * @param {string} text - 入力テキスト全体
    * @returns {string[]} - 抽出されたテキスト配列
@@ -826,7 +817,6 @@
     let inCodeBlock = false;
 
     for (const rawLine of lines) {
-      // コードブロックは無視（``` で開始/終了）
       if (/^\s*```/.test(rawLine)) {
         inCodeBlock = !inCodeBlock;
         continue;
@@ -835,19 +825,14 @@
 
       let line = rawLine.trim();
       if (!line) continue;
-
-      // 見出しはスキップ
       if (/^#{1,6}\s/.test(line)) continue;
 
-      // リスト記法（- / * / + / 数字.）のマーカーを除去
       const listMatch = line.match(/^(?:[-*+]|\d+[.)])\s+(.+)$/);
       if (listMatch) line = listMatch[1].trim();
 
-      // checkbox 記法 [ ] / [x] を除去
       line = line.replace(/^\[[ xX]\]\s+/, '').trim();
       if (!line) continue;
 
-      // 行内にカンマ（半角/全角）があれば split
       if (/[,、]/.test(line)) {
         line.split(/[,、]/).forEach(part => {
           const t = part.trim();
@@ -863,17 +848,20 @@
 
   /**
    * ページ内から指定テキストの全ての出現箇所を Range として収集する。
-   * 既存の findAndHighlightText (line 350) の「最初の1件」版を「全件」版にしたもの。
+   * findAndHighlightText の「最初の1件」版を「全件」版にしたもの。
    * 既存ハイライト内は除外することで二重ハイライトを防ぐ。
    *
    * @param {string} searchText
-   * @returns {Range[]}
+   * @returns {{ranges: Range[], rangeBuildFailures: number}}
+   *   rangeBuildFailures: ヒット位置は見つかったが Range 構築で失敗した件数。
+   *   呼び出し側はこれを集計してユーザー/開発者に通知すべき。
    */
   function findAllOccurrences(searchText) {
     const ranges = [];
-    if (!searchText) return ranges;
+    let rangeBuildFailures = 0;
+    if (!searchText) return { ranges, rangeBuildFailures };
     const text = searchText.trim();
-    if (!text) return ranges;
+    if (!text) return { ranges, rangeBuildFailures };
 
     // 方法1: 単一テキストノード内での完全一致を全件収集
     const walker = document.createTreeWalker(
@@ -910,28 +898,18 @@
           r.setEnd(n, idx + text.length);
           ranges.push(r);
           foundExact = true;
-        } catch (_) { /* skip */ }
+        } catch (e) {
+          rangeBuildFailures++;
+          console.warn('[Web Annotator] Range build failed (exact match)', { text, idx, error: e.message });
+        }
         fromIndex = idx + text.length;
       }
     }
 
-    if (foundExact) return ranges;
+    if (foundExact) return { ranges, rangeBuildFailures };
 
-    // 方法2: 正規化マッチ（空白を1個に圧縮）で全件収集
-    //
-    // ★ 学習ポイント: ここはあなたが実装してください（5〜10行）
-    //
-    // やること:
-    //  - 各テキストノード n について、n.textContent を /\s+/g で空白圧縮した
-    //    normalizedContent を作成
-    //  - 検索テキスト text も同様に正規化した normalizedSearch を作成
-    //  - normalizedContent.indexOf(normalizedSearch, fromIndex) を while で回す
-    //  - ヒット位置を findOriginalIndex(n.textContent, idx) で元のオフセットに変換
-    //  - Range を作成して ranges.push
-    //
-    // ヒント: 既存の findOriginalIndex(original, normalizedIndex) (line 468)
-    //        が使えます。fromIndex は (idx + normalizedSearch.length) で進める。
-
+    // 方法2: 正規化マッチ（空白を1個に圧縮）で全件収集。
+    // findOriginalIndex で正規化後のオフセットを元のテキストノード上のオフセットに復元する。
     const normalizedSearch = text.replace(/\s+/g, ' ');
     for (const n of nodes) {
       const content = n.textContent;
@@ -947,30 +925,36 @@
           r.setStart(n, startOffset);
           r.setEnd(n, endOffset);
           ranges.push(r);
-        } catch (_) { /* skip */ }
+        } catch (e) {
+          rangeBuildFailures++;
+          console.warn('[Web Annotator] Range build failed (normalized match)', { text, idx, error: e.message });
+        }
         fromIndex = idx + normalizedSearch.length;
       }
     }
 
-    return ranges;
+    return { ranges, rangeBuildFailures };
   }
 
   /**
    * テキスト配列をハイライトとして一括インポートする。
    * @param {string[]} texts
    * @param {string} color
-   * @returns {{processed:number, found:number, added:number}}
+   * @returns {{processed:number, found:number, added:number, failed:number}}
+   *   failed: ヒットしたが Range/DOM 反映で失敗した件数
    */
   function importHighlights(texts, color) {
     const usedColor = color && HIGHLIGHT_COLORS.includes(color) ? color : HIGHLIGHT_COLORS[currentColorIndex];
     let found = 0;
     let added = 0;
+    let failed = 0;
 
     isRenderingHighlights = true;
     try {
       texts.forEach(text => {
-        const ranges = findAllOccurrences(text);
+        const { ranges, rangeBuildFailures } = findAllOccurrences(text);
         if (ranges.length > 0) found++;
+        failed += rangeBuildFailures;
 
         ranges.forEach(range => {
           try {
@@ -995,7 +979,8 @@
             });
             added++;
           } catch (e) {
-            console.warn('[Web Annotator] Import highlight failed for one range:', e);
+            failed++;
+            console.warn('[Web Annotator] Import highlight failed for one range:', { text, error: e.message });
           }
         });
       });
@@ -1004,23 +989,26 @@
     }
 
     if (added > 0) saveData();
-    return { processed: texts.length, found, added };
+    return { processed: texts.length, found, added, failed };
   }
 
   /**
    * テキスト配列を付箋として一括インポートする。
    * 各テキストの右横に付箋を表示し、anchorText を保存することで
    * 再描画時もテキスト位置を追従する。
+   * saveData はループ後 1 回にまとめる（chrome.storage.local.set の連続発火を回避）。
    * @param {string[]} texts
-   * @returns {{processed:number, found:number, added:number}}
+   * @returns {{processed:number, found:number, added:number, failed:number}}
    */
   function importStickyNotes(texts) {
     let found = 0;
     let added = 0;
+    let failed = 0;
 
     texts.forEach(text => {
-      const ranges = findAllOccurrences(text);
+      const { ranges, rangeBuildFailures } = findAllOccurrences(text);
       if (ranges.length > 0) found++;
+      failed += rangeBuildFailures;
 
       ranges.forEach(range => {
         try {
@@ -1028,15 +1016,19 @@
           const x = rect.right + window.scrollX + 8;
           const y = rect.top + window.scrollY;
           const anchorXPath = getXPathForNode(range.startContainer);
-          createStickyNote(x, y, text, null, text, anchorXPath);
+          // skipPersist=true: createStickyNote 内では DOM 構築 + stickyNotes.push のみ。
+          // saveData はループ完了後に 1 回だけ呼ぶ（chrome.storage.local.set の連続発火を回避）
+          createStickyNote(x, y, text, null, text, anchorXPath, true);
           added++;
         } catch (e) {
-          console.warn('[Web Annotator] Import sticky note failed for one range:', e);
+          failed++;
+          console.warn('[Web Annotator] Import sticky note failed for one range:', { text, error: e.message });
         }
       });
     });
 
-    return { processed: texts.length, found, added };
+    if (added > 0) saveData();
+    return { processed: texts.length, found, added, failed };
   }
 
   // ============================================

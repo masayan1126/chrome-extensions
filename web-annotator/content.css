@@ -6,9 +6,9 @@
    - ダークモード相当: 濃い色（白文字とのコントラスト確保）
    - テーマ判定は content.js が <html> に
      data-web-annotator-theme="dark|light" を付与
-   - 既存ストレージの hex 値は inline style の fallback で
-     `var(--web-annotator-hl-yellow, #fef08a)` の形にしてあるため
-     後方互換性も担保される
+   - ストレージは hex を保存し続け、描画時に colorToCssValue() で
+     `var(--web-annotator-hl-yellow, #fef08a)` 形式へラップする。
+     hex を fallback として温存することで CSS 未読込み時も従来動作。
    ============================================ */
 :root {
   --web-annotator-hl-yellow: #fef08a;
