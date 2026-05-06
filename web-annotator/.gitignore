@@ -3,5 +3,10 @@
 .env.*
 !.env.example
 
+# Google Cloud Console から DL される OAuth client JSON
+# (ファイル名例: client_secret_1234567890-abcde.apps.googleusercontent.com.json)
+client_secret_*.json
+*credentials*.json
+
 # 動作確認用一時ファイル
 *.local

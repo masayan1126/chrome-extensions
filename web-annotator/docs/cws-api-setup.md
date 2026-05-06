@@ -91,41 +91,23 @@ https://chrome.google.com/webstore/devconsole/329b08a0-c72b-41e1-bc65-961abd55d3
 3. **アプリケーションの種類**: `デスクトップアプリ`
 4. 名前: `web-annotator-publisher` (任意)
 5. 「作成」 → ダイアログで **Client ID** と **Client Secret** が表示
-   - 「JSON をダウンロード」しておくと安心
+   - 「JSON をダウンロード」した場合、**ファイルはリポジトリ外**（例: `~/Documents/secrets/` 等）に保管してください。`.gitignore` で `client_secret_*.json` は除外していますが、リポジトリディレクトリに置かないのが鉄則です
 6. 控えた Client ID と Secret を後で .env に書きます
 
 `CWS_CLIENT_ID` / `CWS_CLIENT_SECRET` として保存。
 
 ---
 
-## Step 6: Refresh Token の取得
+## Step 6: .env に Client ID / Secret を先に書く
 
-OAuth 認可フローを通して長期有効な refresh token を取得します。
-この手順を補助するスクリプトが `scripts/get-cws-refresh-token.mjs` です。
+`web-annotator/.env` を作成（`.gitignore` で git 管理外）:
 
 ```bash
 cd web-annotator
-
-# 環境変数を一時的にセット（.env でも可）
-export CWS_CLIENT_ID='YOUR_CLIENT_ID.apps.googleusercontent.com'
-export CWS_CLIENT_SECRET='YOUR_CLIENT_SECRET'
-
-node scripts/get-cws-refresh-token.mjs
+cp .env.example .env
 ```
 
-スクリプトの動作:
-1. ローカルの `http://127.0.0.1:8765` で短命 HTTP サーバを起動
-2. ブラウザで開くべき認可 URL を表示
-3. 認可 URL を Cmd+クリックで開き、テストユーザーとして承認
-4. リダイレクトでローカルサーバが authorization code を受け取る
-5. code を refresh token に交換して画面表示
-6. `.env` に追記する形でガイド表示
-
----
-
-## Step 7: .env を作成
-
-`web-annotator/.env` を作成 (`.gitignore` で git 管理外):
+エディタで `.env` を開いて、Step 5 で取得した値と Extension ID を埋める:
 
 ```bash
 # Web Annotator → Developer Dashboard URL の UUID
@@ -135,11 +117,37 @@ CWS_EXTENSION_ID=329b08a0-c72b-41e1-bc65-961abd55d356
 CWS_CLIENT_ID=xxxxxxxxxxxxxxxx.apps.googleusercontent.com
 CWS_CLIENT_SECRET=xxxxxxxxxxxxxxxxxx
 
-# Step 6 で取得
-CWS_REFRESH_TOKEN=1//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Step 7 で取得（まだ空でOK）
+CWS_REFRESH_TOKEN=
 ```
 
 **絶対に git にコミットしないでください**。`.gitignore` で除外済みです。
+
+---
+
+## Step 7: Refresh Token の取得
+
+OAuth 認可フローを通して長期有効な refresh token を取得します。
+スクリプトは `.env` を自動で読み込むため、`export` は不要です。
+
+```bash
+cd web-annotator
+node scripts/get-cws-refresh-token.mjs
+```
+
+スクリプトの動作:
+1. `.env` から CWS_CLIENT_ID / CWS_CLIENT_SECRET を読み込む
+2. ローカルの `http://127.0.0.1:8765` で短命 HTTP サーバを起動
+3. ブラウザで開くべき認可 URL を表示
+4. 認可 URL を Cmd+クリックで開き、**Step 4 で追加したテストユーザーの Google アカウント** で承認
+5. リダイレクトでローカルサーバが authorization code を受け取る
+6. code を refresh token に交換して画面表示
+
+表示された `CWS_REFRESH_TOKEN=...` の行を `.env` の該当行に貼り付けて保存。
+
+> ※ 環境変数で渡したい場合は引き続き
+> `CWS_CLIENT_ID=xxx CWS_CLIENT_SECRET=yyy node scripts/get-cws-refresh-token.mjs`
+> でもOK（環境変数は .env より優先される）。
 
 ---
 

@@ -2,8 +2,9 @@
 // Chrome Web Store API 用の refresh token を取得する補助スクリプト。
 // 詳細は docs/cws-api-setup.md を参照。
 //
-// 必要な環境変数: CWS_CLIENT_ID, CWS_CLIENT_SECRET
-// 出力: refresh token を標準出力に表示し、.env に追記する形のガイドを表示する。
+// 必要: CWS_CLIENT_ID, CWS_CLIENT_SECRET
+//   優先順位: 環境変数 > web-annotator/.env
+//   .env だけに書いてあれば export 不要で動作する。
 //
 // 動作:
 //   1. ローカル HTTP サーバを 127.0.0.1:8765 で起動
@@ -12,7 +13,11 @@
 //   4. code を refresh token に交換して表示
 
 import http from 'node:http';
+import path from 'node:path';
 import { URL } from 'node:url';
+import { loadDotenv } from './lib/dotenv.mjs';
+
+loadDotenv(path.join(process.cwd(), '.env'));
 
 const CLIENT_ID = process.env.CWS_CLIENT_ID;
 const CLIENT_SECRET = process.env.CWS_CLIENT_SECRET;
@@ -21,7 +26,8 @@ const REDIRECT_URI = `http://127.0.0.1:${REDIRECT_PORT}`;
 const SCOPE = 'https://www.googleapis.com/auth/chromewebstore';
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  console.error('ERROR: CWS_CLIENT_ID and CWS_CLIENT_SECRET must be set in environment.');
+  console.error('ERROR: CWS_CLIENT_ID and CWS_CLIENT_SECRET must be set');
+  console.error('       (in environment, or in web-annotator/.env)');
   console.error('See docs/cws-api-setup.md Step 6.');
   process.exit(1);
 }
