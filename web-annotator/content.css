@@ -1,5 +1,31 @@
 /* Web Annotator - Content Script Styles */
 
+/* ============================================
+   ハイライト色の CSS variables
+   - 既定（ライトモード相当）: 明るい pastel
+   - ダークモード相当: 濃い色（白文字とのコントラスト確保）
+   - テーマ判定は content.js が <html> に
+     data-web-annotator-theme="dark|light" を付与
+   - ストレージは hex を保存し続け、描画時に colorToCssValue() で
+     `var(--web-annotator-hl-yellow, #fef08a)` 形式へラップする。
+     hex を fallback として温存することで CSS 未読込み時も従来動作。
+   ============================================ */
+:root {
+  --web-annotator-hl-yellow: #fef08a;
+  --web-annotator-hl-green: #86efac;
+  --web-annotator-hl-blue: #93c5fd;
+  --web-annotator-hl-red: #fca5a5;
+}
+
+html[data-web-annotator-theme="dark"] {
+  /* Tailwind の amber-700 / green-700 / blue-700 / red-700 相当
+     白文字に対して WCAG AA を満たすコントラスト */
+  --web-annotator-hl-yellow: #b45309;
+  --web-annotator-hl-green: #15803d;
+  --web-annotator-hl-blue: #1d4ed8;
+  --web-annotator-hl-red: #b91c1c;
+}
+
 /* ハイライトのスタイル */
 .web-annotator-highlight {
   padding: 2px 0 !important;

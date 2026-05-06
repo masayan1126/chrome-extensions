@@ -128,5 +128,60 @@
   "stickyNotePlaceholder": {
     "message": "メモを入力...",
     "description": "Sticky note placeholder"
+  },
+  "importTexts": {
+    "message": "テキストをインポート",
+    "description": "Import section title"
+  },
+  "modeHighlight": {
+    "message": "ハイライト",
+    "description": "Import mode: highlight"
+  },
+  "modeNotes": {
+    "message": "付箋",
+    "description": "Import mode: sticky notes"
+  },
+  "color": {
+    "message": "色",
+    "description": "Color label"
+  },
+  "chooseFile": {
+    "message": "ファイルを選択...",
+    "description": "Import file picker button"
+  },
+  "runImport": {
+    "message": "インポート",
+    "description": "Import run button"
+  },
+  "importNoText": {
+    "message": "対象テキストが見つかりませんでした",
+    "description": "Toast when nothing was parsed"
+  },
+  "importResult": {
+    "message": "$FOUND$ 件のテキストを発見、$ADDED$ 件のアノテーションを追加",
+    "description": "Import result toast",
+    "placeholders": {
+      "found": { "content": "$1", "example": "8" },
+      "added": { "content": "$2", "example": "12" }
+    }
+  },
+  "importFailed": {
+    "message": "インポートに失敗しました",
+    "description": "Toast when content script returns failure"
+  },
+  "importFileReadFailed": {
+    "message": "ファイルの読み込みに失敗しました",
+    "description": "Toast when file reader errored"
+  },
+  "importPartialFailure": {
+    "message": "（$COUNT$件は失敗 — 詳細は DevTools コンソール参照）",
+    "description": "Toast suffix when some items failed",
+    "placeholders": {
+      "count": { "content": "$1", "example": "3" }
+    }
+  },
+  "helpImport": {
+    "message": "インポート: 箇条書き/カンマ区切り/改行区切りを貼り付け、モードを選んでインポート",
+    "description": "Help text for import"
   }
 }

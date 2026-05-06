@@ -360,3 +360,129 @@ body {
     transform: translateX(-50%) translateY(0);
   }
 }
+
+/* Import section */
+.import-section {
+  background: #161616;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.import-section > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s ease;
+}
+
+.import-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.import-section > summary::before {
+  content: "▸";
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  transition: transform 0.15s ease;
+  display: inline-block;
+}
+
+.import-section[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.import-section > summary:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.import-body {
+  padding: 12px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.import-mode {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.import-mode label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.import-mode input[type="radio"] {
+  cursor: pointer;
+}
+
+.import-color {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.import-color-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 4px;
+}
+
+.import-color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.import-color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.import-color-swatch.active {
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+#importTextarea {
+  width: 100%;
+  background: #0e0e0e;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 100px;
+  max-height: 220px;
+}
+
+#importTextarea:focus {
+  outline: none;
+  border-color: rgba(96, 165, 250, 0.6);
+}
+
+.import-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.import-actions .btn {
+  padding: 6px 12px;
+  font-size: 12px;
+}
