@@ -10,6 +10,17 @@
 | ⑤ | コミット/PR | `commit-commands:commit-push-pr` | semantic commit |
 | ⑥ | レビュー | `pr-review-toolkit:review-pr` | code / errors / types を並列実行 |
 | ⑦ | ドキュメント | `claude-md-management:revise-claude-md` / `internal-comms` | CLAUDE.md 更新 + リリースノート作成（`docs/release-notes-vX.Y.Z.md`） |
+| ⑧ | Chrome Web Store 反映 | (web-annotator のみ) `web-annotator/docs/release-checklist.md` | **必ず ストア掲載情報 → zip の順** で更新する |
+
+## Chrome Web Store の反映順序（重要）
+
+zip をアップロードすると即座に「審査中」状態になり、ストア掲載情報（Detailed description / スクリーンショット / カテゴリ等）が **編集ロック** されます。
+**必ず以下の順序を守ってください**:
+
+1. **先**: Web UI で「ストア掲載情報」を更新（`STORE_LISTING.md` の最新内容を貼り付け）
+2. **後**: `node scripts/upload-to-cws.mjs ./web-annotator-vX.Y.Z.zip` で zip アップロード + 公開トリガー
+
+詳細チェックリストは `web-annotator/docs/release-checklist.md` を参照。
 
 ## ガードレール（全工程横断）
 - `hookify` — 不要なふるまいの防止

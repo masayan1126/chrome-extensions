@@ -1,5 +1,15 @@
 # Chrome Web Store Listing Information
 
+> 🚨 **更新運用ルール**: 新バージョンをリリースするときは **必ず以下の順序** で進めること。
+> 詳細チェックリストは [docs/release-checklist.md](./docs/release-checklist.md) を参照。
+>
+> 1. このファイル (`STORE_LISTING.md`) を新バージョンの内容に更新
+> 2. **Web UI で Detailed description を更新（先）**
+> 3. `node scripts/upload-to-cws.mjs ./web-annotator-v<X.Y.Z>.zip` で zip アップロード（後）
+>
+> 順序を逆にすると、zip 審査中ロックで Detailed description が数日編集不可になります。
+
+
 ## Short Description (132 characters max)
 **English:**
 Add highlights and sticky notes to web pages, export as Markdown. Your annotations are saved locally and persist across sessions.

@@ -11,18 +11,25 @@
 //   CWS_CLIENT_SECRET
 //   CWS_REFRESH_TOKEN
 //
-// オプション環境変数:
+// オプション環境変数 / フラグ:
 //   CWS_PUBLISH_TARGET=default  (default | trustedTesters)
 //   CWS_SKIP_PUBLISH=1          (アップロードのみ、公開トリガーをスキップ)
+//   --yes / -y                  (ストア掲載情報更新済み確認をスキップ。CI 等で対話できない時用)
 //
-// Detailed description, screenshots, store listing details は API で更新できないため、
-// Web UI での手動更新が必要。STORE_LISTING.md を参照のこと。
+// ⚠️ Detailed description, screenshots, store listing details は API で更新できないため、
+// Web UI での手動更新が必要。**zip アップロード後はストア掲載情報が編集ロックされる** ため、
+// 必ず先に Detailed description を更新してから本スクリプトを実行すること。
+// 詳細は docs/release-checklist.md 3-A を参照。
 
 import fs from 'node:fs';
 import path from 'node:path';
+import readline from 'node:readline';
 import { loadDotenv } from './lib/dotenv.mjs';
 
 loadDotenv(path.join(process.cwd(), '.env'));
+
+// --yes / -y フラグ判定
+const SKIP_CONFIRM = process.argv.includes('--yes') || process.argv.includes('-y');
 
 // ---------------------------------------------------------------------------
 // 必須環境変数チェック
@@ -37,11 +44,11 @@ if (missing.length > 0) {
 }
 
 // ---------------------------------------------------------------------------
-// zip ファイルパス引数
+// zip ファイルパス引数 (--yes / -y は除外)
 // ---------------------------------------------------------------------------
-const zipPath = process.argv[2];
+const zipPath = process.argv.slice(2).find(arg => !arg.startsWith('-'));
 if (!zipPath) {
-  console.error('Usage: node scripts/upload-to-cws.mjs <path/to/zip>');
+  console.error('Usage: node scripts/upload-to-cws.mjs <path/to/zip> [--yes]');
   process.exit(1);
 }
 if (!fs.existsSync(zipPath)) {
@@ -145,8 +152,49 @@ async function publish(accessToken) {
 // ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// 確認プロンプト: zip アップロード前にストア掲載情報の更新が済んでいるか
+// （アップロード後は審査ロックで Detailed description が編集できなくなる）
+// ---------------------------------------------------------------------------
+async function confirmStoreInfoUpdated() {
+  if (SKIP_CONFIRM) {
+    console.log('--yes flag: skipping store info confirmation.');
+    return;
+  }
+  if (!process.stdin.isTTY) {
+    // 非対話環境（CI など）で --yes 無しは安全のため拒否
+    console.error('ERROR: non-interactive environment but --yes was not given.');
+    console.error('       Pass --yes to acknowledge that store info has been updated already.');
+    process.exit(1);
+  }
+
+  console.log('');
+  console.log('============================================================');
+  console.log('⚠️  IMPORTANT: After this upload, the store listing fields');
+  console.log('   (Detailed description / screenshots) will be LOCKED until');
+  console.log('   review completes (typically a few days).');
+  console.log('');
+  console.log('   Have you ALREADY updated the store listing on');
+  console.log('   https://chrome.google.com/webstore/devconsole ?');
+  console.log('   See docs/release-checklist.md section 3-A.');
+  console.log('============================================================');
+
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const answer = await new Promise(resolve => {
+    rl.question('Type "yes" to continue, anything else to abort: ', a => {
+      rl.close();
+      resolve(a.trim().toLowerCase());
+    });
+  });
+  if (answer !== 'yes' && answer !== 'y') {
+    console.log('Aborted. Update store listing first, then re-run.');
+    process.exit(0);
+  }
+}
+
 (async () => {
   try {
+    await confirmStoreInfoUpdated();
     const token = await getAccessToken();
     await uploadZip(token);
     await publish(token);
@@ -154,7 +202,7 @@ async function publish(accessToken) {
     console.log('=========================================================');
     console.log('Upload + publish trigger sent successfully.');
     console.log('Note: Detailed description / screenshots are NOT updated by this script.');
-    console.log('      Update them manually in Developer Dashboard if needed.');
+    console.log('      They should have been updated BEFORE this upload (see release-checklist.md 3-A).');
     console.log('=========================================================');
   } catch (e) {
     console.error('FAILED:', e.message);
