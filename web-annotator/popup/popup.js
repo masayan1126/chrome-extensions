@@ -1,7 +1,12 @@
 // Web Annotator - Popup Script
 // ポップアップUIの制御
 
-document.addEventListener('DOMContentLoaded', init);
+// ブラウザ実行時のみ DOMContentLoaded を購読する。
+// Node からテスト目的で require されるケース（lib/parseMarkdownList.test.cjs 経由）では
+// document が存在しないためガードする。
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', init);
+}
 
 let currentTab = null;
 let annotations = {
@@ -36,6 +41,13 @@ function applyI18n() {
 // 入力テキストを抽出する（箇条書き / カンマ区切り / 改行区切りの3パターン対応）
 // 注意: popup と content script は別 context のため module 共有不可。
 // content.js の parseMarkdownList と同じ実装を保つこと（片方修正時は両方修正）。
+// テスト: `node --test web-annotator/lib/parseMarkdownList.test.mjs`
+//
+// 読点(、)分割の方針:
+// - 箇条書きマーカー (`- ` `* ` `1.` 等) で始まる行は「1項目=1行」を尊重し、読点では分割しない
+// - 文末記号 (。.!?！？) を含む行は自然文とみなして読点では分割しない
+// - 上記以外（マーカーなし & 句点なし）は従来通り `,` `、` で分割し、
+//   `りんご、みかん、ぶどう` のようなべた書き全角リストを救う
 function parseMarkdownList(text) {
   if (!text || typeof text !== 'string') return [];
   const lines = text.split(/\r?\n/);
@@ -54,12 +66,16 @@ function parseMarkdownList(text) {
     if (/^#{1,6}\s/.test(line)) continue;
 
     const listMatch = line.match(/^(?:[-*+]|\d+[.)])\s+(.+)$/);
+    const hadListMarker = !!listMatch;
     if (listMatch) line = listMatch[1].trim();
 
     line = line.replace(/^\[[ xX]\]\s+/, '').trim();
     if (!line) continue;
 
-    if (/[,、]/.test(line)) {
+    const hasSentenceTerminator = /[。.!?！？]/.test(line);
+    const shouldSplitOnComma = !hadListMarker && !hasSentenceTerminator;
+
+    if (shouldSplitOnComma && /[,、]/.test(line)) {
       line.split(/[,、]/).forEach(part => {
         const t = part.trim();
         if (t) results.push(t);
@@ -70,6 +86,11 @@ function parseMarkdownList(text) {
   }
 
   return results;
+}
+
+// Node からのテスト用 export（ブラウザ実行時は module が undefined のため no-op）。
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { parseMarkdownList };
 }
 
 async function init() {

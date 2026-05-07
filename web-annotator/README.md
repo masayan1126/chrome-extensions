@@ -110,6 +110,16 @@ web-annotator/
 - icon48.png: 48x48 ピクセル
 - icon128.png: 128x128 ピクセル
 
+## テスト
+
+テキスト一括インポートの分割ロジック (`parseMarkdownList`) はリグレッションテストでカバーされています。
+
+```bash
+node --test web-annotator/lib/parseMarkdownList.test.cjs
+```
+
+`parseMarkdownList` は `popup/popup.js` と `content.js` に二重実装されています（popup と content script は別 context のため module 共有不可）。**片方を修正したら必ずもう一方にも同じ差分を当て、上記テストを実行してください。**
+
 ## ライセンス
 
 MIT License
