@@ -164,6 +164,9 @@ Link to your GitHub repository issues page:
 
 ### English
 
+**v1.1.1 — 2026-05-07**
+- Fixed: Bulk text import no longer over-splits Japanese sentences on the full-width comma (`、`). Lines that begin with a Markdown bullet (`- ` / `* ` / `1.`) or that contain a sentence terminator (`。 . ! ? ！ ？`) are now treated as a single item. Plain comma-separated input (`りんご、みかん、ぶどう`) is still split, so existing list usage is preserved.
+
 **v1.1.0 — 2026-05-06**
 - NEW: Bulk text import. Paste a Markdown list, comma-separated text, or one-per-line text and have every matching occurrence on the page highlighted (or attached with sticky notes) at once.
 - NEW: Auto theme adaptation. Highlight colors now adjust between light and dark pages so the underlying text always stays legible (WCAG AA contrast on dark backgrounds).
@@ -173,6 +176,9 @@ Link to your GitHub repository issues page:
 - Initial public release.
 
 ### 日本語
+
+**v1.1.1 — 2026-05-07**
+- 修正: テキスト一括インポートで、箇条書き行や句点を含む日本語の自然文が読点（`、`）ごとに細切れにインポートされていた問題を修正しました。`- ` `* ` `1.` などのマーカーで始まる行 / 句点・疑問符・感嘆符を含む行は1項目として扱われます。`りんご、みかん、ぶどう` のようなべた書きの全角リストは従来通り分割されます。
 
 **v1.1.0 — 2026-05-06**
 - 新機能: テキスト一括インポート。Markdown 箇条書き／カンマ区切り／改行区切りのリストを貼り付けるだけで、ページ内のすべての該当箇所をまとめてハイライトまたは付箋として自動付与できるようになりました。
