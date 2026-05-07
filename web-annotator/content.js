@@ -807,6 +807,14 @@
    * 例: `- りんご, みかん\nぶどう` → ["りんご", "みかん", "ぶどう"]
    * 除外: 空行 / 見出し行 / コードブロック内
    *
+   * 読点(、)分割の方針:
+   *  - 箇条書きマーカー始まりの行は「1項目=1行」とみなし、読点では分割しない
+   *  - 文末記号 (。.!?！？) を含む行は自然文とみなして読点では分割しない
+   *  - 上記以外のみ `,` / `、` で分割（べた書き全角リストの救済）
+   *
+   * 注意: popup/popup.js の同名関数と等価に保つこと（別 context のため module 共有不可）。
+   *      テスト: `node --test web-annotator/lib/parseMarkdownList.test.mjs`
+   *
    * @param {string} text - 入力テキスト全体
    * @returns {string[]} - 抽出されたテキスト配列
    */
@@ -828,12 +836,16 @@
       if (/^#{1,6}\s/.test(line)) continue;
 
       const listMatch = line.match(/^(?:[-*+]|\d+[.)])\s+(.+)$/);
+      const hadListMarker = !!listMatch;
       if (listMatch) line = listMatch[1].trim();
 
       line = line.replace(/^\[[ xX]\]\s+/, '').trim();
       if (!line) continue;
 
-      if (/[,、]/.test(line)) {
+      const hasSentenceTerminator = /[。.!?！？]/.test(line);
+      const shouldSplitOnComma = !hadListMarker && !hasSentenceTerminator;
+
+      if (shouldSplitOnComma && /[,、]/.test(line)) {
         line.split(/[,、]/).forEach(part => {
           const t = part.trim();
           if (t) results.push(t);
