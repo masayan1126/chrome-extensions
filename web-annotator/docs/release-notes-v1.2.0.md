@@ -3,7 +3,7 @@
 Release date: 2026-06-02
 Repository: [masayan1126/chrome-extensions](https://github.com/masayan1126/chrome-extensions) (`web-annotator/`)
 Related issue: [#24](https://github.com/masayan1126/chrome-extensions/issues/24)
-Related PR: _(PR 作成後に追記)_
+Related PR: [#25](https://github.com/masayan1126/chrome-extensions/pull/25)
 Previous version: v1.1.1
 
 ---
