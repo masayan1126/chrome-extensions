@@ -183,5 +183,24 @@
   "helpImport": {
     "message": "Import: paste list / comma-separated / line-separated text, choose mode, click Import",
     "description": "Help text for import"
+  },
+  "domainOtherPages": {
+    "message": "Other pages on this site",
+    "description": "Heading for annotations on other pages of the same hostname (issue #24)"
+  },
+  "domainPageCounts": {
+    "message": "$H$ highlights, $N$ notes",
+    "description": "Per-page highlight/note counts in the domain list",
+    "placeholders": {
+      "h": { "content": "$1", "example": "3" },
+      "n": { "content": "$2", "example": "2" }
+    }
+  },
+  "domainMore": {
+    "message": "+$COUNT$ more pages",
+    "description": "Shown when the domain page list is truncated",
+    "placeholders": {
+      "count": { "content": "$1", "example": "5" }
+    }
   }
 }
