@@ -1,6 +1,10 @@
 // Web Annotator - Background Service Worker
 // バックグラウンド処理を管理
 
+// ドメイン単位アノテーション集計の純粋関数を読み込む (issue #24)。
+// MV3 の classic service worker なので importScripts が使える。
+importScripts('lib/domainAnnotations.js');
+
 // 拡張機能インストール時の処理
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
@@ -49,21 +53,20 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getAllAnnotations') {
     chrome.storage.local.get(null, (data) => {
-      const annotations = [];
-      for (const [url, pageData] of Object.entries(data)) {
-        if (pageData && (pageData.highlights || pageData.stickyNotes)) {
-          annotations.push({
-            url: url,
-            title: pageData.title || url,
-            highlightCount: (pageData.highlights || []).length,
-            stickyNoteCount: (pageData.stickyNotes || []).length,
-            lastModified: pageData.lastModified
-          });
-        }
-      }
+      const annotations = buildAnnotationList(data);
       // 最終更新日時でソート
       annotations.sort((a, b) => (b.lastModified || 0) - (a.lastModified || 0));
       sendResponse({ annotations: annotations });
+    });
+    return true; // 非同期レスポンスを示す
+  }
+
+  // 同じ hostname の「他ページ」のアノテーション集計を返す (issue #24)。
+  // request.currentUrl は content.js と同じく `#` 以下を除去した URL を渡すこと。
+  if (request.action === 'getDomainAnnotations') {
+    chrome.storage.local.get(null, (data) => {
+      const pages = filterDomainAnnotations(buildAnnotationList(data), request.currentUrl);
+      sendResponse({ hostname: getHostname(request.currentUrl), pages });
     });
     return true; // 非同期レスポンスを示す
   }

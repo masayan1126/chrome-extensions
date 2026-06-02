@@ -109,6 +109,9 @@ async function init() {
 
   // イベントリスナーを設定
   setupEventListeners();
+
+  // 同じドメイン（hostname）の他ページのアノテーションを取得（issue #24）
+  await loadDomainAnnotations();
 }
 
 async function loadAnnotations() {
@@ -199,6 +202,94 @@ function updateCounts() {
     annotations.stickyNotes ? annotations.stickyNotes.length : 0;
 }
 
+// 同じドメイン（hostname）の他ページに付箋/マーカーがあれば一覧表示する（issue #24）。
+// 現在ページにアノテーションが無くても、同じサイトの別ページの存在に気づけるようにする。
+async function loadDomainAnnotations() {
+  const section = document.getElementById('domainSection');
+  if (!section) return;
+
+  // 特殊なページ（chrome:// など）は hostname 比較に意味がないので非表示
+  if (currentTab.url.startsWith('chrome://') ||
+      currentTab.url.startsWith('chrome-extension://') ||
+      currentTab.url.startsWith('about:')) {
+    section.style.display = 'none';
+    return;
+  }
+
+  // content.js と同じ正規化（`#` 以下を除去）。これで現在ページ自身の除外が確実になる。
+  const currentUrl = (currentTab.url || '').split('#')[0];
+
+  try {
+    const res = await chrome.runtime.sendMessage({
+      action: 'getDomainAnnotations',
+      currentUrl
+    });
+    renderDomainPages(res && res.pages ? res.pages : []);
+  } catch (e) {
+    console.error('[Web Annotator] Failed to load domain annotations:', e);
+    section.style.display = 'none';
+  }
+}
+
+function renderDomainPages(pages) {
+  const section = document.getElementById('domainSection');
+  const container = document.getElementById('domainList');
+  const countBadge = document.getElementById('domainCount');
+
+  // 件数 0 のときはセクションごと隠す（気づきが無いなら邪魔しない方針）
+  if (!pages.length) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = '';
+  countBadge.textContent = pages.length;
+
+  const MAX = 20; // ページが多い場合の打ち切り
+  const shown = pages.slice(0, MAX);
+
+  let html = shown.map(p => `
+    <div class="list-item domain-item" data-url="${escapeHtml(p.url)}" title="${escapeHtml(p.url)}">
+      <div class="list-item-text domain-title">${escapeHtml(p.title)}</div>
+      <div class="domain-meta">${i18n('domainPageCounts', [String(p.highlightCount), String(p.stickyNoteCount)])}</div>
+    </div>
+  `).join('');
+
+  if (pages.length > MAX) {
+    html += `<p class="empty-message domain-more">${i18n('domainMore', [String(pages.length - MAX)])}</p>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// 一覧の項目クリックでそのページを開く。既存タブがあればフォーカス、無ければ新規タブ。
+async function handleDomainClick(e) {
+  const item = e.target.closest('.domain-item');
+  if (!item) return;
+  const url = item.dataset.url;
+  if (!url) return;
+
+  // chrome.tabs.query({url}) は match pattern を期待し、クエリ文字列付き URL では
+  // 失敗/不一致になりうるため、その場合は新規タブ作成にフォールバックする。
+  let focused = false;
+  try {
+    const existing = await chrome.tabs.query({ url });
+    if (existing && existing.length) {
+      await chrome.tabs.update(existing[0].id, { active: true });
+      if (existing[0].windowId != null) {
+        await chrome.windows.update(existing[0].windowId, { focused: true });
+      }
+      focused = true;
+    }
+  } catch (err) {
+    // match pattern 不正など。新規タブ作成にフォールバック。
+  }
+
+  if (!focused) {
+    await chrome.tabs.create({ url });
+  }
+  window.close();
+}
+
 function setupEventListeners() {
   // タブ切り替え
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -211,6 +302,9 @@ function setupEventListeners() {
   // リスト内のアクションボタン
   document.getElementById('highlightList').addEventListener('click', handleListAction);
   document.getElementById('stickyList').addEventListener('click', handleListAction);
+
+  // 同じドメインの他ページ項目のクリック（issue #24）
+  document.getElementById('domainList').addEventListener('click', handleDomainClick);
 
   // エクスポートボタン
   document.getElementById('exportBtn').addEventListener('click', exportAsMarkdown);

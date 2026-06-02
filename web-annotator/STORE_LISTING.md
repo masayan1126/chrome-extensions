@@ -33,6 +33,7 @@ Web Annotator is a powerful yet simple tool for annotating any web page. Perfect
 - **Cross-paragraph Support** - Highlight text that spans multiple paragraphs
 - **Keyboard Shortcuts** - Quick access with Ctrl/Cmd + Shift + H for highlighting
 - **Auto Theme Adaptation (NEW in v1.1.0)** - Highlight colors automatically adjust between light and dark themed pages so text always stays readable (WCAG AA contrast)
+- **Cross-domain Awareness (NEW in v1.2.0)** - See at a glance when other pages on the same site (hostname) have highlights or sticky notes—even if the current page has none—and jump to them in one click
 - **Multi-language Support** - Available in English and Japanese
 
 **How to Use:**
@@ -81,6 +82,7 @@ Web Annotatorは、あらゆるWebページに注釈を付けるためのシン�
 - **複数段落対応** - 複数の段落にまたがるテキストもハイライト可能
 - **キーボードショートカット** - Ctrl/Cmd + Shift + Hで素早くハイライト
 - **テーマ自動適応（v1.1.0 強化）** - ページの背景色を自動判定し、ライト／ダーク どちらでもハイライトと文字の色が常に読みやすいコントラストになります（WCAG AA 準拠）
+- **同じサイトの他ページの気づき表示（v1.2.0 新機能）** - いま開いているページに何も無くても、同じサイト（ホスト名）の他ページに付箋・マーカーがあればポップアップに一覧表示。クリックでそのページへ移動できます
 - **多言語対応** - 日本語と英語に対応
 
 **使い方：**
@@ -164,6 +166,9 @@ Link to your GitHub repository issues page:
 
 ### English
 
+**v1.2.0 — 2026-06-02**
+- NEW: Cross-domain awareness. The popup now shows an "Other pages on this site" list so you can tell when other pages on the same hostname have highlights or sticky notes—even if the current page has none. Click an entry to open that page (focuses an existing tab if one is already open). Domain matching is by hostname (`news.example.com` and `blog.example.com` are treated as different sites; http/https are treated as the same). Storage format and permissions are unchanged.
+
 **v1.1.1 — 2026-05-07**
 - Fixed: Bulk text import no longer over-splits Japanese sentences on the full-width comma (`、`). Lines that begin with a Markdown bullet (`- ` / `* ` / `1.`) or that contain a sentence terminator (`。 . ! ? ！ ？`) are now treated as a single item. Plain comma-separated input (`りんご、みかん、ぶどう`) is still split, so existing list usage is preserved.
 
@@ -176,6 +181,9 @@ Link to your GitHub repository issues page:
 - Initial public release.
 
 ### 日本語
+
+**v1.2.0 — 2026-06-02**
+- 新機能: 同じサイトの他ページの気づき表示。ポップアップに「このサイトの他のページ」一覧が追加され、いま開いているページにアノテーションが無くても、同じホスト名の他ページにある付箋・マーカーに気づけるようになりました。項目をクリックするとそのページを開きます（すでに開いていればそのタブに切り替え）。「同じサイト」はホスト名単位で判定します（`news.example.com` と `blog.example.com` は別サイト扱い、http/https は同一扱い）。保存形式・権限の変更はありません。
 
 **v1.1.1 — 2026-05-07**
 - 修正: テキスト一括インポートで、箇条書き行や句点を含む日本語の自然文が読点（`、`）ごとに細切れにインポートされていた問題を修正しました。`- ` `* ` `1.` などのマーカーで始まる行 / 句点・疑問符・感嘆符を含む行は1項目として扱われます。`りんご、みかん、ぶどう` のようなべた書きの全角リストは従来通り分割されます。
