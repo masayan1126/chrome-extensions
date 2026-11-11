@@ -1,0 +1,161 @@
+{
+  "extensionName": {
+    "message": "Phone Bench",
+    "description": "拡張機能の名前"
+  },
+  "extensionShortName": {
+    "message": "Phone Bench",
+    "description": "短い名前"
+  },
+  "extensionDescription": {
+    "message": "localhost や公開中のページを、複数の iPhone の画面に並べて同時に確認できます。",
+    "description": "説明"
+  },
+  "actionTitle": {
+    "message": "このページを iPhone の画面で確認",
+    "description": "ツールバーのボタン"
+  },
+  "menuOpenPage": {
+    "message": "このページを iPhone の画面で確認",
+    "description": "右クリックメニュー（ページ）"
+  },
+  "menuOpenLink": {
+    "message": "リンク先を iPhone の画面で確認",
+    "description": "右クリックメニュー（リンク）"
+  },
+  "appName": {
+    "message": "Phone Bench",
+    "description": "画面上部の名前"
+  },
+  "pageTitle": {
+    "message": "Phone Bench",
+    "description": "タブのタイトル"
+  },
+  "globalUrlLabel": {
+    "message": "すべての端末で開く URL"
+  },
+  "globalUrlPlaceholder": {
+    "message": "localhost:3000 や https://example.com"
+  },
+  "openEverywhere": {
+    "message": "すべての端末で開く"
+  },
+  "addDevice": {
+    "message": "端末を追加"
+  },
+  "addDeviceMenuTitle": {
+    "message": "追加する機種"
+  },
+  "chromeLabel": {
+    "message": "画面の表示"
+  },
+  "chromeSafari": {
+    "message": "Safari"
+  },
+  "chromeStandalone": {
+    "message": "ホーム画面アプリ"
+  },
+  "zoomLabel": {
+    "message": "表示倍率"
+  },
+  "zoomFit": {
+    "message": "画面に合わせる"
+  },
+  "syncScroll": {
+    "message": "スクロールを同期"
+  },
+  "reloadAll": {
+    "message": "すべて再読み込み"
+  },
+  "emptyBench": {
+    "message": "端末がありません。「端末を追加」から機種を選んでください。"
+  },
+  "modelLabel": {
+    "message": "機種"
+  },
+  "slotUrlLabel": {
+    "message": "この端末で開く URL"
+  },
+  "slotUrlPlaceholder": {
+    "message": "この端末だけ別の URL を開く"
+  },
+  "actionBack": {
+    "message": "戻る"
+  },
+  "actionForward": {
+    "message": "進む"
+  },
+  "actionReload": {
+    "message": "再読み込み"
+  },
+  "actionRotate": {
+    "message": "縦横を切り替える"
+  },
+  "actionOpenInTab": {
+    "message": "新しいタブで開く"
+  },
+  "actionDuplicate": {
+    "message": "この端末を複製"
+  },
+  "actionMoveLeft": {
+    "message": "左へ移動"
+  },
+  "actionMoveRight": {
+    "message": "右へ移動"
+  },
+  "actionRemove": {
+    "message": "この端末を外す"
+  },
+  "frameTitle": {
+    "message": "iPhone の画面"
+  },
+  "emptyTitle": {
+    "message": "URL を入力すると、ここに表示されます"
+  },
+  "emptyHint": {
+    "message": "開発中のサーバーなら、よく使うポートから選べます。"
+  },
+  "failureTitle": {
+    "message": "ページを表示できませんでした"
+  },
+  "failureHint": {
+    "message": "URL が正しいか、開発サーバーが起動しているかを確かめてから、もう一度読み込んでください。"
+  },
+  "failureRetry": {
+    "message": "もう一度読み込む"
+  },
+  "safariPlaceholder": {
+    "message": "検索/Webサイト名"
+  },
+  "viewportSize": {
+    "message": "表示領域 $W$ × $H$ ・ @$DPR$x",
+    "placeholders": {
+      "W": {
+        "content": "$1"
+      },
+      "H": {
+        "content": "$2"
+      },
+      "DPR": {
+        "content": "$3"
+      }
+    }
+  },
+  "errorInvalidUrl": {
+    "message": "URL の形式を確かめてください。例：localhost:3000、https://example.com"
+  },
+  "errorUnsupportedUrl": {
+    "message": "http と https のページだけを表示できます。"
+  },
+  "errorMaxDevices": {
+    "message": "並べられる端末は $MAX$ 台までです。",
+    "placeholders": {
+      "MAX": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorRegister": {
+    "message": "iPhone として表示する準備に失敗しました。タブを閉じて開き直してください。"
+  }
+}
