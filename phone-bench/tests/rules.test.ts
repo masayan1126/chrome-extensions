@@ -3,10 +3,10 @@ import { buildRulesForTab, nextRuleId, ruleIdsForTab } from '../src/background/r
 import { IOS_SAFARI_UA, decodeFrameName, encodeFrameName } from '../src/shared/protocol';
 
 describe('buildRulesForTab', () => {
-  const rules = buildRulesForTab(42, 7);
+  const rules = buildRulesForTab(42, 7, 'abcdefghijklmnopabcdefghijklmnop');
 
   it('対象のタブだけに効く', () => {
-    expect(rules.map((r) => r.id)).toEqual([7, 8]);
+    expect(rules.map((r) => r.id)).toEqual([7, 8, 9]);
     expect(rules.every((r) => r.condition.tabIds?.length === 1 && r.condition.tabIds[0] === 42)).toBe(true);
   });
 
@@ -19,15 +19,23 @@ describe('buildRulesForTab', () => {
   });
 
   it('埋め込みを拒むヘッダーは iframe の応答からだけ外す', () => {
-    expect(rules[1].condition.resourceTypes).toEqual(['sub_frame']);
-    expect(rules[1].action.responseHeaders?.map((h) => h.header)).toEqual(['x-frame-options', 'content-security-policy']);
+    for (const r of rules.slice(1)) {
+      expect(r.condition.resourceTypes).toEqual(['sub_frame']);
+      expect(r.action.responseHeaders?.map((h) => h.header)).toEqual(['x-frame-options', 'content-security-policy']);
+    }
+  });
+
+  it('外すのは拡張機能が読み込ませた iframe と、その中の同じサイトへの移動だけ', () => {
+    expect(rules[1].condition.initiatorDomains).toEqual(['abcdefghijklmnopabcdefghijklmnop']);
+    expect(rules[2].condition.domainType).toBe('firstParty');
+    expect(rules[2].condition.initiatorDomains).toBeUndefined();
   });
 
   it('タブごとのルール ID を見つけ、次の ID を決める', () => {
-    const other = buildRulesForTab(99, 9);
+    const other = buildRulesForTab(99, 10, 'abcdefghijklmnopabcdefghijklmnop');
     const all = [...rules, ...other];
-    expect(ruleIdsForTab(all, 42)).toEqual([7, 8]);
-    expect(nextRuleId(all)).toBe(11);
+    expect(ruleIdsForTab(all, 42)).toEqual([7, 8, 9]);
+    expect(nextRuleId(all)).toBe(13);
     expect(nextRuleId([])).toBe(1);
   });
 });

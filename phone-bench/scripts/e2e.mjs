@@ -28,6 +28,7 @@ const server = createServer((req, res) => {
 <p class="only-mobile">mobile layout</p>
 <pre id="info"></pre>
 <a id="next" href="/second">next page</a>
+<iframe id="nested" src="${nestedUrl}" width="200" height="60"></iframe>
 <div class="box"></div>
 <script>
 addEventListener('load', () => setTimeout(() => document.getElementById('info').textContent = JSON.stringify({
@@ -45,6 +46,15 @@ addEventListener('load', () => setTimeout(() => document.getElementById('info').
 });
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const port = server.address().port;
+
+// 表示中のページが別サイトとして埋め込む先。埋め込み拒否のヘッダーは外さずに残るべき
+const nestedServer = createServer((req, res) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.end('<!doctype html><p id="nested-ok">nested</p>');
+});
+await new Promise((r) => nestedServer.listen(0, '127.0.0.1', r));
+const nestedUrl = `http://127.0.0.1:${nestedServer.address().port}/`;
 const testUrl = `http://localhost:${port}/`;
 
 const context = await chromium.launchPersistentContext('', {
@@ -68,10 +78,10 @@ try {
   await page.click('#global-url-form button[type=submit]');
   await page.waitForFunction(() => document.querySelectorAll('iframe.viewport').length === 3);
 
+  const deviceFrames = () => page.frames().filter((f) => f.parentFrame() === page.mainFrame());
   const frameInfo = async () => {
     const results = [];
-    for (const frame of page.frames()) {
-      if (frame === page.mainFrame()) continue;
+    for (const frame of deviceFrames()) {
       const handle = await frame.waitForSelector('#info:not(:empty)', { timeout: 10000 });
       results.push(JSON.parse(await handle.textContent()));
     }
@@ -95,7 +105,15 @@ try {
   await page.screenshot({ path: resolve(out, '02-loaded.png') });
 
   // iframe 内のリンク移動が、端末ごとの URL 欄に反映される
-  const first = page.frames().find((f) => f !== page.mainFrame());
+  // 表示中のページが埋め込んだ別サイトの iframe は、X-Frame-Options どおり表示されない
+  const nested = page.frames().find((f) => f.parentFrame() && f.parentFrame() !== page.mainFrame());
+  assert.ok(nested, '入れ子の iframe がある');
+  await page.waitForTimeout(800);
+  const nestedShown = nested.url() === nestedUrl && (await nested.locator('#nested-ok').count().catch(() => 0)) > 0;
+  console.log('nested frame url:', JSON.stringify(nested.url()), 'shown:', nestedShown);
+  assert.equal(nestedShown, false, '別サイトの入れ子 iframe の埋め込み拒否は残る');
+
+  const first = deviceFrames()[0];
   await first.click('#next');
   await page.waitForFunction(
     () => Array.from(document.querySelectorAll('.slot-url input')).some((i) => i.value.endsWith('/second')),
@@ -106,7 +124,7 @@ try {
   // スクロールの同期
   await page.check('#sync-scroll', { force: true });
   await page.waitForTimeout(300);
-  const frames = page.frames().filter((f) => f !== page.mainFrame());
+  const frames = deviceFrames();
   await frames[1].evaluate(() => window.scrollTo(0, (document.scrollingElement.scrollHeight - innerHeight) / 2));
   await page.waitForTimeout(600);
   const ratios = await Promise.all(
@@ -130,7 +148,7 @@ try {
 
   // タイトルが変わった後に、iframe 内のリンクでつながらないページへ移っても案内を出す
   const firstSlot = page.locator('.slot').nth(0);
-  const firstFrame = page.frames().find((f) => f !== page.mainFrame() && f.url().endsWith('/second'));
+  const firstFrame = deviceFrames().find((f) => f.url().endsWith('/second'));
   await firstFrame.evaluate(() => { document.title = 'changed'; });
   await page.waitForTimeout(900);
   await firstFrame.evaluate(() => { location.href = 'http://localhost:1/'; }).catch(() => undefined);
@@ -147,4 +165,5 @@ try {
 } finally {
   await context.close();
   server.close();
+  nestedServer.close();
 }

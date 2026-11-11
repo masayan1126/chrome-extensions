@@ -24,12 +24,12 @@ localhost の開発サーバーや公開中の URL を、iPhone の画面に表�
 | 倍率 | 画面に合わせる（一番背の高い端末が収まる倍率を全端末にそろえる）／100%／75%／50% |
 | 操作 | 端末ごとの戻る・進む・再読み込み・新しいタブで開く。全端末の再読み込み。スクロールの同期 |
 | 表示の再現 | 通信の User-Agent を iOS Safari にし、Client Hints を外す。ページから見える `navigator.userAgent`・`platform`・`maxTouchPoints`・`screen.width/height`・`navigator.standalone`・`ontouchstart` を iPhone に合わせる |
-| 埋め込み制限の解除 | エミュレーター画面のタブの iframe に限り、X-Frame-Options と CSP（frame-ancestors）の応答ヘッダーを外す |
+| 埋め込み制限の解除 | エミュレーター画面が端末に読み込ませたページと、端末の中で同じサイトへ移ったページに限り、X-Frame-Options と CSP の応答ヘッダーを外す。表示中のページが別サイトを埋め込む iframe には元のヘッダーを残す |
 | 状態の保存 | 端末の並び・URL・表示モード・倍率・同期・履歴を `chrome.storage.local` に保存する |
 
 ## 仕組み
 
-- **ヘッダーの書き換え**：`declarativeNetRequest` のセッションルールを、エミュレーター画面のタブ ID に限って登録する。タブを閉じる・別のページへ移ると外す。ほかのタブの通信は変えない。
+- **ヘッダーの書き換え**：`declarativeNetRequest` のセッションルールを、エミュレーター画面のタブ ID に限って登録する。タブを閉じる・別のページへ移ると外す。ほかのタブの通信は変えない。埋め込み制限を外すルールは、initiator が自分の拡張機能の iframe 読み込み（`initiatorDomains`）と、同じサイト内の iframe の移動（`domainType: firstParty`）に絞る。表示中のページが別サイトを埋め込んでも、その iframe の X-Frame-Options・CSP は効いたままになり、クリックジャッキングに使われない。
 - **ページ内の値の書き換え**：MAIN ワールドのコンテンツスクリプトが、最上位のフレームが自分のエミュレーター画面のときだけ動く。iframe の `name` に画面寸法を入れて渡す。
 - **iframe 内の移動の追跡**：ISOLATED ワールドのブリッジが、URL とタイトルを `postMessage` でエミュレーター画面へ送る。宛先は自分の拡張機能のオリジンに限る。戻る・進む・再読み込み・スクロール同期の指示も同じ経路で受ける。
 - **権限の委譲を絞る**：iframe の `allow` は fullscreen・autoplay・clipboard-write だけにする。カメラ・マイク・位置情報などの許可は拡張機能のオリジンに記録され、以後どのサイトにも引き継がれてしまうため委譲しない。
@@ -46,6 +46,7 @@ localhost の開発サーバーや公開中の URL を、iPhone の画面に表�
 - `env(safe-area-inset-*)` は 0 のまま
 - 描画の解像度（devicePixelRatio）はパソコンの画面の値
 - カメラ・マイク・位置情報・クリップボードの読み取りは iframe 内では使えない
+- 端末の中のリンクで別サイトへ移ったとき、移動先が埋め込みを拒んでいると表示できない（上の URL 欄から開き直せば表示できる）
 - ログインが必要なサイトは、ブラウザのサードパーティ Cookie の設定によってはログイン状態にならない
 - `http://`（localhost とローカルネットワーク以外）のページは、混在コンテンツとして表示できない場合がある
 
