@@ -20,13 +20,21 @@ const SUBRESOURCE_TYPES = [
   'other',
 ] as chrome.declarativeNetRequest.ResourceType[];
 
+const REMOVE_FRAME_BLOCKERS = [
+  { header: 'x-frame-options', operation: 'remove' as chrome.declarativeNetRequest.HeaderOperation },
+  { header: 'content-security-policy', operation: 'remove' as chrome.declarativeNetRequest.HeaderOperation },
+];
+
 /**
  * エミュレーター画面のタブ専用のセッションルールを作る。
  * 1. iframe 内の通信を iPhone の Safari として送る（User-Agent を差し替え、Safari が送らない Client Hints を外す）
- * 2. iframe への埋め込みを拒む応答ヘッダー（X-Frame-Options と CSP の frame-ancestors）を外す
- * どちらも tabIds で対象のタブに限るので、ほかのタブの通信には影響しない。
+ * 2. iframe への埋め込みを拒む応答ヘッダー（X-Frame-Options と CSP）を外す。外すのは次の2つだけ:
+ *    - エミュレーター画面が端末の iframe に読み込ませたページ（initiator が自分の拡張機能）
+ *    - 端末の iframe の中で、同じサイトのページへ移ったとき（firstParty）
+ *    表示中のページがさらに別サイトを埋め込む iframe には、元のヘッダーを残す（クリックジャッキング対策）。
+ * どのルールも tabIds で対象のタブに限るので、ほかのタブの通信には影響しない。
  */
-export function buildRulesForTab(tabId: number, firstRuleId: number): Rule[] {
+export function buildRulesForTab(tabId: number, firstRuleId: number, extensionId: string): Rule[] {
   return [
     {
       id: firstRuleId,
@@ -45,14 +53,22 @@ export function buildRulesForTab(tabId: number, firstRuleId: number): Rule[] {
     {
       id: firstRuleId + 1,
       priority: 1,
-      action: {
-        type: 'modifyHeaders' as chrome.declarativeNetRequest.RuleActionType,
-        responseHeaders: [
-          { header: 'x-frame-options', operation: 'remove' as chrome.declarativeNetRequest.HeaderOperation },
-          { header: 'content-security-policy', operation: 'remove' as chrome.declarativeNetRequest.HeaderOperation },
-        ],
+      action: { type: 'modifyHeaders' as chrome.declarativeNetRequest.RuleActionType, responseHeaders: REMOVE_FRAME_BLOCKERS },
+      condition: {
+        tabIds: [tabId],
+        resourceTypes: ['sub_frame' as chrome.declarativeNetRequest.ResourceType],
+        initiatorDomains: [extensionId],
       },
-      condition: { tabIds: [tabId], resourceTypes: ['sub_frame' as chrome.declarativeNetRequest.ResourceType] },
+    },
+    {
+      id: firstRuleId + 2,
+      priority: 1,
+      action: { type: 'modifyHeaders' as chrome.declarativeNetRequest.RuleActionType, responseHeaders: REMOVE_FRAME_BLOCKERS },
+      condition: {
+        tabIds: [tabId],
+        resourceTypes: ['sub_frame' as chrome.declarativeNetRequest.ResourceType],
+        domainType: 'firstParty' as chrome.declarativeNetRequest.DomainType,
+      },
     },
   ];
 }

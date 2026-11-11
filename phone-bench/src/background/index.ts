@@ -21,7 +21,7 @@ function registerTab(tabId: number): Promise<void> {
     const remaining = rules.filter((r) => !removeRuleIds.includes(r.id));
     await chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds,
-      addRules: buildRulesForTab(tabId, nextRuleId(remaining)),
+      addRules: buildRulesForTab(tabId, nextRuleId(remaining), chrome.runtime.id),
     });
   });
 }
