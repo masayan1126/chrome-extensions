@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phone Bench</title>
+    <link rel="icon" href="icons/icon-32.png" />
+    <link rel="stylesheet" href="emulator.css" />
+  </head>
+  <body>
+    <header class="toolbar">
+      <div class="brand">
+        <img src="icons/icon-48.png" alt="" width="28" height="28" />
+        <span class="brand-name" data-i18n="appName">Phone Bench</span>
+      </div>
+
+      <form id="global-url-form" class="global-url" autocomplete="off">
+        <label class="visually-hidden" for="global-url" data-i18n="globalUrlLabel"></label>
+        <input
+          id="global-url"
+          type="text"
+          inputmode="url"
+          list="url-history"
+          spellcheck="false"
+          data-i18n-placeholder="globalUrlPlaceholder"
+        />
+        <button type="submit" class="btn btn--primary" data-i18n="openEverywhere"></button>
+      </form>
+
+      <div class="tools">
+        <button id="add-device" class="btn" type="button" popovertarget="add-menu">
+          <span data-i18n="addDevice"></span>
+        </button>
+
+        <fieldset class="segmented">
+          <legend class="visually-hidden" data-i18n="chromeLabel"></legend>
+          <label><input type="radio" name="chrome" value="safari" /><span data-i18n="chromeSafari"></span></label>
+          <label><input type="radio" name="chrome" value="standalone" /><span data-i18n="chromeStandalone"></span></label>
+        </fieldset>
+
+        <label class="zoom">
+          <span class="visually-hidden" data-i18n="zoomLabel"></span>
+          <select id="zoom">
+            <option value="fit" data-i18n="zoomFit"></option>
+            <option value="1">100%</option>
+            <option value="0.75">75%</option>
+            <option value="0.5">50%</option>
+          </select>
+          <output id="zoom-readout" class="zoom-readout" aria-live="polite"></output>
+        </label>
+
+        <label class="switch">
+          <input id="sync-scroll" type="checkbox" role="switch" />
+          <span class="switch-track" aria-hidden="true"></span>
+          <span data-i18n="syncScroll"></span>
+        </label>
+
+        <button id="reload-all" class="btn btn--quiet" type="button">
+          <span data-i18n="reloadAll"></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="bench" class="bench">
+      <p id="empty-bench" class="empty-bench" data-i18n="emptyBench" hidden></p>
+    </main>
+
+    <div id="add-menu" class="add-menu" popover>
+      <p class="add-menu-title" data-i18n="addDeviceMenuTitle"></p>
+    </div>
+
+    <datalist id="url-history"></datalist>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="emulator.js"></script>
+  </body>
+</html>

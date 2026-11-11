@@ -1,0 +1,161 @@
+{
+  "extensionName": {
+    "message": "Phone Bench",
+    "description": "拡張機能の名前"
+  },
+  "extensionShortName": {
+    "message": "Phone Bench",
+    "description": "短い名前"
+  },
+  "extensionDescription": {
+    "message": "Preview localhost and live pages on several iPhone screens side by side.",
+    "description": "説明"
+  },
+  "actionTitle": {
+    "message": "Preview this page on iPhone screens",
+    "description": "ツールバーのボタン"
+  },
+  "menuOpenPage": {
+    "message": "Preview this page on iPhone screens",
+    "description": "右クリックメニュー（ページ）"
+  },
+  "menuOpenLink": {
+    "message": "Preview this link on iPhone screens",
+    "description": "右クリックメニュー（リンク）"
+  },
+  "appName": {
+    "message": "Phone Bench",
+    "description": "画面上部の名前"
+  },
+  "pageTitle": {
+    "message": "Phone Bench",
+    "description": "タブのタイトル"
+  },
+  "globalUrlLabel": {
+    "message": "URL to open on every device"
+  },
+  "globalUrlPlaceholder": {
+    "message": "localhost:3000 or https://example.com"
+  },
+  "openEverywhere": {
+    "message": "Open on all devices"
+  },
+  "addDevice": {
+    "message": "Add device"
+  },
+  "addDeviceMenuTitle": {
+    "message": "Choose a model"
+  },
+  "chromeLabel": {
+    "message": "Screen mode"
+  },
+  "chromeSafari": {
+    "message": "Safari"
+  },
+  "chromeStandalone": {
+    "message": "Home screen app"
+  },
+  "zoomLabel": {
+    "message": "Zoom"
+  },
+  "zoomFit": {
+    "message": "Fit to window"
+  },
+  "syncScroll": {
+    "message": "Sync scrolling"
+  },
+  "reloadAll": {
+    "message": "Reload all"
+  },
+  "emptyBench": {
+    "message": "No devices yet. Use “Add device” to choose a model."
+  },
+  "modelLabel": {
+    "message": "Model"
+  },
+  "slotUrlLabel": {
+    "message": "URL for this device"
+  },
+  "slotUrlPlaceholder": {
+    "message": "Open a different URL on this device"
+  },
+  "actionBack": {
+    "message": "Back"
+  },
+  "actionForward": {
+    "message": "Forward"
+  },
+  "actionReload": {
+    "message": "Reload"
+  },
+  "actionRotate": {
+    "message": "Rotate"
+  },
+  "actionOpenInTab": {
+    "message": "Open in new tab"
+  },
+  "actionDuplicate": {
+    "message": "Duplicate this device"
+  },
+  "actionMoveLeft": {
+    "message": "Move left"
+  },
+  "actionMoveRight": {
+    "message": "Move right"
+  },
+  "actionRemove": {
+    "message": "Remove this device"
+  },
+  "frameTitle": {
+    "message": "iPhone screen"
+  },
+  "emptyTitle": {
+    "message": "Enter a URL to show it here"
+  },
+  "emptyHint": {
+    "message": "For a dev server, pick a common port."
+  },
+  "failureTitle": {
+    "message": "This page couldn't be shown"
+  },
+  "failureHint": {
+    "message": "Check the URL and that your dev server is running, then try again."
+  },
+  "failureRetry": {
+    "message": "Try again"
+  },
+  "safariPlaceholder": {
+    "message": "Search or enter website"
+  },
+  "viewportSize": {
+    "message": "Viewport $W$ × $H$ · @$DPR$x",
+    "placeholders": {
+      "W": {
+        "content": "$1"
+      },
+      "H": {
+        "content": "$2"
+      },
+      "DPR": {
+        "content": "$3"
+      }
+    }
+  },
+  "errorInvalidUrl": {
+    "message": "Check the URL format, e.g. localhost:3000 or https://example.com"
+  },
+  "errorUnsupportedUrl": {
+    "message": "Only http and https pages can be shown."
+  },
+  "errorMaxDevices": {
+    "message": "You can show up to $MAX$ devices.",
+    "placeholders": {
+      "MAX": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorRegister": {
+    "message": "Couldn't prepare iPhone mode. Close this tab and open it again."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "phone-bench",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Preview localhost and live URLs on several iPhone screens side by side",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "e2e": "node scripts/e2e.mjs",
+    "screenshot": "node scripts/screenshot.mjs",
+    "zip": "node scripts/zip.mjs",
+    "release": "npm run typecheck && npm run test && npm run build && npm run zip"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.6",
+    "esbuild": "^0.25.0",
+    "playwright": "1.62.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
