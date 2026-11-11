@@ -280,7 +280,9 @@ export class SlotView {
     s.width = `${outer.width}px`;
     s.height = `${outer.height}px`;
     s.padding = `${bezel.top}px ${bezel.right}px ${bezel.bottom}px ${bezel.left}px`;
-    s.transform = `scale(${context.scale})`;
+    // 100% のときは transform を付けない。Chrome は transform で縮めた枠の中の別オリジンの iframe で、
+    // backdrop-filter（すりガラス）の描画が崩れることがあり、等倍なら正しく描ける。
+    s.transform = context.scale === 1 ? 'none' : `scale(${context.scale})`;
     s.setProperty('--corner', `${model.cornerRadius}px`);
 
     const sc = this.screen.style;

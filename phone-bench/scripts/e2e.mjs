@@ -39,6 +39,7 @@ addEventListener('load', () => setTimeout(() => document.getElementById('info').
   maxTouchPoints: navigator.maxTouchPoints,
   touch: 'ontouchstart' in window,
   innerWidth: innerWidth,
+  clientWidth: document.documentElement.clientWidth,
   innerHeight: innerHeight,
   screenWidth: screen.width,
 }, null, 1), 100));
@@ -101,6 +102,8 @@ try {
   const widths = infos.map((i) => i.innerWidth).sort((a, b) => a - b);
   assert.deepEqual(widths, [375, 402, 440], '各端末の幅でレイアウトされる');
   for (const info of infos) assert.equal(info.screenWidth, info.innerWidth, 'screen.width も端末の幅');
+  // headless の Chromium はスクロールバーが重ね表示なので、この確認は常に通る。幅が狭くなる現象は通常の Chrome で目視確認した
+  for (const info of infos) assert.equal(info.clientWidth, info.innerWidth, 'スクロールバーで表示幅が狭くならない');
   console.log('frames:', infos.map((i) => `${i.innerWidth}x${i.innerHeight} screen=${i.screenWidth}`).join(', '));
   await page.screenshot({ path: resolve(out, '02-loaded.png') });
 

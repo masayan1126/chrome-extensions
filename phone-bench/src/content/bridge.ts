@@ -17,6 +17,12 @@ function isDirectChildOfEmulator(): boolean {
 }
 
 if (isDirectChildOfEmulator()) {
+  // iPhone のスクロールバーは表示領域の幅を使わない。パソコンのスクロールバーで幅が 15px ほど
+  // 狭くならないよう、端末の画面ではスクロールバーを隠す。
+  const style = document.createElement('style');
+  style.textContent = '*{scrollbar-width:none!important}::-webkit-scrollbar{display:none!important}';
+  (document.head ?? document.documentElement).append(style);
+
   const post = (message: WithoutSource<BridgeMessage>) => {
     window.parent.postMessage({ source: BRIDGE_SOURCE, ...message }, hostOrigin);
   };
