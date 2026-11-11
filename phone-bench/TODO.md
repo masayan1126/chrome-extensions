@@ -6,9 +6,12 @@ v1.0.0 の実装・テスト・アイコン（ChatGPT で生成した B 案）�
 
 ## 次の作業
 
-- [ ] Chrome ウェブストアに新しいアイテムとして登録する（担当：本人。デベロッパーダッシュボードでの操作）
-  - 先にストア掲載情報（`STORE_LISTING.md`）とスクリーンショット（`docs/screenshot.png`）、プライバシーポリシーの URL を入れ、最後に zip（`npm run release` で `phone-bench-v1.0.0.zip`）を上げる
-  - 審査で `<all_urls>` の理由を聞かれたら、`STORE_LISTING.md` の「権限の説明」を使う
+- [ ] Chrome ウェブストアに新しいアイテムとして登録し、審査へ送信する（担当：本人。2026-11-11 時点で回答待ち）
+  - Chrome ウェブストアは拡張機能からの自動操作を受け付けないため、ダッシュボードの操作は手作業になる
+  - 入力内容とファイルは `~/Downloads/phone-bench-store-kit/guide.html` にまとめた（ローカルのみ。正本は `STORE_LISTING.md`）
+  - 新しいアイテムは zip を上げないと作れないので、この回だけ「zip で下書きを作る → 掲載情報を入力 → 審査へ送信」の順
+  - 送信後：拡張機能 ID を記録し、審査結果を確認する
+- [ ] web-annotator の CWS API の refresh token が失効している（2026-11-11 に invalid_grant）。API で更新を上げる前に `web-annotator/scripts/get-cws-refresh-token.mjs` で取り直す
 - [ ] 実機（iPhone の Safari）と見比べて、Safari のツールバーの高さの目安（下部 134pt・SE 94pt）を必要なら直す
 
 ## 完了

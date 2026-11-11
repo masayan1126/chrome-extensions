@@ -77,3 +77,15 @@ Web ページを iPhone の画面サイズと User-Agent で表示し、複数�
 
 - アイコン：128×128（public/icons/icon-128.png）
 - スクリーンショット：1280×800（docs/screenshot.png）
+- プロモーション タイル（小）：440×280（store/promo-small-440x280.png）
+
+## URL
+
+- プライバシー ポリシー：https://github.com/masayan1126/chrome-extensions/blob/main/phone-bench/PRIVACY_POLICY.md
+- サポート：https://github.com/masayan1126/chrome-extensions/issues
+
+## プライバシーへの取り組み（ダッシュボード入力用・英語）
+
+- 単一用途：Developer tool that shows web pages (including localhost dev servers) at iPhone screen sizes with an iPhone Safari user agent, so developers can check mobile layouts on several iPhone models side by side in one tab.
+- リモートコード：使用しない
+- データの使用：収集・送信するユーザーデータなし
