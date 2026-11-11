@@ -183,5 +183,24 @@
   "helpImport": {
     "message": "インポート: 箇条書き/カンマ区切り/改行区切りを貼り付け、モードを選んでインポート",
     "description": "Help text for import"
+  },
+  "domainOtherPages": {
+    "message": "このサイトの他のページ",
+    "description": "Heading for annotations on other pages of the same hostname (issue #24)"
+  },
+  "domainPageCounts": {
+    "message": "マーカー$H$件・付箋$N$件",
+    "description": "Per-page highlight/note counts in the domain list",
+    "placeholders": {
+      "h": { "content": "$1", "example": "3" },
+      "n": { "content": "$2", "example": "2" }
+    }
+  },
+  "domainMore": {
+    "message": "他 $COUNT$ ページ",
+    "description": "Shown when the domain page list is truncated",
+    "placeholders": {
+      "count": { "content": "$1", "example": "5" }
+    }
   }
 }

@@ -38,6 +38,15 @@
       </section>
     </main>
 
+    <!-- 同じドメイン（hostname）の他ページに付箋/マーカーがある場合に表示（issue #24） -->
+    <section id="domainSection" class="domain-section" style="display:none;">
+      <div class="domain-section-header">
+        <span data-i18n="domainOtherPages">Other pages on this site</span>
+        <span class="badge" id="domainCount">0</span>
+      </div>
+      <div id="domainList" class="list"></div>
+    </section>
+
     <details class="import-section">
       <summary data-i18n="importTexts">Import texts</summary>
       <div class="import-body">

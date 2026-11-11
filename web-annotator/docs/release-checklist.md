@@ -23,8 +23,10 @@
   rm -f web-annotator-v*.zip
   zip -r web-annotator-v<X.Y.Z>.zip \
     _locales background.js content.css content.js manifest.json popup \
+    lib/domainAnnotations.js \
     icons/icon16.png icons/icon48.png icons/icon128.png
   ```
+  > ⚠ `lib/domainAnnotations.js` は `background.js` が `importScripts` で読み込む実行時依存です。**同梱必須**（漏らすと Service Worker が起動失敗）。`lib/*.test.cjs` はテスト専用なので同梱しません。
 - [ ] `STORE_LISTING.md` の Key Features / How to Use / Changelog を新バージョン用に更新
 - [ ] `docs/release-notes-v<X.Y.Z>.md` を `internal-comms` スキルで作成
 - [ ] semantic commit → push → PR 作成

@@ -361,6 +361,45 @@ body {
   }
 }
 
+/* Domain section (issue #24) — 同じ hostname の他ページ一覧 */
+.domain-section {
+  padding: 12px 20px;
+  background: #161616;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.domain-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* .list-item を継承（背景/hover/角丸/アニメーション）し、差分のみ上書き */
+.domain-item {
+  cursor: pointer;
+}
+
+.domain-title {
+  -webkit-line-clamp: 2;
+}
+
+.domain-meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.domain-more {
+  padding: 12px;
+  font-size: 12px;
+}
+
 /* Import section */
 .import-section {
   background: #161616;

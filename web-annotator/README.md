@@ -21,6 +21,11 @@ Webページにマーカー（ハイライト）と付箋を追加し、Markdown
 - 「Markdownで出力」ボタンでダウンロード
 - ファイル名は `<ページタイトル>.md`
 
+### 4. 同じサイトの他ページの気づき表示（v1.2.0）
+- 現在のページにアノテーションが無くても、同じドメイン（hostname）の他ページに付箋・マーカーがあればポップアップに一覧表示
+- 各ページのマーカー／付箋の件数を表示し、クリックでそのページへ移動（既存タブがあればフォーカス、無ければ新規タブ）
+- 「同じドメイン」は hostname 単位で判定（`news.example.com` と `blog.example.com` は別、www 有無も別、http/https は同一扱い）
+
 ## インストール方法
 
 ### 開発者モードでインストール
@@ -90,6 +95,10 @@ web-annotator/
 │   ├── popup.html     # ポップアップUI
 │   ├── popup.css      # ポップアップスタイル
 │   └── popup.js       # ポップアップロジック
+├── lib/
+│   ├── domainAnnotations.js        # ドメイン単位の集計ロジック（純粋関数、background から importScripts）
+│   ├── domainAnnotations.test.cjs  # 上記のテスト
+│   └── parseMarkdownList.test.cjs  # インポート分割ロジックのテスト
 ├── icons/
 │   ├── icon16.png     # 16x16 アイコン
 │   ├── icon48.png     # 48x48 アイコン
@@ -112,13 +121,18 @@ web-annotator/
 
 ## テスト
 
-テキスト一括インポートの分割ロジック (`parseMarkdownList`) はリグレッションテストでカバーされています。
+ロジックは Node 標準のテストランナーでカバーされています。
 
 ```bash
 node --test web-annotator/lib/parseMarkdownList.test.cjs
+node --test web-annotator/lib/domainAnnotations.test.cjs
 ```
 
+> `node --test web-annotator/lib/`（ディレクトリ指定）は本体ファイル `domainAnnotations.js` も拾おうとするため、テストファイルは個別パスで指定してください。
+
 `parseMarkdownList` は `popup/popup.js` と `content.js` に二重実装されています（popup と content script は別 context のため module 共有不可）。**片方を修正したら必ずもう一方にも同じ差分を当て、上記テストを実行してください。**
+
+`domainAnnotations.js`（ドメイン単位の集計ロジック）は `background.js` から `importScripts` で読み込まれます。chrome 非依存の純粋関数として実装されており、`domainAnnotations.test.cjs` で検証されます。**zip 同梱対象に必ず含めてください**（含め忘れると Service Worker が `importScripts` で起動失敗します）。
 
 ## ライセンス
 
